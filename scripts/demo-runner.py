@@ -110,7 +110,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--markets", nargs="*", default=DEFAULT_MARKETS)
     args = parser.parse_args(argv)
 
-    with httpx.Client(timeout=30.0) as client:
+    with httpx.Client(timeout=120.0) as client:
         results = [query_oracle(client, args.base_url, m, args.payer) for m in args.markets]
     print_results(results)
     return 0
