@@ -178,7 +178,7 @@ def test_canonical_trace_hash_is_stable() -> None:
         counter_arguments=[CounterArgument(claim="c", weight=0.2, rebuttal="r")],
         sensitivity=[SensitivityNode(factor="f", delta_pp=1.0, note=None)],
         summary="s",
-        model="mock:claude-opus-4-7",
+        model="mock:gemini-3.1-pro-preview",
         produced_at="2026-01-01T00:00:00Z",
         consumer_address=None,
     )

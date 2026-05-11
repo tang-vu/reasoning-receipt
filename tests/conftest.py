@@ -20,7 +20,8 @@ _MOCK_ENV = {
     "RR_MOCK_TRADER": "1",
     "RR_MOCK_CIRCLE": "1",
     "RR_LOCAL_FACILITATOR": "0",
-    "ANTHROPIC_API_KEY": "",
+    "GOOGLE_CLOUD_PROJECT": "",
+    "GOOGLE_API_KEY": "",
     "CORS_ORIGINS": "*",
 }
 

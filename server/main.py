@@ -2,7 +2,7 @@
 
 Wires:
   - x402 paywall
-  - Anthropic Claude analyst
+  - Gemini analyst (Vertex AI / public Gemini API)
   - Irys trace sealer
   - Arc chain client (mock or live)
   - SQLAlchemy session

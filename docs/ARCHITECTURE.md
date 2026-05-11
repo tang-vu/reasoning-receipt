@@ -5,7 +5,7 @@ ReasoningReceipt is an x402-paywalled prediction-market oracle where every price
 ```mermaid
 graph LR
   A[Polymarket / Kalshi APIs] -->|events| B(Scanner)
-  B --> C{Analyst — Gemini 2.5 Pro<br/>+ web search}
+  B --> C{Analyst — Gemini 3.1 Pro Preview<br/>+ Google Search grounding}
   C -->|trace JSON| D[Canonicalizer<br/>sort keys · UTC · 6dp floats]
   D -->|sha256| E[Irys / IPFS pin]
   D --> F[Trader — Kelly sizing<br/>portfolio wallet]
@@ -26,7 +26,7 @@ graph LR
 | Layer | Files | Job |
 |---|---|---|
 | Scanner | `agent/scanner.py` | Pull Polymarket Gamma markets, apply liquidity / horizon / language filter, persist a candidate cache. |
-| Analyst | `agent/analyst.py`, `agent/prompts/analyst.md` | Single Gemini 2.5 Pro call (Vertex AI when `GOOGLE_CLOUD_PROJECT` set, public Gemini API otherwise) with Google Search grounding. Returns probability, confidence, cited sources, counter-arguments, sensitivity. |
+| Analyst | `agent/analyst.py`, `agent/prompts/analyst.md` | Single Gemini 3.1 Pro Preview call (Vertex AI when `GOOGLE_CLOUD_PROJECT` set, public Gemini API otherwise) with Google Search grounding. Automatic fallback chain to Flash Preview and Gemini 2.5 Flash on quota / availability errors. Returns probability, confidence, cited sources, counter-arguments, sensitivity. |
 | Trace | `agent/trace.py`, `storage/irys.py` | Canonicalize the analyst output, SHA-256 it, upload to Irys, return `(hash, cid)`. |
 | Chain client | `server/chain.py`, `contracts/src/ReceiptRegistry.sol` | Emit `Receipt(...)` on Arc with `(consumer, market, probability, confidence, hash, cid)`. |
 | x402 paywall | `server/x402.py`, `server/facilitator.py` | Issue HMAC-signed challenges, verify payments, settle via Circle Nanopayments. |

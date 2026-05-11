@@ -15,7 +15,7 @@ The product isn't the number. The product is the **auditable trace** behind the 
 ```mermaid
 graph LR
   A[Polymarket/Kalshi] -->|events| B(Scanner)
-  B --> C{Analyst<br/>Claude Opus 4.7}
+  B --> C{Analyst<br/>Gemini 3.1 Pro<br/>+ Google Search}
   C -->|trace+probability| D[Trader]
   D -->|positions| E[Circle Wallet]
   C -->|trace JSON| F[Irys/IPFS]
@@ -27,7 +27,7 @@ graph LR
   J --> G
 ```
 
-The agent runs continuously: scans Polymarket and Kalshi for liquid, near-resolution events, asks Gemini 2.5 Pro (via Vertex AI) to produce a probability + counter-arguments + cited sources with Google Search grounding, hashes that canonical JSON, pins it to Irys, emits a `Receipt` event on Arc, and (separately) takes a Kelly-sized position with its own portfolio wallet. The FastAPI server exposes the same oracle behind an x402 paywall to outside consumers.
+The agent runs continuously: scans Polymarket and Kalshi for liquid, near-resolution events, asks Gemini 3.1 Pro Preview (via Vertex AI, with Google Search grounding) to produce a probability + counter-arguments + cited sources, hashes that canonical JSON, pins it to Irys, emits a `Receipt` event on Arc, and (separately) takes a Kelly-sized position with its own portfolio wallet. The FastAPI server exposes the same oracle behind an x402 paywall to outside consumers.
 
 ## Quick start
 
@@ -67,7 +67,7 @@ docs/         Architecture, demo, submission text
 
 ## Tech stack
 
-- **Agent**: Python 3.11+ / FastAPI / `google-genai` SDK (Gemini 2.5 Pro via Vertex AI for reasoning, with Google Search grounding for sources)
+- **Agent**: Python 3.11+ / FastAPI / `google-genai` SDK (Gemini 3.1 Pro Preview via Vertex AI for reasoning, with Google Search grounding for sources, automatic fallback chain to Flash + 2.5 stable)
 - **Markets**: Polymarket CLOB + Kalshi
 - **Settlement**: Arc testnet, Solidity 0.8.26, Foundry
 - **Paywall**: x402 + Circle Nanopayments
