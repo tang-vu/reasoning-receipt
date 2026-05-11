@@ -46,7 +46,7 @@ Per the "agentic sophistication" rubric: multi-stage autonomous decisions (scan 
 |---|---|
 | GitHub | `https://github.com/tang-vu/reasoning-receipt` |
 | Demo video | `[YouTube unlisted URL — fill in after recording]` |
-| Live dashboard | `[Vercel URL — fill in after deploy]` |
+| Live dashboard | `https://tang-vu.github.io/reasoning-receipt/` |
 | Contract on Arc | `[Arc explorer URL — fill in after deploy]` |
 | Team | Solo — Vu Minh Tang (`tang-vu`) |
 | Circle Developer Console email | `[email — fill in]` |

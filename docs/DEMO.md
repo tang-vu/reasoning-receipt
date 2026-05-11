@@ -67,23 +67,37 @@ uv run python -m scripts.record-demo --out recordings/demo.mp4
 
 Produces `recordings/demo.mp4` (1080p, ~3 min). Upload to YouTube unlisted; paste the URL into `docs/SUBMISSION.md`.
 
-## Public dashboard (Cloudflare Pages)
+## Public dashboard (GitHub Pages)
 
 The dashboard supports two modes:
 
 * **Server mode** (default): Next.js SSR talking to the local FastAPI server at `NEXT_PUBLIC_DASHBOARD_API_URL`. Good for local dev.
-* **Snapshot mode**: static export reading a frozen `public/snapshot.json` produced from the SQLite DB. Good for free hosting on Cloudflare Pages — no backend needed, dashboard stays up forever.
+* **Snapshot mode**: static export reading a frozen `public/snapshot.json` produced from the SQLite DB. Hosted free on **GitHub Pages** at https://tang-vu.github.io/reasoning-receipt/ — no backend needed, dashboard stays up forever.
+
+### Auto-deploy on every push
+
+`.github/workflows/deploy-dashboard.yml` runs on any push touching `dashboard/**`. It:
+
+1. Reads the committed `dashboard/public/snapshot.json` (or emits a placeholder if absent)
+2. Builds Next.js with `NEXT_PUBLIC_USE_SNAPSHOT=1 NEXT_PUBLIC_BASE_PATH=/reasoning-receipt`
+3. Uploads the static output to GitHub Pages
+
+→ To refresh the dashboard with new on-chain data:
 
 ```bash
-# 1. Export DB snapshot to public/snapshot.json
+# Local: export the latest snapshot from your SQLite DB
 uv run python -m scripts.export-snapshot --out dashboard/public/snapshot.json --limit 2000
 
-# 2. Build + deploy to Cloudflare Pages
-cd dashboard
-npx wrangler login                # one-time
-npm run deploy:cf                 # build:snapshot + wrangler pages deploy
-
-# Subsequent re-deploys: just `npm run deploy:cf` again (will rebuild from latest snapshot).
+# Commit + push — Pages workflow rebuilds automatically
+git add dashboard/public/snapshot.json
+git commit -m "snapshot: <N> receipts"
+git push
 ```
 
-After deploy, paste the `*.pages.dev` URL into `docs/SUBMISSION.md`.
+### Manual local build (if you want to preview before pushing)
+
+```bash
+cd dashboard
+npm run build:snapshot   # produces ./out
+npx serve out            # or any static server
+```

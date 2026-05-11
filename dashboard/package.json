@@ -5,11 +5,10 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
-    "build:snapshot": "cross-env NEXT_PUBLIC_USE_SNAPSHOT=1 next build",
+    "build:snapshot": "cross-env NEXT_PUBLIC_USE_SNAPSHOT=1 NEXT_PUBLIC_BASE_PATH=/reasoning-receipt next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit",
-    "deploy:cf": "npm run build:snapshot && wrangler pages deploy out --project-name reasoning-receipt"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "next": "^15.0.3",
@@ -28,7 +27,6 @@
     "eslint-config-next": "^15.0.3",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.15",
-    "typescript": "^5.7.2",
-    "wrangler": "^3.91.0"
+    "typescript": "^5.7.2"
   }
 }

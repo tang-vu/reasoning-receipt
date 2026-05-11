@@ -60,7 +60,9 @@ async function loadSnapshot(): Promise<Snapshot> {
     })();
     return _snapshot;
   }
-  _snapshot = fetch("/snapshot.json", { cache: "force-cache" }).then((r) => {
+  // GitHub Pages serves under /<repo>/, so prefix the asset URL.
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+  _snapshot = fetch(`${basePath}/snapshot.json`, { cache: "force-cache" }).then((r) => {
     if (!r.ok) throw new Error(`snapshot.json: ${r.status}`);
     return r.json();
   });

@@ -1,0 +1,94 @@
+name: Deploy dashboard to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "dashboard/**"
+      - "scripts/export-snapshot.py"
+      - ".github/workflows/deploy-dashboard.yml"
+  workflow_dispatch:
+    inputs:
+      use_snapshot_from_artifact:
+        description: "Optional: name of an artifact containing snapshot.json"
+        required: false
+
+# A single concurrent deploy per ref. Cancel previous in-flight runs.
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    name: Build static dashboard
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: dashboard/package-lock.json
+
+      - name: Install dashboard deps
+        working-directory: dashboard
+        run: npm ci
+
+      # If the repo has a committed snapshot, use it; otherwise emit a minimal
+      # placeholder so the build still produces a navigable site.
+      - name: Provision snapshot.json
+        run: |
+          if [ -f dashboard/public/snapshot.json ]; then
+            echo "Using committed snapshot.json"
+          else
+            mkdir -p dashboard/public
+            cat > dashboard/public/snapshot.json <<'EOF'
+          {
+            "version": "rr-snapshot/1",
+            "exported_at": "1970-01-01T00:00:00Z",
+            "stats": {
+              "total_receipts": 0,
+              "total_paid_micro_usdc": 0,
+              "distinct_markets": 0,
+              "distinct_consumers": 0,
+              "latest_receipt_at": null
+            },
+            "receipts": [],
+            "per_market": [],
+            "volume_chart": []
+          }
+          EOF
+          fi
+
+      - name: Build (snapshot mode, basePath = /reasoning-receipt)
+        working-directory: dashboard
+        env:
+          NEXT_PUBLIC_USE_SNAPSHOT: "1"
+          NEXT_PUBLIC_BASE_PATH: "/reasoning-receipt"
+        run: npx next build
+
+      - name: Add .nojekyll
+        run: touch dashboard/out/.nojekyll
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dashboard/out
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
