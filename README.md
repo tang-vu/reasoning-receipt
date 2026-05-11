@@ -2,9 +2,11 @@
 
 > An x402-paywalled AI oracle for prediction markets where the **reasoning trace is the product**. Every response includes a full hashed chain-of-thought, settled on Arc in under a second for ~$0.01.
 
+[![CI](https://github.com/tang-vu/reasoning-receipt/actions/workflows/ci.yml/badge.svg)](https://github.com/tang-vu/reasoning-receipt/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![Solidity 0.8.26](https://img.shields.io/badge/solidity-0.8.26-363636.svg)](https://soliditylang.org)
+[![Next.js 15](https://img.shields.io/badge/next.js-15-black.svg)](https://nextjs.org)
 
 ReasoningReceipt is a paid oracle: pay a few cents of USDC over [x402](https://docs.cdp.coinbase.com/x402/docs/welcome), get a price for a prediction-market event plus a **receipt** — a hashed, on-chain pointer to the full reasoning trace that produced it. The trace lives on Irys/IPFS, the hash + CID sit in `ReceiptRegistry.sol` on Arc, the response settles in under a second.
 

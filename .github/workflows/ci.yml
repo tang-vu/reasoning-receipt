@@ -1,0 +1,81 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python:
+    name: pytest + ruff
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "latest"
+      - name: Set up Python
+        run: uv python install 3.11
+      - name: Install dependencies
+        run: uv sync --extra dev --frozen
+      - name: Ruff
+        run: uv run --extra dev ruff check .
+      - name: Pytest
+        run: uv run --extra dev pytest tests/ -q
+        env:
+          RR_MOCK_X402: "1"
+          RR_MOCK_CHAIN: "1"
+          RR_MOCK_IRYS: "1"
+          RR_MOCK_ANALYST: "1"
+          RR_MOCK_SCANNER: "1"
+          RR_MOCK_TRADER: "1"
+          RR_MOCK_CIRCLE: "1"
+
+  contracts:
+    name: forge build + test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: stable
+      - name: Install forge-std
+        run: |
+          if [ ! -d contracts/lib/forge-std ]; then
+            git clone --depth 1 https://github.com/foundry-rs/forge-std contracts/lib/forge-std
+          fi
+      - name: forge build
+        working-directory: contracts
+        run: forge build
+      - name: forge test
+        working-directory: contracts
+        run: forge test -vv
+
+  dashboard:
+    name: next build + typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: dashboard/package-lock.json
+      - name: Install
+        working-directory: dashboard
+        run: npm ci
+      - name: Typecheck
+        working-directory: dashboard
+        run: npx tsc --noEmit
+      - name: Build (server mode)
+        working-directory: dashboard
+        run: npx next build
