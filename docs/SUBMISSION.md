@@ -94,10 +94,19 @@ A $0.01 oracle call is uneconomical on classical L1s — gas alone exceeds the p
 
 ## Pre-submit checklist
 
-- [ ] `.env` redacted from any uploaded asset
-- [ ] `git ls-files | grep -E "^(CLAUDE|notes/|\.claude|AGENTS)"` returns empty
-- [ ] `git ls-files | xargs grep -l "sk-ant\\|0x[a-f0-9]\\{64\\}"` returns empty (no committed secrets)
-- [ ] Demo video plays in incognito
-- [ ] Dashboard public URL responds in incognito
-- [ ] `scripts/setup.sh` works from a fresh clone in `/tmp/test-clone`
+Repo hygiene (run each before submitting):
+
+- [x] `.env` is gitignored, not committed
+- [x] `git ls-files | grep -E "^(CLAUDE|notes/|\.claude|AGENTS)"` returns empty
+- [x] `git ls-files | xargs grep -l "sk-ant\\|0x[a-f0-9]\\{64\\}"` returns empty (no committed secrets)
+- [x] CI green on main: https://github.com/tang-vu/reasoning-receipt/actions
+- [x] Dashboard live: https://tang-vu.github.io/reasoning-receipt/
+
+Submission deliverables (Harvey fills these in the final week):
+
+- [ ] `dashboard/public/snapshot.json` regenerated from a DB with ≥ 1000 receipts
+- [ ] Founder pitch video recorded + uploaded to YouTube (unlisted)
+- [ ] Product demo video recorded via `scripts/record-demo.py` + uploaded to YouTube (unlisted)
+- [ ] `scripts/setup.sh` smoke-tested from a fresh clone in `/tmp/test-clone`
 - [ ] All bracketed placeholders above are filled in
+- [ ] `arc-canteen update-product` + `arc-canteen update-traction` ran during the build window

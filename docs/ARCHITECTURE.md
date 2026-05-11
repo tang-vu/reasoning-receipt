@@ -78,4 +78,38 @@ Per-receipt economics make or break this product. Posting a $0.01 receipt over a
 
 * `GET /healthz` reports per-subsystem mock state.
 * `GET /stats` reports total receipts, distinct markets, distinct consumers, and total USDC settled.
-* The dashboard reads `/stats` and `/receipts` directly on each request — no caching layer.
+* `GET /events/stream` is an SSE feed of new receipts as they emit — useful for live demos and downstream auditors.
+* `GET /verify/{id}` re-derives the trace hash from the Irys-fetched canonical JSON and compares to the on-chain value. `scripts/verify-receipt.py` is the CLI version.
+* The server-mode dashboard reads `/stats` and `/receipts` directly on each request — no caching layer.
+
+## Deployment topology
+
+```
+                    push to main (dashboard/** or scripts/export-snapshot.py)
+                                   │
+                                   ▼
+              .github/workflows/deploy-dashboard.yml
+                                   │
+                          npm ci · npm run build:snapshot
+                                   │
+                                   ▼
+              GitHub Pages — https://tang-vu.github.io/reasoning-receipt/
+                          (static, no backend, live forever)
+
+
+  Harvey's PC (when actively driving volume)
+   ├─ FastAPI server   uvicorn server.main:app
+   ├─ Agent loop       python -m agent.loop
+   └─ SQLite local
+        │
+        │ emits Receipt(...) events
+        ▼
+   Arc testnet · ReceiptRegistry.sol
+        │ (persistent on-chain — survives PC reboots)
+        │
+        │ export-snapshot.py → dashboard/public/snapshot.json → git push
+        ▼
+   GitHub Pages refreshes ~70s later
+```
+
+The dashboard never talks to the FastAPI server in production — it reads a snapshot committed to the repo. That snapshot is regenerated from the SQLite DB whenever Harvey wants to publish updated traction.

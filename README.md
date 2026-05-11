@@ -12,6 +12,11 @@ ReasoningReceipt is a paid oracle: pay a few cents of USDC over [x402](https://d
 
 The product isn't the number. The product is the **auditable trace** behind the number.
 
+**Live**
+
+* Dashboard — https://tang-vu.github.io/reasoning-receipt/ (auto-deployed on every push)
+* Latest release — [v0.1.0-rc1](https://github.com/tang-vu/reasoning-receipt/releases/tag/v0.1.0-rc1)
+
 ## Architecture
 
 ```mermaid
