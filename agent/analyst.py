@@ -21,7 +21,7 @@ import json
 import logging
 import os
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -30,6 +30,12 @@ from .trace import CounterArgument, ReasoningTrace, SensitivityNode, Source
 logger = logging.getLogger(__name__)
 
 DEFAULT_REASONING_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.1-pro-preview")
+# Fallback chain — tried in order on quota/transient errors.
+# Preview models are deployed only at `global` location; 2.5 stable is the last resort.
+_DEFAULT_FALLBACKS = "gemini-3-flash-preview,gemini-2.5-flash"
+DEFAULT_FALLBACK_MODELS = [
+    m.strip() for m in os.getenv("GEMINI_FALLBACK_MODELS", _DEFAULT_FALLBACKS).split(",") if m.strip()
+]
 PROMPT_FILE = Path(__file__).parent / "prompts" / "analyst.md"
 
 
@@ -46,7 +52,12 @@ class MarketCandidate:
 @dataclass(slots=True)
 class AnalystConfig:
     model: str = DEFAULT_REASONING_MODEL
-    max_tokens: int = 4096
+    fallback_models: list[str] = field(default_factory=lambda: list(DEFAULT_FALLBACK_MODELS))
+    # Gemini 3.x defaults to "thinking" mode which consumes output budget. We give
+    # ourselves room and explicitly cap thinking. 16k is a safe ceiling for a
+    # trace JSON plus a moderate thinking budget.
+    max_tokens: int = 16_384
+    thinking_budget: int = 2_048
     temperature: float = 0.2
     enable_web_search: bool = True
 
@@ -160,6 +171,7 @@ class Analyst:
 
         self.backend: str | None = None
         self._client = None
+        self._last_model_used: str | None = None
         if not self.mock:
             self._client, self.backend = _build_client()
             if self._client is None:
@@ -189,9 +201,13 @@ class Analyst:
         prob = max(0.0, min(1.0, prob))
         conf = max(0.0, min(1.0, conf))
 
-        model_label = self.config.model if not self.mock else f"mock:{self.config.model}"
-        if not self.mock and self.backend:
-            model_label = f"{self.config.model}@{self.backend}"
+        if self.mock:
+            model_label = f"mock:{self.config.model}"
+        elif self.backend:
+            actual = self._last_model_used or self.config.model
+            model_label = f"{actual}@{self.backend}"
+        else:
+            model_label = self.config.model
 
         return ReasoningTrace(
             schema_version="rr-trace/1",
@@ -230,25 +246,50 @@ class Analyst:
         if self.config.enable_web_search:
             tools.append(types.Tool(google_search=types.GoogleSearch()))
 
+        thinking = None
+        if self.config.thinking_budget is not None:
+            try:
+                thinking = types.ThinkingConfig(thinking_budget=self.config.thinking_budget)
+            except Exception:
+                # Older SDK versions may not expose ThinkingConfig; skip silently.
+                thinking = None
+
         config = types.GenerateContentConfig(
             system_instruction=self.prompt,
             temperature=self.config.temperature,
             max_output_tokens=self.config.max_tokens,
             response_mime_type="application/json" if not tools else None,
             tools=tools or None,
+            thinking_config=thinking,
         )
 
-        resp = self._client.models.generate_content(
-            model=self.config.model,
-            contents=user,
-            config=config,
-        )
-        text = getattr(resp, "text", None)
-        if not text:
-            # Walk parts manually for the multi-part response shape.
-            for cand in getattr(resp, "candidates", []) or []:
-                for part in getattr(cand.content, "parts", []) or []:
-                    if getattr(part, "text", None):
-                        return part.text
-            raise RuntimeError("Gemini returned no text")
-        return text
+        chain = [self.config.model, *self.config.fallback_models]
+        last_exc: Exception | None = None
+        for model in chain:
+            try:
+                resp = self._client.models.generate_content(
+                    model=model,
+                    contents=user,
+                    config=config,
+                )
+                self._last_model_used = model
+                if model != self.config.model:
+                    logger.info("analyst: fell back from %s → %s", self.config.model, model)
+                text = getattr(resp, "text", None)
+                if text:
+                    return text
+                for cand in getattr(resp, "candidates", []) or []:
+                    for part in getattr(cand.content, "parts", []) or []:
+                        if getattr(part, "text", None):
+                            return part.text
+                raise RuntimeError(f"Gemini ({model}) returned no text")
+            except Exception as exc:
+                last_exc = exc
+                msg = str(exc)
+                # Retry on quota / availability errors only; otherwise re-raise.
+                if any(s in msg for s in ("429", "RESOURCE_EXHAUSTED", "404", "NOT_FOUND", "503")):
+                    logger.warning("analyst: %s failed (%s); trying fallback", model, msg[:200])
+                    continue
+                raise
+        assert last_exc is not None
+        raise last_exc
