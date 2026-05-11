@@ -21,6 +21,7 @@ dependencies = [
     "tenacity>=9.0",
     "rich>=13.9",
     "click>=8.1",
+    "sse-starlette>=2.1",
     "supervisor; sys_platform != 'win32'",
 ]
 

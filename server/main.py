@@ -26,6 +26,8 @@ from storage.db import init_db
 from storage.irys import IrysClient
 
 from .chain import ChainClient
+from .events import ReceiptBroker
+from .events import router as events_router
 from .facilitator import router as facilitator_router
 from .routes import router as oracle_router
 from .verify import router as verify_router
@@ -47,6 +49,7 @@ async def lifespan(app: FastAPI):
     app.state.analyst = Analyst()
     app.state.sealer = TraceSealer(IrysClient())
     app.state.chain = ChainClient()
+    app.state.broker = ReceiptBroker()
     logger.info(
         "boot: paywall_mock=%s analyst_mock=%s sealer_mock=%s chain_mock=%s",
         app.state.paywall.mock,
@@ -75,6 +78,7 @@ def create_app() -> FastAPI:
     )
     app.include_router(oracle_router)
     app.include_router(verify_router)
+    app.include_router(events_router)
     if os.getenv("RR_LOCAL_FACILITATOR", "").lower() in {"1", "true", "yes"}:
         app.include_router(facilitator_router)
     return app

@@ -117,6 +117,11 @@ async def get_price(market_id: str, request: Request) -> PriceResponse:
         )
         session.add(row)
         session.flush()
+        broker_payload = _to_trace_row(row).model_dump()
+
+    broker = getattr(request.app.state, "broker", None)
+    if broker is not None:
+        await broker.publish(broker_payload)
 
     return PriceResponse(
         market_id=market_id,
