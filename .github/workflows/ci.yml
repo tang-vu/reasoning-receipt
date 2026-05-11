@@ -47,7 +47,10 @@ jobs:
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
         with:
-          version: stable
+          # Pin to avoid rate-limited "latest tag" lookup against GitHub API.
+          version: v1.7.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install forge-std
         run: |
           if [ ! -d contracts/lib/forge-std ]; then
