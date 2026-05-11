@@ -21,7 +21,7 @@ uv run python -m scripts.seed-demo --count 80
 
 ## Segment 1 — Agent loop (30 s, terminal capture)
 
-Caption: *"The agent runs continuously. Scan markets → produce a probability with Claude Opus 4.7 → hash the trace → emit a Receipt on Arc. Sub-second per cycle."*
+Caption: *"The agent runs continuously. Scan markets → produce a probability with Gemini 2.5 Pro (Google Search grounded) → hash the trace → emit a Receipt on Arc. Sub-second per cycle."*
 
 Show two scrolling log lines per second of the agent loop printing `priced X prob=Y conf=Z tx=0x…`. Stop after ~30 s.
 

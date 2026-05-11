@@ -5,7 +5,7 @@ ReasoningReceipt is an x402-paywalled prediction-market oracle where every price
 ```mermaid
 graph LR
   A[Polymarket / Kalshi APIs] -->|events| B(Scanner)
-  B --> C{Analyst — Claude Opus 4.7<br/>+ web search}
+  B --> C{Analyst — Gemini 2.5 Pro<br/>+ web search}
   C -->|trace JSON| D[Canonicalizer<br/>sort keys · UTC · 6dp floats]
   D -->|sha256| E[Irys / IPFS pin]
   D --> F[Trader — Kelly sizing<br/>portfolio wallet]
@@ -26,7 +26,7 @@ graph LR
 | Layer | Files | Job |
 |---|---|---|
 | Scanner | `agent/scanner.py` | Pull Polymarket Gamma markets, apply liquidity / horizon / language filter, persist a candidate cache. |
-| Analyst | `agent/analyst.py`, `agent/prompts/analyst.md` | Single Claude Opus 4.7 call with web-search tool. Returns probability, confidence, cited sources, counter-arguments, sensitivity. |
+| Analyst | `agent/analyst.py`, `agent/prompts/analyst.md` | Single Gemini 2.5 Pro call (Vertex AI when `GOOGLE_CLOUD_PROJECT` set, public Gemini API otherwise) with Google Search grounding. Returns probability, confidence, cited sources, counter-arguments, sensitivity. |
 | Trace | `agent/trace.py`, `storage/irys.py` | Canonicalize the analyst output, SHA-256 it, upload to Irys, return `(hash, cid)`. |
 | Chain client | `server/chain.py`, `contracts/src/ReceiptRegistry.sol` | Emit `Receipt(...)` on Arc with `(consumer, market, probability, confidence, hash, cid)`. |
 | x402 paywall | `server/x402.py`, `server/facilitator.py` | Issue HMAC-signed challenges, verify payments, settle via Circle Nanopayments. |
@@ -68,7 +68,7 @@ Per-receipt economics make or break this product. Posting a $0.01 receipt over a
 
 | Failure | Behaviour |
 |---|---|
-| Anthropic outage | Analyst falls back to deterministic mock answer; trace and receipt continue. The trace's `model` field flips to `mock:...` so consumers can detect it. |
+| Gemini / Vertex outage | Analyst falls back to deterministic mock answer; trace and receipt continue. The trace's `model` field flips to `mock:...` so consumers can detect it. |
 | Arc RPC outage | Chain client switches to mock mode, returns a synthetic tx hash. The DB row records `is_mock=True` via the model field; replays are skipped. |
 | Irys outage | IrysClient enters mock mode; CID is a deterministic shortened hash. The trace can still be regenerated locally from the DB question + analyst output. |
 | Polymarket schema drift | Scanner catches the exception, falls back to the deterministic mock fixture, and logs a warning. |

@@ -1,17 +1,24 @@
-"""Claude-driven probability analyst.
+"""Gemini-driven probability analyst.
 
-Takes a `MarketCandidate`, asks Claude Opus 4.7 (via the Anthropic SDK) for a
-calibrated probability with cited sources, counter-arguments, and sensitivity.
-Returns a populated `ReasoningTrace`.
+Takes a `MarketCandidate`, asks Gemini (via Vertex AI or the public Gemini API)
+for a calibrated probability with cited sources, counter-arguments, and
+sensitivity. Returns a populated `ReasoningTrace`.
 
-Mock mode (`RR_MOCK_ANALYST=1` or missing `ANTHROPIC_API_KEY`): deterministic
+Mock mode (`RR_MOCK_ANALYST=1` or no Google credentials): deterministic
 synthetic answer so the full pipeline runs in tests and local dev.
+
+Credentials resolution order:
+  1. `GOOGLE_CLOUD_PROJECT` set → Vertex AI client
+     (also honours `GOOGLE_CLOUD_LOCATION`, default `us-central1`).
+  2. `GOOGLE_API_KEY` set → public Gemini API client.
+  3. Otherwise → mock mode.
 """
 
 from __future__ import annotations
 
 import hashlib
 import json
+import logging
 import os
 import re
 from dataclasses import dataclass
@@ -20,7 +27,9 @@ from pathlib import Path
 
 from .trace import CounterArgument, ReasoningTrace, SensitivityNode, Source
 
-DEFAULT_REASONING_MODEL = "claude-opus-4-7"
+logger = logging.getLogger(__name__)
+
+DEFAULT_REASONING_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-pro")
 PROMPT_FILE = Path(__file__).parent / "prompts" / "analyst.md"
 
 
@@ -78,7 +87,11 @@ def _mock_answer(candidate: MarketCandidate) -> dict:
     prob = (digest[0] / 255.0) * 0.6 + 0.2
     confidence = 0.55 + (digest[1] / 255.0) * 0.35
     return {
-        "claim": f"The outcome of '{candidate.question[:80]}' is most likely YES." if prob >= 0.5 else f"The outcome of '{candidate.question[:80]}' is most likely NO.",
+        "claim": (
+            f"The outcome of '{candidate.question[:80]}' is most likely YES."
+            if prob >= 0.5
+            else f"The outcome of '{candidate.question[:80]}' is most likely NO."
+        ),
         "probability": round(prob, 6),
         "confidence": round(confidence, 6),
         "horizon_days": 14,
@@ -105,27 +118,64 @@ def _mock_answer(candidate: MarketCandidate) -> dict:
             {"factor": "Tail risk in news cycle", "delta_pp": 8.0, "note": "Single-event shock"},
             {"factor": "Liquidity drying up", "delta_pp": 3.0, "note": "Slippage on resolution"},
         ],
-        "summary": "Synthetic analyst output. Replace with real Claude call by populating ANTHROPIC_API_KEY.",
+        "summary": (
+            "Synthetic analyst output. Replace with real Gemini call by populating "
+            "GOOGLE_CLOUD_PROJECT (Vertex AI) or GOOGLE_API_KEY (Gemini API)."
+        ),
     }
 
 
-class Analyst:
-    """Produces a ReasoningTrace for a MarketCandidate."""
+def _build_client():
+    """Return a (client, backend_name) pair or (None, None) for mock mode."""
+    try:
+        from google import genai  # type: ignore
+    except ImportError:
+        logger.warning("analyst: google-genai SDK not installed; falling back to mock")
+        return None, None
 
-    def __init__(self, *, api_key: str | None = None, config: AnalystConfig | None = None, mock: bool | None = None) -> None:
-        self.api_key = api_key or os.getenv("ANTHROPIC_API_KEY")
+    project = os.getenv("GOOGLE_CLOUD_PROJECT")
+    api_key = os.getenv("GOOGLE_API_KEY")
+    if project:
+        location = os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1")
+        return genai.Client(vertexai=True, project=project, location=location), "vertex"
+    if api_key:
+        return genai.Client(api_key=api_key), "gemini-api"
+    return None, None
+
+
+class Analyst:
+    """Produces a ReasoningTrace for a MarketCandidate via Gemini."""
+
+    def __init__(
+        self,
+        *,
+        config: AnalystConfig | None = None,
+        mock: bool | None = None,
+    ) -> None:
         self.config = config or AnalystConfig()
         env_mock = os.getenv("RR_MOCK_ANALYST", "").lower() in {"1", "true", "yes"}
         self.mock = env_mock if mock is None else mock
-        if not self.api_key:
-            self.mock = True
+
+        self.backend: str | None = None
+        self._client = None
+        if not self.mock:
+            self._client, self.backend = _build_client()
+            if self._client is None:
+                self.mock = True
+
         self.prompt = _load_prompt()
 
-    def analyse(self, candidate: MarketCandidate, *, consumer_address: str | None = None) -> ReasoningTrace:
+    def analyse(
+        self,
+        candidate: MarketCandidate,
+        *,
+        consumer_address: str | None = None,
+    ) -> ReasoningTrace:
         raw = self._call_model(candidate)
         try:
             obj = _extract_first_json(raw)
-        except Exception:
+        except Exception as exc:
+            logger.warning("analyst: model output unparseable (%s); falling back to mock answer", exc)
             obj = _mock_answer(candidate)
 
         sources = [Source(**s) for s in obj.get("sources", [])]
@@ -136,6 +186,10 @@ class Analyst:
         conf = float(obj.get("confidence", 0.5))
         prob = max(0.0, min(1.0, prob))
         conf = max(0.0, min(1.0, conf))
+
+        model_label = self.config.model if not self.mock else f"mock:{self.config.model}"
+        if not self.mock and self.backend:
+            model_label = f"{self.config.model}@{self.backend}"
 
         return ReasoningTrace(
             schema_version="rr-trace/1",
@@ -150,38 +204,49 @@ class Analyst:
             counter_arguments=counter,
             sensitivity=sensitivity,
             summary=obj.get("summary", ""),
-            model=self.config.model if not self.mock else f"mock:{self.config.model}",
+            model=model_label,
             produced_at=datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
             consumer_address=consumer_address,
         )
 
     def _call_model(self, candidate: MarketCandidate) -> str:
-        if self.mock:
+        if self.mock or self._client is None:
             return json.dumps(_mock_answer(candidate))
 
-        from anthropic import Anthropic
+        from google.genai import types  # type: ignore
 
-        client = Anthropic(api_key=self.api_key)
         user = (
             f"Market source: {candidate.source}\n"
             f"Market id: {candidate.market_id}\n"
             f"Question: {candidate.question}\n"
             f"Resolves by: {candidate.end_date.isoformat() if candidate.end_date else 'unknown'}\n"
             f"On-platform liquidity: ${candidate.liquidity_usd:,.0f}\n\n"
-            "Produce the JSON described in the system prompt. JSON only."
+            "Produce the JSON described in the system instruction. JSON only — no prose, no fences."
         )
-        tools = []
+
+        tools: list = []
         if self.config.enable_web_search:
-            tools = [{"type": "web_search_20250305", "name": "web_search", "max_uses": 5}]
-        resp = client.messages.create(
-            model=self.config.model,
-            system=self.prompt,
-            max_tokens=self.config.max_tokens,
+            tools.append(types.Tool(google_search=types.GoogleSearch()))
+
+        config = types.GenerateContentConfig(
+            system_instruction=self.prompt,
             temperature=self.config.temperature,
-            messages=[{"role": "user", "content": user}],
-            tools=tools if tools else None,
+            max_output_tokens=self.config.max_tokens,
+            response_mime_type="application/json" if not tools else None,
+            tools=tools or None,
         )
-        for block in resp.content:
-            if getattr(block, "type", None) == "text":
-                return block.text
-        raise RuntimeError("Claude returned no text blocks")
+
+        resp = self._client.models.generate_content(
+            model=self.config.model,
+            contents=user,
+            config=config,
+        )
+        text = getattr(resp, "text", None)
+        if not text:
+            # Walk parts manually for the multi-part response shape.
+            for cand in getattr(resp, "candidates", []) or []:
+                for part in getattr(cand.content, "parts", []) or []:
+                    if getattr(part, "text", None):
+                        return part.text
+            raise RuntimeError("Gemini returned no text")
+        return text

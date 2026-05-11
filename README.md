@@ -27,7 +27,7 @@ graph LR
   J --> G
 ```
 
-The agent runs continuously: scans Polymarket and Kalshi for liquid, near-resolution events, asks Claude Opus 4.7 to produce a probability + counter-arguments + cited sources, hashes that canonical JSON, pins it to Irys, emits a `Receipt` event on Arc, and (separately) takes a Kelly-sized position with its own portfolio wallet. The FastAPI server exposes the same oracle behind an x402 paywall to outside consumers.
+The agent runs continuously: scans Polymarket and Kalshi for liquid, near-resolution events, asks Gemini 2.5 Pro (via Vertex AI) to produce a probability + counter-arguments + cited sources with Google Search grounding, hashes that canonical JSON, pins it to Irys, emits a `Receipt` event on Arc, and (separately) takes a Kelly-sized position with its own portfolio wallet. The FastAPI server exposes the same oracle behind an x402 paywall to outside consumers.
 
 ## Quick start
 
@@ -67,7 +67,7 @@ docs/         Architecture, demo, submission text
 
 ## Tech stack
 
-- **Agent**: Python 3.11+ / FastAPI / Anthropic SDK (Claude Opus 4.7 for reasoning, Sonnet 4.6 for scanning, Haiku 4.5 for classification)
+- **Agent**: Python 3.11+ / FastAPI / `google-genai` SDK (Gemini 2.5 Pro via Vertex AI for reasoning, with Google Search grounding for sources)
 - **Markets**: Polymarket CLOB + Kalshi
 - **Settlement**: Arc testnet, Solidity 0.8.26, Foundry
 - **Paywall**: x402 + Circle Nanopayments
@@ -77,7 +77,7 @@ docs/         Architecture, demo, submission text
 
 ## Why this is interesting
 
-Most "AI agents on chain" emit hashes of opaque blobs. ReasoningReceipt commits to the **full chain-of-thought** — including the sources Claude actually cited, the counterarguments it weighed, and the confidence calibration it produced. The hash on Arc lets anyone verify the trace they fetch is the exact trace the oracle published. The agent then **eats its own cooking** — its portfolio wallet consumes the same oracle to size positions, so the on-chain volume is real, not synthetic.
+Most "AI agents on chain" emit hashes of opaque blobs. ReasoningReceipt commits to the **full chain-of-thought** — including the sources the analyst actually cited (Google Search grounded), the counterarguments it weighed, and the confidence calibration it produced. The hash on Arc lets anyone verify the trace they fetch is the exact trace the oracle published. The agent then **eats its own cooking** — its portfolio wallet consumes the same oracle to size positions, so the on-chain volume is real, not synthetic.
 
 The wedge is per-call economics: classical L1 gas makes a $0.01 query nonsensical. On Arc, the receipt costs less than the answer.
 
