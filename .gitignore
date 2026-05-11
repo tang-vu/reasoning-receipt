@@ -1,0 +1,62 @@
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
+build/
+dist/
+
+# Node / Next.js
+node_modules/
+.next/
+.vercel/
+.turbo/
+
+# Foundry
+contracts/out/
+contracts/cache/
+contracts/broadcast/
+contracts/lib/
+
+# DB
+*.db
+*.sqlite
+*.sqlite3
+
+# OS / Editor
+.DS_Store
+.vscode/
+.idea/
+*.swp
+
+# AI tooling — NEVER commit any of these
+CLAUDE.md
+notes/
+.claude/
+.claude-*
+.aider*
+AGENTS.md
+.cursor/
+.cursorrules
+.continue/
+.codeium/
+.copilot/
+**/.claude/
+**/notes/
+
+# Local build/run artifacts
+*.log
+.cache/
+tmp/
+recordings/
