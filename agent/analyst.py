@@ -29,7 +29,7 @@ from .trace import CounterArgument, ReasoningTrace, SensitivityNode, Source
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_REASONING_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-pro")
+DEFAULT_REASONING_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.1-pro-preview")
 PROMPT_FILE = Path(__file__).parent / "prompts" / "analyst.md"
 
 
@@ -136,7 +136,9 @@ def _build_client():
     project = os.getenv("GOOGLE_CLOUD_PROJECT")
     api_key = os.getenv("GOOGLE_API_KEY")
     if project:
-        location = os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1")
+        # "global" is the multi-region endpoint and is the right default for Gemini
+        # on Vertex unless a specific region is required for data residency.
+        location = os.getenv("GOOGLE_CLOUD_LOCATION", "global")
         return genai.Client(vertexai=True, project=project, location=location), "vertex"
     if api_key:
         return genai.Client(api_key=api_key), "gemini-api"
