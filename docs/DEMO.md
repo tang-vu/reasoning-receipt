@@ -66,3 +66,24 @@ uv run python -m scripts.record-demo --out recordings/demo.mp4
 ```
 
 Produces `recordings/demo.mp4` (1080p, ~3 min). Upload to YouTube unlisted; paste the URL into `docs/SUBMISSION.md`.
+
+## Public dashboard (Cloudflare Pages)
+
+The dashboard supports two modes:
+
+* **Server mode** (default): Next.js SSR talking to the local FastAPI server at `NEXT_PUBLIC_DASHBOARD_API_URL`. Good for local dev.
+* **Snapshot mode**: static export reading a frozen `public/snapshot.json` produced from the SQLite DB. Good for free hosting on Cloudflare Pages — no backend needed, dashboard stays up forever.
+
+```bash
+# 1. Export DB snapshot to public/snapshot.json
+uv run python -m scripts.export-snapshot --out dashboard/public/snapshot.json --limit 2000
+
+# 2. Build + deploy to Cloudflare Pages
+cd dashboard
+npx wrangler login                # one-time
+npm run deploy:cf                 # build:snapshot + wrangler pages deploy
+
+# Subsequent re-deploys: just `npm run deploy:cf` again (will rebuild from latest snapshot).
+```
+
+After deploy, paste the `*.pages.dev` URL into `docs/SUBMISSION.md`.

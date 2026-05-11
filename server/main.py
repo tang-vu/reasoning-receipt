@@ -28,6 +28,7 @@ from storage.irys import IrysClient
 from .chain import ChainClient
 from .facilitator import router as facilitator_router
 from .routes import router as oracle_router
+from .verify import router as verify_router
 from .x402 import X402Paywall
 
 load_dotenv()
@@ -73,6 +74,7 @@ def create_app() -> FastAPI:
         expose_headers=["Accept-Payment", "X-Payment-Challenge"],
     )
     app.include_router(oracle_router)
+    app.include_router(verify_router)
     if os.getenv("RR_LOCAL_FACILITATOR", "").lower() in {"1", "true", "yes"}:
         app.include_router(facilitator_router)
     return app

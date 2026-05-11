@@ -1,9 +1,6 @@
 import { api } from "@/lib/api";
 import { TracesTable } from "@/components/traces-table";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
 export default async function TracesPage() {
   const rows = await api.receipts(200).catch(() => []);
   return (

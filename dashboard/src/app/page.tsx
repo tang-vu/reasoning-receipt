@@ -3,9 +3,6 @@ import { StatCard } from "@/components/stat-card";
 import { TracesTable } from "@/components/traces-table";
 import { VolumeChart } from "@/components/volume-chart";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
 function microUsdcToString(micro: number): string {
   return (micro / 1_000_000).toFixed(4);
 }

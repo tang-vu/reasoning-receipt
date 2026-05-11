@@ -2,9 +2,22 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { api, type TraceRow } from "@/lib/api";
+import { VerifyButton } from "@/components/verify-button";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+const useSnapshot = process.env.NEXT_PUBLIC_USE_SNAPSHOT === "1";
+
+// Static export needs to know which ids to pre-render. In snapshot mode we
+// enumerate everything in the snapshot; in server mode we let Next handle it
+// per-request.
+export async function generateStaticParams(): Promise<Array<{ id: string }>> {
+  if (!useSnapshot) return [];
+  try {
+    const rows = await api.receipts(2000);
+    return rows.map((r) => ({ id: String(r.id) }));
+  } catch {
+    return [];
+  }
+}
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -56,6 +69,8 @@ export default async function TraceDetail({ params }: PageProps) {
           </div>
         </div>
       </section>
+
+      <VerifyButton receiptId={row.id} />
 
       <section className="rounded-xl border border-border bg-panel p-5">
         {fieldRow("Market id", row.market_id, true)}

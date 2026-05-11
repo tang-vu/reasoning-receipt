@@ -1,8 +1,5 @@
 import { api, type TraceRow } from "@/lib/api";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
 interface EventStat {
   market_id: string;
   question: string;

@@ -2,9 +2,6 @@ import { api, type TraceRow } from "@/lib/api";
 import { StatCard } from "@/components/stat-card";
 import { VolumeChart } from "@/components/volume-chart";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
 function microUsdc(micro: number): string {
   return (micro / 1_000_000).toFixed(4);
 }
