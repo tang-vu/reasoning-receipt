@@ -9,17 +9,9 @@ contract ReceiptRegistryTest is Test {
     address internal publisher = address(0xBEEF);
     address internal consumer = address(0xCAFE);
 
-    event Receipt(
-        uint256 indexed id,
-        address indexed publisher,
-        address indexed consumer,
-        bytes32 marketId,
-        uint32 probability,
-        uint32 confidence,
-        bytes32 traceHash,
-        string traceCid,
-        uint64 publishedAt
-    );
+    // Receipt event is referenced via `emit ReceiptRegistry.Receipt(...)` below.
+    // Not re-declared in this contract to avoid colliding with forge-std's
+    // `struct Receipt` in StdCheats.
 
     function setUp() public {
         registry = new ReceiptRegistry();
@@ -33,7 +25,9 @@ contract ReceiptRegistryTest is Test {
         vm.warp(1_715_000_000);
         vm.prank(publisher);
         vm.expectEmit(true, true, true, true);
-        emit Receipt(1, publisher, consumer, marketId, 612345, 850000, traceHash, cid, 1_715_000_000);
+        emit ReceiptRegistry.Receipt(
+            1, publisher, consumer, marketId, 612345, 850000, traceHash, cid, 1_715_000_000
+        );
         uint256 id = registry.publish(consumer, marketId, 612345, 850000, traceHash, cid);
 
         assertEq(id, 1, "first id is 1");
