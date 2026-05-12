@@ -1,498 +1,232 @@
 {
   "version": "rr-snapshot/1",
-  "exported_at": "2026-05-12T02:34:05.942222+07:00",
+  "exported_at": "2026-05-12T15:35:31.737607+07:00",
   "stats": {
-    "total_receipts": 25,
-    "total_paid_micro_usdc": 0,
+    "total_receipts": 6,
+    "total_paid_micro_usdc": 60000,
     "distinct_markets": 5,
-    "distinct_consumers": 0,
-    "latest_receipt_at": "2026-05-11T19:34:04.632164"
+    "distinct_consumers": 1,
+    "latest_receipt_at": "2026-05-12T08:35:09.283755"
   },
   "receipts": [
     {
-      "id": 25,
-      "market_id": "mock-polymarket-eu-ai-act-amendment",
-      "market_source": "polymarket",
-      "market_question": "Will the EU AI Act be amended before July 1, 2026?",
-      "probability": 0.454118,
-      "confidence": 0.63098,
-      "trace_hash": "0x5a72db707bd10782cb4b942019ae7ad14fb1e9a54c4cbf7859889da7f4e05806",
-      "trace_cid": "ar://5a72db707bd10782cb4b942019ae7ad1",
-      "consumer_address": null,
-      "arc_tx_hash": "0xba5e33fc6d5ec2a1df89647b025912cdff4afa25d48a04dae30206cff1c99ecf",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-11T19:34:04.632164"
-    },
-    {
-      "id": 24,
-      "market_id": "mock-polymarket-cpi-may-2026",
-      "market_source": "polymarket",
-      "market_question": "Will US headline CPI for May 2026 print \u2265 3.0% YoY?",
-      "probability": 0.277647,
-      "confidence": 0.808039,
-      "trace_hash": "0xef8e028348606fcdc78b93a35eee1a08bf43055f40280aa512d6f5f336c9b703",
-      "trace_cid": "ar://ef8e028348606fcdc78b93a35eee1a08",
-      "consumer_address": null,
-      "arc_tx_hash": "0x368d971f2f06e6c9fedbeb4c1f683e2b943c3b1156e8a3b47340ebd2e423c62f",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-11T19:34:04.619514"
-    },
-    {
-      "id": 23,
-      "market_id": "mock-polymarket-btc-100k-by-jun-2026",
-      "market_source": "polymarket",
-      "market_question": "Will Bitcoin close above $100,000 on June 30, 2026?",
-      "probability": 0.567059,
-      "confidence": 0.573333,
-      "trace_hash": "0x36d87ba19809afe4be0f2e9c6725d499c98365d4975c90441a3e022cba81fe8e",
-      "trace_cid": "ar://36d87ba19809afe4be0f2e9c6725d499",
-      "consumer_address": null,
-      "arc_tx_hash": "0x062127720c0ac2c3314a87c8d1f3636239d7f010ede60dcef45c39f21ce0092a",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-11T19:34:04.607058"
-    },
-    {
-      "id": 22,
-      "market_id": "mock-polymarket-arsenal-pl-title-2026",
-      "market_source": "polymarket",
-      "market_question": "Will Arsenal win the 2025\u201326 Premier League title?",
-      "probability": 0.585882,
-      "confidence": 0.688627,
-      "trace_hash": "0xcaa79cdd7a97602ad55bbdddaf8c860ed2da199518f4808d3aed90a9c9146fef",
-      "trace_cid": "ar://caa79cdd7a97602ad55bbdddaf8c860e",
-      "consumer_address": null,
-      "arc_tx_hash": "0xdd96602c5c05767b2b6de775aab7eedfca010cf9d364c64ae48987298be599f7",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-11T19:34:04.595130"
-    },
-    {
-      "id": 21,
-      "market_id": "mock-polymarket-fed-rate-cut-jun-2026",
-      "market_source": "polymarket",
-      "market_question": "Will the Fed cut rates at the June 2026 FOMC meeting?",
-      "probability": 0.531765,
-      "confidence": 0.836863,
-      "trace_hash": "0x0cea187594eae3ebe899facef6d7a5eaf0c59245cc12d56e78255aa0c1fcb2b3",
-      "trace_cid": "ar://0cea187594eae3ebe899facef6d7a5ea",
-      "consumer_address": null,
-      "arc_tx_hash": "0x19c389a803b7b96d6522168d3d672318b63abfff63e9ce29c462f54256803b7c",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-11T19:34:04.583436"
-    },
-    {
-      "id": 20,
-      "market_id": "mock-polymarket-eu-ai-act-amendment",
-      "market_source": "polymarket",
-      "market_question": "Will the EU AI Act be amended before July 1, 2026?",
-      "probability": 0.454118,
-      "confidence": 0.63098,
-      "trace_hash": "0x9541c92f8b6d13a11f9e8230b168ad1d6997a20999b18dafea93c6be626b72a3",
-      "trace_cid": "ar://9541c92f8b6d13a11f9e8230b168ad1d",
-      "consumer_address": null,
-      "arc_tx_hash": "0x51818965d93b6540fbf58a2595dc556ae35c06ebf1d72bcf3f412d5280e3e798",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-11T19:34:04.568868"
-    },
-    {
-      "id": 19,
-      "market_id": "mock-polymarket-cpi-may-2026",
-      "market_source": "polymarket",
-      "market_question": "Will US headline CPI for May 2026 print \u2265 3.0% YoY?",
-      "probability": 0.277647,
-      "confidence": 0.808039,
-      "trace_hash": "0xfc3c0f4f0cef92344ece2210601417a8faff6aa7bddcf7a465ae7ebb3dca266d",
-      "trace_cid": "ar://fc3c0f4f0cef92344ece2210601417a8",
-      "consumer_address": null,
-      "arc_tx_hash": "0x894db81e17d8221d3fea0bd572040fe06960205cbd12207eb4f78d5b41189fbc",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-11T19:34:04.555436"
-    },
-    {
-      "id": 18,
-      "market_id": "mock-polymarket-btc-100k-by-jun-2026",
-      "market_source": "polymarket",
-      "market_question": "Will Bitcoin close above $100,000 on June 30, 2026?",
-      "probability": 0.567059,
-      "confidence": 0.573333,
-      "trace_hash": "0xacb2bbdfd1be30ffe6d437934bc5355c7b161df9b6c05fb3b6e5353580c1ce3c",
-      "trace_cid": "ar://acb2bbdfd1be30ffe6d437934bc5355c",
-      "consumer_address": null,
-      "arc_tx_hash": "0x478dd54337bd7b92489c9cd4a17d471a0fb70f13ca41ad03e8dc0bf31967d105",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-11T19:34:04.543044"
-    },
-    {
-      "id": 17,
-      "market_id": "mock-polymarket-arsenal-pl-title-2026",
-      "market_source": "polymarket",
-      "market_question": "Will Arsenal win the 2025\u201326 Premier League title?",
-      "probability": 0.585882,
-      "confidence": 0.688627,
-      "trace_hash": "0x7bf8e4e160946df9912cc079fb2928ad91f99d37799dd18687571341761ebf14",
-      "trace_cid": "ar://7bf8e4e160946df9912cc079fb2928ad",
-      "consumer_address": null,
-      "arc_tx_hash": "0x924ee0d608a2562be6672e8b6948d8614024c0f2386abaf5c62d3d6fad1cd374",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-11T19:34:04.530480"
-    },
-    {
-      "id": 16,
-      "market_id": "mock-polymarket-fed-rate-cut-jun-2026",
-      "market_source": "polymarket",
-      "market_question": "Will the Fed cut rates at the June 2026 FOMC meeting?",
-      "probability": 0.531765,
-      "confidence": 0.836863,
-      "trace_hash": "0xf0a6649ff16e5beea200cec8646bd039acc919f09cbf56ed8e9ca0d03317fa50",
-      "trace_cid": "ar://f0a6649ff16e5beea200cec8646bd039",
-      "consumer_address": null,
-      "arc_tx_hash": "0x12d868d52821e55ab9c3ae7bae5ef687236f8664bdac12bade1f47240de7eeba",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-11T19:34:04.516415"
-    },
-    {
-      "id": 15,
-      "market_id": "mock-polymarket-eu-ai-act-amendment",
-      "market_source": "polymarket",
-      "market_question": "Will the EU AI Act be amended before July 1, 2026?",
-      "probability": 0.454118,
-      "confidence": 0.63098,
-      "trace_hash": "0x7063e7c613628d2bf250c560d25ea51c514fe3342504a065708453c572449d4d",
-      "trace_cid": "ar://7063e7c613628d2bf250c560d25ea51c",
-      "consumer_address": null,
-      "arc_tx_hash": "0x8fa9a4e9bd55c3c501669cb1dd597d0db7ba30a0b093e3f1b94a3370605c296f",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-11T19:34:04.503246"
-    },
-    {
-      "id": 14,
-      "market_id": "mock-polymarket-cpi-may-2026",
-      "market_source": "polymarket",
-      "market_question": "Will US headline CPI for May 2026 print \u2265 3.0% YoY?",
-      "probability": 0.277647,
-      "confidence": 0.808039,
-      "trace_hash": "0xad39587776bfbdb75e52cfd89870ea7d2cb7dddd44c0493ef847d17c34669e2b",
-      "trace_cid": "ar://ad39587776bfbdb75e52cfd89870ea7d",
-      "consumer_address": null,
-      "arc_tx_hash": "0x30e04d47ed6b519a94145fad770915f8dcbcd505c371fd9f9cfb4830791ad3b0",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-11T19:34:04.490202"
-    },
-    {
-      "id": 13,
-      "market_id": "mock-polymarket-btc-100k-by-jun-2026",
-      "market_source": "polymarket",
-      "market_question": "Will Bitcoin close above $100,000 on June 30, 2026?",
-      "probability": 0.567059,
-      "confidence": 0.573333,
-      "trace_hash": "0x9ba0edc9d00e0919c6cdb4fce426f5c79bf0949dc68f359951527a83437fd125",
-      "trace_cid": "ar://9ba0edc9d00e0919c6cdb4fce426f5c7",
-      "consumer_address": null,
-      "arc_tx_hash": "0x714d995d1c883d97da2e9e3fe324569ea4ab4854637b7a329a2b746adb33f484",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-11T19:34:04.477264"
-    },
-    {
-      "id": 12,
-      "market_id": "mock-polymarket-arsenal-pl-title-2026",
-      "market_source": "polymarket",
-      "market_question": "Will Arsenal win the 2025\u201326 Premier League title?",
-      "probability": 0.585882,
-      "confidence": 0.688627,
-      "trace_hash": "0xbe00b88851b8eb6ae1280ee9ce2701d4c4082aa6714979ec38d96651f8672807",
-      "trace_cid": "ar://be00b88851b8eb6ae1280ee9ce2701d4",
-      "consumer_address": null,
-      "arc_tx_hash": "0x970ecc3be127b4deb3ff58bb62351aba0556ca3474715d792636e94547ca4e2b",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-11T19:34:04.465027"
-    },
-    {
-      "id": 11,
-      "market_id": "mock-polymarket-fed-rate-cut-jun-2026",
-      "market_source": "polymarket",
-      "market_question": "Will the Fed cut rates at the June 2026 FOMC meeting?",
-      "probability": 0.531765,
-      "confidence": 0.836863,
-      "trace_hash": "0x5e57641f00a1953a3f853b76396adc4051121c159b23bc5bcef5c334255ae9d3",
-      "trace_cid": "ar://5e57641f00a1953a3f853b76396adc40",
-      "consumer_address": null,
-      "arc_tx_hash": "0xce8485951495d959b3cd5d2cb54a240d13a45513713a586e2d03425afcbcfd31",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-11T19:34:04.452219"
-    },
-    {
-      "id": 10,
-      "market_id": "mock-polymarket-eu-ai-act-amendment",
-      "market_source": "polymarket",
-      "market_question": "Will the EU AI Act be amended before July 1, 2026?",
-      "probability": 0.454118,
-      "confidence": 0.63098,
-      "trace_hash": "0xbe7d3e63d162c10a27f59eca95aa74d16478675d6c2dd41bafc9c02bfbbf0fd3",
-      "trace_cid": "ar://be7d3e63d162c10a27f59eca95aa74d1",
-      "consumer_address": null,
-      "arc_tx_hash": "0x813c7bbb149678b9f0e41171e666148c613c0ed07c5b4d10a3e367fa4984966e",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-11T19:34:04.439123"
-    },
-    {
-      "id": 9,
-      "market_id": "mock-polymarket-cpi-may-2026",
-      "market_source": "polymarket",
-      "market_question": "Will US headline CPI for May 2026 print \u2265 3.0% YoY?",
-      "probability": 0.277647,
-      "confidence": 0.808039,
-      "trace_hash": "0xff552709c73a343e759fd33e8aa901698dc181b2314bab012acb2001ce25374d",
-      "trace_cid": "ar://ff552709c73a343e759fd33e8aa90169",
-      "consumer_address": null,
-      "arc_tx_hash": "0x28391b8232b3c007bb799c9afdf6a8bdaed0cf10d8c24405f9aa4dfb2cf761b8",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-11T19:34:04.426613"
-    },
-    {
-      "id": 8,
-      "market_id": "mock-polymarket-btc-100k-by-jun-2026",
-      "market_source": "polymarket",
-      "market_question": "Will Bitcoin close above $100,000 on June 30, 2026?",
-      "probability": 0.567059,
-      "confidence": 0.573333,
-      "trace_hash": "0x18ec305bbe1cde310ce7ed3f4edbe24e4398bed786ef01981baddba6fac9e666",
-      "trace_cid": "ar://18ec305bbe1cde310ce7ed3f4edbe24e",
-      "consumer_address": null,
-      "arc_tx_hash": "0x6227779df94cfb5b15186432bfc368abd8771a2f07e7859aeedadf16c199b664",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-11T19:34:04.413800"
-    },
-    {
-      "id": 7,
-      "market_id": "mock-polymarket-arsenal-pl-title-2026",
-      "market_source": "polymarket",
-      "market_question": "Will Arsenal win the 2025\u201326 Premier League title?",
-      "probability": 0.585882,
-      "confidence": 0.688627,
-      "trace_hash": "0xf1d5fefae81073a3ccd63319581865ae4038ba2ab35dae3956ea2ca7f1f239c7",
-      "trace_cid": "ar://f1d5fefae81073a3ccd63319581865ae",
-      "consumer_address": null,
-      "arc_tx_hash": "0xa47fa6b1524bc4ad6a67e7e8f7102b743a19258d46bf9bec9721500bcac1292e",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-11T19:34:04.400972"
-    },
-    {
       "id": 6,
-      "market_id": "mock-polymarket-fed-rate-cut-jun-2026",
+      "market_id": "mock-polymarket-arsenal-pl-title-2026",
       "market_source": "polymarket",
-      "market_question": "Will the Fed cut rates at the June 2026 FOMC meeting?",
-      "probability": 0.531765,
-      "confidence": 0.836863,
-      "trace_hash": "0x15b17627e8fd6211a57a34d89930371a10ec05bc6a8235ae3777d5f40323392a",
-      "trace_cid": "ar://15b17627e8fd6211a57a34d89930371a",
-      "consumer_address": null,
-      "arc_tx_hash": "0x03848a879bbd388a08731b4f0863f7b33f2f5f904ebc7a4a83c33612ba7da374",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-11T19:34:04.388708"
+      "market_question": "Will the outcome of 'mock-polymarket-arsenal-pl-title-2026' resolve YES?",
+      "probability": 0.87,
+      "confidence": 0.9,
+      "trace_hash": "0x7a51735b5e64ebd3f151c90bcfa35724d513111964b6b327f690f739f825b95f",
+      "trace_cid": "ar://7a51735b5e64ebd3f151c90bcfa35724",
+      "consumer_address": "0xDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+      "arc_tx_hash": "3c58b6e8097dc9593c607d76839b8eb52f4fc6e16aa986379b92b0f36939f4b9",
+      "paid_micro_usdc": 10000,
+      "created_at": "2026-05-12T08:35:09.283755"
     },
     {
       "id": 5,
       "market_id": "mock-polymarket-eu-ai-act-amendment",
       "market_source": "polymarket",
-      "market_question": "Will the EU AI Act be amended before July 1, 2026?",
-      "probability": 0.454118,
-      "confidence": 0.63098,
-      "trace_hash": "0x61976d58a29012ba6d5fbec80c46474726be56be0ebf7f55d0b2b65e86a3693c",
-      "trace_cid": "ar://61976d58a29012ba6d5fbec80c464747",
-      "consumer_address": null,
-      "arc_tx_hash": "0x5156c0f7b0e44a636b69d7d3c288b7d502456486c47bef417961478f400f458f",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-11T19:34:04.376601"
+      "market_question": "Will the outcome of 'mock-polymarket-eu-ai-act-amendment' resolve YES?",
+      "probability": 0.5,
+      "confidence": 0.1,
+      "trace_hash": "0xe7e1e8bdb5f5bfb62dcb4f4026d739aee5416706aa99fe3385e17ea37b8687da",
+      "trace_cid": "ar://e7e1e8bdb5f5bfb62dcb4f4026d739ae",
+      "consumer_address": "0xDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+      "arc_tx_hash": "46d558714678a85d8dfb6f50cefa4f9dedd301e172b154335c648eb00d77e11b",
+      "paid_micro_usdc": 10000,
+      "created_at": "2026-05-12T08:34:36.897022"
     },
     {
       "id": 4,
       "market_id": "mock-polymarket-cpi-may-2026",
       "market_source": "polymarket",
-      "market_question": "Will US headline CPI for May 2026 print \u2265 3.0% YoY?",
-      "probability": 0.277647,
-      "confidence": 0.808039,
-      "trace_hash": "0x0a35afcd5038d9c024c8f03c22bdf00df62c47fa8f5df12ef4496a2b6f85a4d5",
-      "trace_cid": "ar://0a35afcd5038d9c024c8f03c22bdf00d",
-      "consumer_address": null,
-      "arc_tx_hash": "0xba641a2e048c94f40df038dafa8ddc26c01ac1792888623763dccd61c8b9650b",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-11T19:34:04.363945"
+      "market_question": "Will the outcome of 'mock-polymarket-cpi-may-2026' resolve YES?",
+      "probability": 0.5,
+      "confidence": 0.1,
+      "trace_hash": "0x1c07b81fa1aba4fc549df09e1e102b82286e9c8fd11de33f346236928f09b694",
+      "trace_cid": "ar://1c07b81fa1aba4fc549df09e1e102b82",
+      "consumer_address": "0xDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+      "arc_tx_hash": "6bcb17febe822331a007f8fd35efd97a4c09d951cfe50417d7cbbcc77bbf0923",
+      "paid_micro_usdc": 10000,
+      "created_at": "2026-05-12T08:34:19.979766"
     },
     {
       "id": 3,
       "market_id": "mock-polymarket-btc-100k-by-jun-2026",
       "market_source": "polymarket",
-      "market_question": "Will Bitcoin close above $100,000 on June 30, 2026?",
-      "probability": 0.567059,
-      "confidence": 0.573333,
-      "trace_hash": "0x4003f11545305231fa439b568e1b1950df06d3fc88fdfe99b2077ef3f754b7c1",
-      "trace_cid": "ar://4003f11545305231fa439b568e1b1950",
-      "consumer_address": null,
-      "arc_tx_hash": "0x2b1f17db7b537bfde486d5cc2860fab85d3a33e4b9222593f2ec85bcf2794580",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-11T19:34:04.350921"
+      "market_question": "Will the outcome of 'mock-polymarket-btc-100k-by-jun-2026' resolve YES?",
+      "probability": 0.35,
+      "confidence": 0.8,
+      "trace_hash": "0x101d82066fdfa56d78e7ad9e94e11472f73ae5170db2daaa6a917deaf42fdb30",
+      "trace_cid": "ar://101d82066fdfa56d78e7ad9e94e11472",
+      "consumer_address": "0xDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+      "arc_tx_hash": "3af70f6dcd70d1c6e4e2ded4accd85117c2ff848440bfad3a4851aef4c22ce11",
+      "paid_micro_usdc": 10000,
+      "created_at": "2026-05-12T08:33:58.323699"
     },
     {
       "id": 2,
       "market_id": "mock-polymarket-arsenal-pl-title-2026",
       "market_source": "polymarket",
-      "market_question": "Will Arsenal win the 2025\u201326 Premier League title?",
-      "probability": 0.585882,
-      "confidence": 0.688627,
-      "trace_hash": "0xebac4bcfcfb3d2ae6c08eb3127111eb26de879a206f79c1de6068ab698dbfe59",
-      "trace_cid": "ar://ebac4bcfcfb3d2ae6c08eb3127111eb2",
-      "consumer_address": null,
-      "arc_tx_hash": "0x59be14ab5da51271eed5151a5bc7dec6c02314740dd40c0af4ecb0fbdee21dfc",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-11T19:34:04.338661"
+      "market_question": "Will the outcome of 'mock-polymarket-arsenal-pl-title-2026' resolve YES?",
+      "probability": 0.87,
+      "confidence": 0.9,
+      "trace_hash": "0x280633355e7bbb7e9ff98270a42103d82a0e31e5f5fde00cf59b28349c3d64be",
+      "trace_cid": "ar://280633355e7bbb7e9ff98270a42103d8",
+      "consumer_address": "0xDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+      "arc_tx_hash": "ef1d5a0a26ce3fdc5156770960a20e1cb4ff0bf9a382628689e6c563f517f22a",
+      "paid_micro_usdc": 10000,
+      "created_at": "2026-05-12T08:33:36.227972"
     },
     {
       "id": 1,
       "market_id": "mock-polymarket-fed-rate-cut-jun-2026",
       "market_source": "polymarket",
-      "market_question": "Will the Fed cut rates at the June 2026 FOMC meeting?",
-      "probability": 0.531765,
-      "confidence": 0.836863,
-      "trace_hash": "0x34094c4455742322d23b944e9f44041bb49c08b1b4299b2bd41ab9521e7241da",
-      "trace_cid": "ar://34094c4455742322d23b944e9f44041b",
-      "consumer_address": null,
-      "arc_tx_hash": "0xb75c2ec3150c5f33a7ac8e871a20000e04350200ccc9f3e87c39bddf7fe8ca66",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-11T19:34:04.325439"
+      "market_question": "Will the outcome of 'mock-polymarket-fed-rate-cut-jun-2026' resolve YES?",
+      "probability": 0.04,
+      "confidence": 0.95,
+      "trace_hash": "0x2624a80e8775983edd51711b1558767510f97727887b06df8851edc70883d54f",
+      "trace_cid": "ar://2624a80e8775983edd51711b15587675",
+      "consumer_address": "0xDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+      "arc_tx_hash": "c3cfa6053735e5ebfe21f6ed5857f6c3c26a1aa174f8ac1615ebff10f4ce971f",
+      "paid_micro_usdc": 10000,
+      "created_at": "2026-05-12T08:32:37.273259"
     }
   ],
   "per_market": [
     {
+      "market_id": "mock-polymarket-arsenal-pl-title-2026",
+      "question": "Will the outcome of 'mock-polymarket-arsenal-pl-title-2026' resolve YES?",
+      "count": 2,
+      "avg_probability": 0.87,
+      "last_at": "2026-05-12T08:35:09.283755"
+    },
+    {
       "market_id": "mock-polymarket-eu-ai-act-amendment",
-      "question": "Will the EU AI Act be amended before July 1, 2026?",
-      "count": 5,
-      "avg_probability": 0.4541180000000001,
-      "last_at": "2026-05-11T19:34:04.632164"
+      "question": "Will the outcome of 'mock-polymarket-eu-ai-act-amendment' resolve YES?",
+      "count": 1,
+      "avg_probability": 0.5,
+      "last_at": "2026-05-12T08:34:36.897022"
     },
     {
       "market_id": "mock-polymarket-cpi-may-2026",
-      "question": "Will US headline CPI for May 2026 print \u2265 3.0% YoY?",
-      "count": 5,
-      "avg_probability": 0.277647,
-      "last_at": "2026-05-11T19:34:04.619514"
+      "question": "Will the outcome of 'mock-polymarket-cpi-may-2026' resolve YES?",
+      "count": 1,
+      "avg_probability": 0.5,
+      "last_at": "2026-05-12T08:34:19.979766"
     },
     {
       "market_id": "mock-polymarket-btc-100k-by-jun-2026",
-      "question": "Will Bitcoin close above $100,000 on June 30, 2026?",
-      "count": 5,
-      "avg_probability": 0.567059,
-      "last_at": "2026-05-11T19:34:04.607058"
-    },
-    {
-      "market_id": "mock-polymarket-arsenal-pl-title-2026",
-      "question": "Will Arsenal win the 2025\u201326 Premier League title?",
-      "count": 5,
-      "avg_probability": 0.585882,
-      "last_at": "2026-05-11T19:34:04.595130"
+      "question": "Will the outcome of 'mock-polymarket-btc-100k-by-jun-2026' resolve YES?",
+      "count": 1,
+      "avg_probability": 0.35,
+      "last_at": "2026-05-12T08:33:58.323699"
     },
     {
       "market_id": "mock-polymarket-fed-rate-cut-jun-2026",
-      "question": "Will the Fed cut rates at the June 2026 FOMC meeting?",
-      "count": 5,
-      "avg_probability": 0.531765,
-      "last_at": "2026-05-11T19:34:04.583436"
+      "question": "Will the outcome of 'mock-polymarket-fed-rate-cut-jun-2026' resolve YES?",
+      "count": 1,
+      "avg_probability": 0.04,
+      "last_at": "2026-05-12T08:32:37.273259"
     }
   ],
   "volume_chart": [
     {
-      "label": "19:34",
-      "count": 4
+      "label": "08:32",
+      "count": 1
     },
     {
-      "label": "19:34",
-      "count": 3
-    },
-    {
-      "label": "19:34",
-      "count": 3
-    },
-    {
-      "label": "19:34",
-      "count": 4
-    },
-    {
-      "label": "19:34",
-      "count": 3
-    },
-    {
-      "label": "19:34",
-      "count": 3
-    },
-    {
-      "label": "19:34",
-      "count": 3
-    },
-    {
-      "label": "19:34",
-      "count": 2
-    },
-    {
-      "label": "19:34",
+      "label": "08:32",
       "count": 0
     },
     {
-      "label": "19:34",
+      "label": "08:32",
       "count": 0
     },
     {
-      "label": "19:34",
+      "label": "08:32",
       "count": 0
     },
     {
-      "label": "19:34",
+      "label": "08:33",
       "count": 0
     },
     {
-      "label": "19:34",
+      "label": "08:33",
       "count": 0
     },
     {
-      "label": "19:34",
+      "label": "08:33",
       "count": 0
     },
     {
-      "label": "19:34",
+      "label": "08:33",
       "count": 0
     },
     {
-      "label": "19:34",
+      "label": "08:33",
       "count": 0
     },
     {
-      "label": "19:34",
+      "label": "08:33",
+      "count": 1
+    },
+    {
+      "label": "08:33",
       "count": 0
     },
     {
-      "label": "19:34",
+      "label": "08:33",
       "count": 0
     },
     {
-      "label": "19:34",
+      "label": "08:33",
+      "count": 1
+    },
+    {
+      "label": "08:33",
       "count": 0
     },
     {
-      "label": "19:34",
+      "label": "08:34",
       "count": 0
     },
     {
-      "label": "19:34",
+      "label": "08:34",
       "count": 0
     },
     {
-      "label": "19:34",
+      "label": "08:34",
+      "count": 1
+    },
+    {
+      "label": "08:34",
       "count": 0
     },
     {
-      "label": "19:34",
+      "label": "08:34",
+      "count": 1
+    },
+    {
+      "label": "08:34",
       "count": 0
     },
     {
-      "label": "19:34",
+      "label": "08:34",
       "count": 0
+    },
+    {
+      "label": "08:34",
+      "count": 0
+    },
+    {
+      "label": "08:34",
+      "count": 0
+    },
+    {
+      "label": "08:35",
+      "count": 1
     }
   ]
 }
