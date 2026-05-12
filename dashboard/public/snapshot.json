@@ -1,16 +1,128 @@
 {
   "version": "rr-snapshot/1",
-  "exported_at": "2026-05-12T15:35:31.737607+07:00",
+  "exported_at": "2026-05-12T15:59:02.562198+07:00",
   "stats": {
-    "total_receipts": 6,
+    "total_receipts": 14,
     "total_paid_micro_usdc": 60000,
-    "distinct_markets": 5,
+    "distinct_markets": 11,
     "distinct_consumers": 1,
-    "latest_receipt_at": "2026-05-12T08:35:09.283755"
+    "latest_receipt_at": "2026-05-12T08:55:59.893984"
   },
   "receipts": [
     {
+      "id": 8,
+      "market_id": "2197191",
+      "market_source": "polymarket",
+      "market_question": "LoL: Hanwha Life Esports Challengers vs KT Rolster Challengers - Game 1 Winner",
+      "probability": 0.32,
+      "confidence": 0.8,
+      "trace_hash": "0x0b06ab8f1943e6b8161d8a74b8d640ad9d3e746bebb88c1011e19022e9ce1ee3",
+      "trace_cid": "ar://0b06ab8f1943e6b8161d8a74b8d640ad",
+      "consumer_address": null,
+      "arc_tx_hash": "6e840ef031a945254bbb16edda9285c9d32bfa47c4b5b613566c6e29b19bd666",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-12T08:55:59.893984"
+    },
+    {
+      "id": 7,
+      "market_id": "2132801",
+      "market_source": "polymarket",
+      "market_question": "Will Ethereum dip to $1,600 in May?",
+      "probability": 0.125,
+      "confidence": 0.65,
+      "trace_hash": "0x30e9b8f0eb9cc51d86d204460e771cfd5d603ec1a07186e19278c40abdb978f8",
+      "trace_cid": "ar://30e9b8f0eb9cc51d86d204460e771cfd",
+      "consumer_address": null,
+      "arc_tx_hash": "e3c12c9fbe18eaa4b3aa5e6685d7687814d778061fabf714945a705c6f5b5783",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-12T08:55:31.248762"
+    },
+    {
       "id": 6,
+      "market_id": "1390374",
+      "market_source": "polymarket",
+      "market_question": "Will Finland be in the top 5 at Eurovision 2026?",
+      "probability": 0.82,
+      "confidence": 0.85,
+      "trace_hash": "0x8bf7eeb539c0a8d57b5bb2ffc7852316f94f31b7c9618540f13649b193dd9c17",
+      "trace_cid": "ar://8bf7eeb539c0a8d57b5bb2ffc7852316",
+      "consumer_address": null,
+      "arc_tx_hash": "f357a5ad110fe7c22553f47cb1a8268a798080e963996aa56ea6a843c9e291a0",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-12T08:55:13.491520"
+    },
+    {
+      "id": 5,
+      "market_id": "2175685",
+      "market_source": "polymarket",
+      "market_question": "Will the price of XRP be above $1.90 on May 13?",
+      "probability": 0.015,
+      "confidence": 0.95,
+      "trace_hash": "0x474fe0838c7ecc66f0970a789247fd110ffb45f09290362746b8457383c68062",
+      "trace_cid": "ar://474fe0838c7ecc66f0970a789247fd11",
+      "consumer_address": null,
+      "arc_tx_hash": "124b9c7900cb0e0ce12244d70b6bb4f0765ab34bfda3d48a037860b6cf4ad2a8",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-12T08:53:31.949357"
+    },
+    {
+      "id": 4,
+      "market_id": "1087541",
+      "market_source": "polymarket",
+      "market_question": "Will Matteo Berrettini win the 2026 Men's French Open?",
+      "probability": 0.005,
+      "confidence": 0.95,
+      "trace_hash": "0xcd497b5bda5283711322bd54f21b8f3d352388ba35cca725e5a94c1904c7aa16",
+      "trace_cid": "ar://cd497b5bda5283711322bd54f21b8f3d",
+      "consumer_address": null,
+      "arc_tx_hash": "c79cceacf39e0cdb846b9487da0c6a20b9d3644bc228b306df71968df2224614",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-12T08:53:07.684754"
+    },
+    {
+      "id": 3,
+      "market_id": "679500",
+      "market_source": "polymarket",
+      "market_question": "Will Won Hee-ryong win the 2026 Gyeonggi Province Gubernatorial Election?",
+      "probability": 0.001,
+      "confidence": 0.98,
+      "trace_hash": "0x0299dd53894fe94f36a590e41cb4d179de53429f41f893cbc0247e5e60bb743d",
+      "trace_cid": "ar://0299dd53894fe94f36a590e41cb4d179",
+      "consumer_address": null,
+      "arc_tx_hash": "c4643b3b2b4290ae4ed60e7194a0f45305476dfa2de4161e5dc841ee86bf1aaf",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-12T08:52:19.886214"
+    },
+    {
+      "id": 2,
+      "market_id": "2175685",
+      "market_source": "polymarket",
+      "market_question": "Will the price of XRP be above $1.90 on May 13?",
+      "probability": 0.015,
+      "confidence": 0.95,
+      "trace_hash": "0xdc8836928d4106670adb5161a47b92aad8ba899873df43b9e7063fa0da99269f",
+      "trace_cid": "ar://dc8836928d4106670adb5161a47b92aa",
+      "consumer_address": null,
+      "arc_tx_hash": "85d6bfe3ccd9baffcf627892bac82f9cfaf7b1b124e3eb934be28b6134330608",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-12T08:51:18.322911"
+    },
+    {
+      "id": 1,
+      "market_id": "1087541",
+      "market_source": "polymarket",
+      "market_question": "Will Matteo Berrettini win the 2026 Men's French Open?",
+      "probability": 0.002,
+      "confidence": 0.95,
+      "trace_hash": "0xed3e293ae33bfdbe4967ed754c3f1ade4a1318851e430c46a7828c2142167ead",
+      "trace_cid": "ar://ed3e293ae33bfdbe4967ed754c3f1ade",
+      "consumer_address": null,
+      "arc_tx_hash": "9cd47531eb2ab0a8989964af44bd5feb6699478ee2de805274d88a589c2ac1e5",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-12T08:50:49.355618"
+    },
+    {
+      "id": 14,
       "market_id": "mock-polymarket-arsenal-pl-title-2026",
       "market_source": "polymarket",
       "market_question": "Will the outcome of 'mock-polymarket-arsenal-pl-title-2026' resolve YES?",
@@ -24,7 +136,7 @@
       "created_at": "2026-05-12T08:35:09.283755"
     },
     {
-      "id": 5,
+      "id": 13,
       "market_id": "mock-polymarket-eu-ai-act-amendment",
       "market_source": "polymarket",
       "market_question": "Will the outcome of 'mock-polymarket-eu-ai-act-amendment' resolve YES?",
@@ -38,7 +150,7 @@
       "created_at": "2026-05-12T08:34:36.897022"
     },
     {
-      "id": 4,
+      "id": 12,
       "market_id": "mock-polymarket-cpi-may-2026",
       "market_source": "polymarket",
       "market_question": "Will the outcome of 'mock-polymarket-cpi-may-2026' resolve YES?",
@@ -52,7 +164,7 @@
       "created_at": "2026-05-12T08:34:19.979766"
     },
     {
-      "id": 3,
+      "id": 11,
       "market_id": "mock-polymarket-btc-100k-by-jun-2026",
       "market_source": "polymarket",
       "market_question": "Will the outcome of 'mock-polymarket-btc-100k-by-jun-2026' resolve YES?",
@@ -66,7 +178,7 @@
       "created_at": "2026-05-12T08:33:58.323699"
     },
     {
-      "id": 2,
+      "id": 10,
       "market_id": "mock-polymarket-arsenal-pl-title-2026",
       "market_source": "polymarket",
       "market_question": "Will the outcome of 'mock-polymarket-arsenal-pl-title-2026' resolve YES?",
@@ -80,7 +192,7 @@
       "created_at": "2026-05-12T08:33:36.227972"
     },
     {
-      "id": 1,
+      "id": 9,
       "market_id": "mock-polymarket-fed-rate-cut-jun-2026",
       "market_source": "polymarket",
       "market_question": "Will the outcome of 'mock-polymarket-fed-rate-cut-jun-2026' resolve YES?",
@@ -96,11 +208,53 @@
   ],
   "per_market": [
     {
+      "market_id": "2175685",
+      "question": "Will the price of XRP be above $1.90 on May 13?",
+      "count": 2,
+      "avg_probability": 0.015,
+      "last_at": "2026-05-12T08:53:31.949357"
+    },
+    {
+      "market_id": "1087541",
+      "question": "Will Matteo Berrettini win the 2026 Men's French Open?",
+      "count": 2,
+      "avg_probability": 0.0035,
+      "last_at": "2026-05-12T08:53:07.684754"
+    },
+    {
       "market_id": "mock-polymarket-arsenal-pl-title-2026",
       "question": "Will the outcome of 'mock-polymarket-arsenal-pl-title-2026' resolve YES?",
       "count": 2,
       "avg_probability": 0.87,
       "last_at": "2026-05-12T08:35:09.283755"
+    },
+    {
+      "market_id": "2197191",
+      "question": "LoL: Hanwha Life Esports Challengers vs KT Rolster Challengers - Game 1 Winner",
+      "count": 1,
+      "avg_probability": 0.32,
+      "last_at": "2026-05-12T08:55:59.893984"
+    },
+    {
+      "market_id": "2132801",
+      "question": "Will Ethereum dip to $1,600 in May?",
+      "count": 1,
+      "avg_probability": 0.125,
+      "last_at": "2026-05-12T08:55:31.248762"
+    },
+    {
+      "market_id": "1390374",
+      "question": "Will Finland be in the top 5 at Eurovision 2026?",
+      "count": 1,
+      "avg_probability": 0.82,
+      "last_at": "2026-05-12T08:55:13.491520"
+    },
+    {
+      "market_id": "679500",
+      "question": "Will Won Hee-ryong win the 2026 Gyeonggi Province Gubernatorial Election?",
+      "count": 1,
+      "avg_probability": 0.001,
+      "last_at": "2026-05-12T08:52:19.886214"
     },
     {
       "market_id": "mock-polymarket-eu-ai-act-amendment",
@@ -137,96 +291,96 @@
       "count": 1
     },
     {
-      "label": "08:32",
-      "count": 0
-    },
-    {
-      "label": "08:32",
-      "count": 0
-    },
-    {
-      "label": "08:32",
-      "count": 0
-    },
-    {
       "label": "08:33",
-      "count": 0
-    },
-    {
-      "label": "08:33",
-      "count": 0
-    },
-    {
-      "label": "08:33",
-      "count": 0
-    },
-    {
-      "label": "08:33",
-      "count": 0
-    },
-    {
-      "label": "08:33",
-      "count": 0
-    },
-    {
-      "label": "08:33",
-      "count": 1
-    },
-    {
-      "label": "08:33",
-      "count": 0
-    },
-    {
-      "label": "08:33",
-      "count": 0
-    },
-    {
-      "label": "08:33",
-      "count": 1
-    },
-    {
-      "label": "08:33",
-      "count": 0
+      "count": 3
     },
     {
       "label": "08:34",
-      "count": 0
-    },
-    {
-      "label": "08:34",
-      "count": 0
-    },
-    {
-      "label": "08:34",
-      "count": 1
-    },
-    {
-      "label": "08:34",
-      "count": 0
-    },
-    {
-      "label": "08:34",
-      "count": 1
-    },
-    {
-      "label": "08:34",
-      "count": 0
-    },
-    {
-      "label": "08:34",
-      "count": 0
-    },
-    {
-      "label": "08:34",
-      "count": 0
-    },
-    {
-      "label": "08:34",
-      "count": 0
+      "count": 2
     },
     {
       "label": "08:35",
+      "count": 0
+    },
+    {
+      "label": "08:36",
+      "count": 0
+    },
+    {
+      "label": "08:37",
+      "count": 0
+    },
+    {
+      "label": "08:38",
+      "count": 0
+    },
+    {
+      "label": "08:39",
+      "count": 0
+    },
+    {
+      "label": "08:40",
+      "count": 0
+    },
+    {
+      "label": "08:41",
+      "count": 0
+    },
+    {
+      "label": "08:42",
+      "count": 0
+    },
+    {
+      "label": "08:43",
+      "count": 0
+    },
+    {
+      "label": "08:44",
+      "count": 0
+    },
+    {
+      "label": "08:45",
+      "count": 0
+    },
+    {
+      "label": "08:46",
+      "count": 0
+    },
+    {
+      "label": "08:47",
+      "count": 0
+    },
+    {
+      "label": "08:48",
+      "count": 0
+    },
+    {
+      "label": "08:49",
+      "count": 0
+    },
+    {
+      "label": "08:50",
       "count": 1
+    },
+    {
+      "label": "08:51",
+      "count": 1
+    },
+    {
+      "label": "08:52",
+      "count": 1
+    },
+    {
+      "label": "08:53",
+      "count": 2
+    },
+    {
+      "label": "08:54",
+      "count": 0
+    },
+    {
+      "label": "08:55",
+      "count": 3
     }
   ]
 }
