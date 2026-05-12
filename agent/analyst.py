@@ -286,8 +286,12 @@ class Analyst:
             except Exception as exc:
                 last_exc = exc
                 msg = str(exc)
-                # Retry on quota / availability errors only; otherwise re-raise.
-                if any(s in msg for s in ("429", "RESOURCE_EXHAUSTED", "404", "NOT_FOUND", "503")):
+                # Retry on quota / availability / empty-response errors; otherwise re-raise.
+                retry_triggers = (
+                    "429", "RESOURCE_EXHAUSTED", "404", "NOT_FOUND", "503",
+                    "no text", "returned no text", "INVALID_ARGUMENT",
+                )
+                if any(s in msg for s in retry_triggers):
                     logger.warning("analyst: %s failed (%s); trying fallback", model, msg[:200])
                     continue
                 raise

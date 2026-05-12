@@ -100,7 +100,12 @@ class AgentLoop:
             or self._processed.get(c.market_id, 0) + cooldown <= now
         ]
         for candidate in eligible[: self.config.per_tick]:
-            await loop.run_in_executor(None, self._process_candidate, candidate)
+            try:
+                await loop.run_in_executor(None, self._process_candidate, candidate)
+            except Exception as exc:  # noqa: BLE001
+                logger.warning("loop: skipped %s after error (%s)", candidate.market_id, str(exc)[:200])
+            # Stamp processed regardless of success so we don't immediately retry
+            # the same bad market on the next tick. TTL still lets it come back.
             self._processed[candidate.market_id] = time.time()
 
     def _process_candidate(self, candidate: MarketCandidate) -> None:
