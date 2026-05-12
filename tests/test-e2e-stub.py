@@ -27,19 +27,37 @@ def client() -> TestClient:
         yield c
 
 
-def _payment_header(challenge_body: dict, *, payer: str = "0x" + "C" * 40) -> tuple[str, str]:
-    """Build a base64-encoded X-PAYMENT payload + the matching challenge token."""
+def _payment_header(
+    challenge_body: dict,
+    *,
+    payer: str = "0x" + "C" * 40,
+    resource: str = "/price/test",
+) -> tuple[str, str]:
+    """Build a base64-encoded X-PAYMENT payload + return its nonce.
+
+    Matches Circle x402-v2 settle-envelope shape, but with a mock signature —
+    accepted by the server when RR_MOCK_X402 is on.
+    """
     accept = challenge_body["accepts"][0]
+    inner = {
+        "from": payer,
+        "to": accept.get("payTo", ""),
+        "value": str(accept["amount"]),
+        "validAfter": "0",
+        "validBefore": "9999999999",
+        "nonce": accept["nonce"],
+        "signature": "0x" + "ab" * 32,
+    }
     payment = {
         "scheme": "exact",
         "network": accept["network"],
         "asset": accept["asset"],
-        "amount": accept["amount"],
-        "recipient": accept["recipient"],
+        "amount": str(accept["amount"]),
         "nonce": accept["nonce"],
-        "resource": accept["resource"],
+        "resource": resource,
         "payer": payer,
-        "signature": "0x" + "ab" * 32,
+        "payload": inner,
+        "extra": accept.get("extra", {}),
     }
     header = base64.b64encode(json.dumps(payment).encode("utf-8")).decode("ascii")
     return header, accept["nonce"]
@@ -57,11 +75,14 @@ def test_unpaid_request_returns_402(client: TestClient) -> None:
     r = client.get("/price/mock-polymarket-fed-rate-cut-jun-2026")
     assert r.status_code == 402
     body = r.json()
-    assert body["x402_version"] == 1
+    # x402 v2 spec — Circle Gateway Nanopayments shape.
+    assert body["x402Version"] == 2
     accepts = body["accepts"]
-    assert accepts and accepts[0]["network"] == "arc-testnet"
-    assert accepts[0]["asset"] == "USDC"
-    assert "Accept-Payment" in r.headers
+    assert accepts and accepts[0]["network"].startswith("eip155:")
+    assert accepts[0]["asset"].startswith("0x")  # USDC contract address
+    assert accepts[0]["scheme"] == "exact"
+    assert accepts[0]["extra"]["name"] == "GatewayWalletBatched"
+    assert "PAYMENT-REQUIRED" in r.headers
     assert "X-Payment-Challenge" in r.headers
 
 
@@ -72,7 +93,7 @@ def test_full_paid_pipeline(client: TestClient) -> None:
     challenge = client.get(f"/price/{market_id}")
     assert challenge.status_code == 402
     body = challenge.json()
-    payment_header, nonce = _payment_header(body)
+    payment_header, nonce = _payment_header(body, resource=f"/price/{market_id}")
     challenge_token = challenge.headers["x-payment-challenge"]
 
     # 2) Retry with X-PAYMENT
@@ -116,7 +137,7 @@ def test_each_call_emits_a_new_receipt(client: TestClient) -> None:
     for i in range(3):
         ch = client.get(f"/price/{market_id}")
         assert ch.status_code == 402, f"iteration {i}: ch={ch.status_code} body={ch.text}"
-        payment, _ = _payment_header(ch.json())
+        payment, _ = _payment_header(ch.json(), resource=f"/price/{market_id}")
         token = ch.headers["x-payment-challenge"]
         paid = client.get(
             f"/price/{market_id}",
@@ -131,7 +152,7 @@ def test_each_call_emits_a_new_receipt(client: TestClient) -> None:
 def test_replayed_challenge_is_rejected(client: TestClient) -> None:
     market_id = "mock-polymarket-cpi-may-2026"
     ch = client.get(f"/price/{market_id}")
-    payment, _ = _payment_header(ch.json())
+    payment, _ = _payment_header(ch.json(), resource=f"/price/{market_id}")
     token = ch.headers["x-payment-challenge"]
 
     first = client.get(

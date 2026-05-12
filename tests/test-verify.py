@@ -22,16 +22,26 @@ def _pay_for(client: TestClient, market_id: str) -> int:
     """Drive one full paid /price call, return the receipt_id."""
     ch = client.get(f"/price/{market_id}")
     accept = ch.json()["accepts"][0]
+    payer = "0x" + "C" * 40
+    inner = {
+        "from": payer,
+        "to": accept.get("payTo", ""),
+        "value": str(accept["amount"]),
+        "validAfter": "0",
+        "validBefore": "9999999999",
+        "nonce": accept["nonce"],
+        "signature": "0x" + "ab" * 32,
+    }
     payment = {
         "scheme": "exact",
         "network": accept["network"],
         "asset": accept["asset"],
-        "amount": accept["amount"],
-        "recipient": accept["recipient"],
+        "amount": str(accept["amount"]),
         "nonce": accept["nonce"],
-        "resource": accept["resource"],
-        "payer": "0x" + "C" * 40,
-        "signature": "0x" + "ab" * 32,
+        "resource": f"/price/{market_id}",
+        "payer": payer,
+        "payload": inner,
+        "extra": accept.get("extra", {}),
     }
     header = base64.b64encode(json.dumps(payment).encode()).decode()
     token = ch.headers["x-payment-challenge"]

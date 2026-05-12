@@ -110,7 +110,7 @@ async def get_price(market_id: str, request: Request) -> PriceResponse:
             trace_cid=sealed.cid,
             consumer_address=evidence.payer_address,
             publisher_address=chain.publisher_address,
-            paid_micro_usdc=int(round(evidence.settled_amount_usdc * 1_000_000)),
+            paid_micro_usdc=int(evidence.settled_amount_micro_usdc),
             arc_tx_hash=publish.tx_hash,
             arc_block_number=publish.block_number,
             latency_ms=latency_ms,
@@ -136,7 +136,7 @@ async def get_price(market_id: str, request: Request) -> PriceResponse:
         receipt_id=publish.receipt_id,
         arc_tx_hash=publish.tx_hash,
         consumer_address=evidence.payer_address,
-        paid_usdc=evidence.settled_amount_usdc,
+        paid_usdc=evidence.settled_amount_micro_usdc / 1_000_000,
         latency_ms=latency_ms,
     )
 

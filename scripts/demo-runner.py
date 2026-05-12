@@ -41,18 +41,38 @@ class DemoResult:
     latency_ms: int
 
 
-def _build_payment_header(challenge_body: dict, payer: str) -> tuple[str, str]:
+def _build_payment_header(challenge_body: dict, payer: str, resource: str) -> tuple[str, str]:
+    """Compose an X-PAYMENT payload that satisfies the server's verifier.
+
+    The on-the-wire shape mirrors Circle's x402-v2 settle envelope:
+        { scheme, network, payload: { from, to, value, validAfter, validBefore, nonce, signature } }
+
+    In mock mode the signature is synthetic; the server accepts any signature
+    when RR_MOCK_X402=1. When wired to the real Circle facilitator, replace
+    `signature` with an EIP-3009 TransferWithAuthorization signature.
+    """
     accept = challenge_body["accepts"][0]
+    extra = accept.get("extra", {})
+    resource_url = resource
+    inner = {
+        "from": payer,
+        "to": accept.get("payTo", accept.get("recipient", "")),
+        "value": str(accept["amount"]),
+        "validAfter": "0",
+        "validBefore": str(int(__import__("time").time()) + accept.get("maxTimeoutSeconds", 604900)),
+        "nonce": accept["nonce"],
+        "signature": "0x" + "ab" * 32,
+    }
     payment = {
         "scheme": "exact",
         "network": accept["network"],
         "asset": accept["asset"],
-        "amount": accept["amount"],
-        "recipient": accept["recipient"],
+        "amount": str(accept["amount"]),
         "nonce": accept["nonce"],
-        "resource": accept["resource"],
+        "resource": resource_url,
         "payer": payer,
-        "signature": "0x" + "ab" * 32,
+        "payload": inner,
+        "extra": extra,
     }
     return base64.b64encode(json.dumps(payment).encode("utf-8")).decode("ascii"), accept["nonce"]
 
@@ -65,7 +85,7 @@ def query_oracle(client: httpx.Client, base_url: str, market_id: str, payer: str
         raise SystemExit(f"expected 402, got {r1.status_code}: {r1.text}")
 
     body = r1.json()
-    payment_header, _ = _build_payment_header(body, payer)
+    payment_header, _ = _build_payment_header(body, payer, resource=f"/price/{market_id}")
     challenge_token = r1.headers["x-payment-challenge"]
 
     r2 = client.get(
