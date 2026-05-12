@@ -38,6 +38,10 @@ class LoopConfig:
     per_tick: int = 3
     error_backoff_s: float = 15.0
     enable_trader: bool = True
+    # Time-to-live for the "recently priced" set. After this many seconds, a
+    # market becomes eligible to be re-priced. 0 means never re-price (single
+    # pass through the candidate list).
+    market_cooldown_s: float = 300.0
 
     @classmethod
     def from_env(cls) -> LoopConfig:
@@ -46,6 +50,7 @@ class LoopConfig:
             per_tick=int(os.getenv("RR_LOOP_PER_TICK", "3")),
             error_backoff_s=float(os.getenv("RR_LOOP_BACKOFF_S", "15")),
             enable_trader=os.getenv("RR_LOOP_TRADER", "1").lower() in {"1", "true", "yes"},
+            market_cooldown_s=float(os.getenv("RR_LOOP_MARKET_COOLDOWN_S", "300")),
         )
 
 
@@ -61,7 +66,7 @@ class AgentLoop:
         self.portfolio = Portfolio()
         self.trader = Trader(bankroll_provider=self.portfolio.bankroll)
         self._stop = False
-        self._processed: set[str] = set()
+        self._processed: dict[str, float] = {}  # market_id → epoch seconds it was last priced
 
     def stop(self) -> None:
         self._stop = True
@@ -86,10 +91,17 @@ class AgentLoop:
     async def _tick(self) -> None:
         loop = asyncio.get_running_loop()
         candidates = await loop.run_in_executor(None, self.scanner.scan)
-        fresh = [c for c in candidates if c.market_id not in self._processed]
-        for candidate in fresh[: self.config.per_tick]:
+        now = time.time()
+        cooldown = self.config.market_cooldown_s
+        eligible = [
+            c
+            for c in candidates
+            if cooldown <= 0
+            or self._processed.get(c.market_id, 0) + cooldown <= now
+        ]
+        for candidate in eligible[: self.config.per_tick]:
             await loop.run_in_executor(None, self._process_candidate, candidate)
-            self._processed.add(candidate.market_id)
+            self._processed[candidate.market_id] = time.time()
 
     def _process_candidate(self, candidate: MarketCandidate) -> None:
         start = time.perf_counter()
