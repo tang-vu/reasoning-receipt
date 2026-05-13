@@ -1,0 +1,13 @@
+{
+  "name": "rr-mcp-oracle",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "MCP server exposing the ReasoningReceipt oracle as a tool for Claude Desktop / Cursor / Cline.",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  }
+}
