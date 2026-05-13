@@ -72,7 +72,7 @@ Produces `recordings/demo.mp4` (1080p, ~3 min). Upload to YouTube unlisted; past
 The dashboard supports two modes:
 
 * **Server mode** (default): Next.js SSR talking to the local FastAPI server at `NEXT_PUBLIC_DASHBOARD_API_URL`. Good for local dev.
-* **Snapshot mode**: static export reading a frozen `public/snapshot.json` produced from the SQLite DB. Hosted free on **GitHub Pages** at https://tang-vu.github.io/reasoning-receipt/ — no backend needed, dashboard stays up forever.
+* **Snapshot mode**: static export reading a frozen `public/snapshot.json` produced from the SQLite DB. Hosted free on **GitHub Pages** with custom domain at https://rrtrace.xyz — no backend needed, dashboard stays up forever.
 
 ### Auto-deploy on every push
 

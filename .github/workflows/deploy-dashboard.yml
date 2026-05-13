@@ -67,11 +67,13 @@ jobs:
           EOF
           fi
 
-      - name: Build (snapshot mode, basePath = /reasoning-receipt)
+      - name: Build (snapshot mode, custom-domain root)
         working-directory: dashboard
         env:
           NEXT_PUBLIC_USE_SNAPSHOT: "1"
-          NEXT_PUBLIC_BASE_PATH: "/reasoning-receipt"
+          # rrtrace.xyz custom domain serves from root → no basePath.
+          # Keep this in sync with dashboard/public/CNAME.
+          NEXT_PUBLIC_BASE_PATH: ""
         run: npx next build
 
       - name: Add .nojekyll

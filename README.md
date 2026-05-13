@@ -15,7 +15,7 @@
 
 | | |
 |---|---|
-| 🌐 **Dashboard** | https://tang-vu.github.io/reasoning-receipt/ |
+| 🌐 **Dashboard** | https://rrtrace.xyz |
 | 🔍 **Contract on Arc** (source-verified) | https://testnet.arcscan.app/address/0x59022EFd46a697bbf2fAd36CcfA8F2099f0bd1Bf |
 | 📜 **Receipts emitted on-chain** | **1,500+** and rising (~50/hour, deployer wallet drives it autonomously) |
 | 🎯 **Distinct Polymarket markets priced** | **90+** |

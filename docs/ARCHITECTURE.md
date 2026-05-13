@@ -93,7 +93,7 @@ Per-receipt economics make or break this product. Posting a $0.01 receipt over a
                           npm ci · npm run build:snapshot
                                    │
                                    ▼
-              GitHub Pages — https://tang-vu.github.io/reasoning-receipt/
+              GitHub Pages (custom domain) — https://rrtrace.xyz
                           (static, no backend, live forever)
 
 

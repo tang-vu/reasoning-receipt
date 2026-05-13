@@ -20,7 +20,7 @@ The agent itself is a four-stage loop. A **scanner** polls Polymarket Gamma for 
 
 The server is the second face of the same oracle. A FastAPI endpoint `GET /price/<market_id>` returns **402 Payment Required** with a Circle Gateway / x402-v2 `PAYMENT-REQUIRED` body — `network: eip155:5042002`, `asset` set to USDC on Arc, `amount` in micro-USDC, `extra.verifyingContract` pointing at the Arc Testnet Gateway Wallet (`0x0077777d7EBA4688BDeF3E311b846F25870A19B9`). The consumer signs an EIP-3009 `TransferWithAuthorization` payload, retries with `X-Payment`, and the server forwards to Circle's facilitator `/v1/settle` for gasless USDC settlement. The trace is sealed (canonical JSON → SHA-256 → real Irys upload via the `@irys/upload` SDK), `Receipt(...)` is emitted on Arc, the row is persisted, and the response carries the price plus the trace pointer.
 
-The dashboard at `https://tang-vu.github.io/reasoning-receipt/` is a Next.js 15 static build, auto-deployed by GitHub Actions on every push to `dashboard/**` or whenever a fresh snapshot is committed. Snapshot mode reads a frozen `public/snapshot.json` exported from the live SQLite — judges click a URL and see real on-chain truth without our backend needing to stay up. The home page renders total receipts, USDC settled, distinct markets, distinct consumers, a 24-bucket volume chart, and the most recent receipts. Each trace page has a **Verify** button that pulls the trace JSON from Irys, re-canonicalises it, re-hashes it client-side, and shows a byte-for-byte verdict against the on-chain hash — the wedge is auditable, not just claimed.
+The dashboard at `https://rrtrace.xyz` is a Next.js 15 static build, auto-deployed by GitHub Actions on every push to `dashboard/**` or whenever a fresh snapshot is committed. Snapshot mode reads a frozen `public/snapshot.json` exported from the live SQLite — judges click a URL and see real on-chain truth without our backend needing to stay up. The home page renders total receipts, USDC settled, distinct markets, distinct consumers, a 24-bucket volume chart, and the most recent receipts. Each trace page has a **Verify** button that pulls the trace JSON from Irys, re-canonicalises it, re-hashes it client-side, and shows a byte-for-byte verdict against the on-chain hash — the wedge is auditable, not just claimed.
 
 Per the "agentic sophistication" rubric: a multi-stage autonomous loop (scan → analyse → seal → publish → trade) that re-prices every market on a 5-minute cooldown, sources fresh news via Gemini's Google Search grounding, and routes between Gemini 3.1 Pro Preview, Gemini 3 Flash Preview, and Gemini 2.5 Flash via an automatic fallback chain — the chain has fired hundreds of times in production when Pro Preview hits 429 quota mid-tick, transparently keeping the loop alive. Per the "traction" rubric: the agent's consumer wallet drives continuous load, so the **1300+ receipts on Arc** at submission time are real on-chain events, not synthetic. Per the "Circle tools" rubric: Wallets (developer-controlled, portfolio + consumer split), USDC (settlement currency + native gas), Arc (settlement chain), Gateway / x402 v2 (paywall spec), and CCTP V2 (cross-chain liquidity demo) — five Circle products in production paths. Per the "innovation" rubric: traces are byte-verifiable end-to-end (Irys → re-hash → match), and the multi-model auto-routing is itself emergent agentic behaviour.
 
@@ -61,7 +61,7 @@ Per the "agentic sophistication" rubric: a multi-stage autonomous loop (scan →
 |---|---|
 | GitHub | https://github.com/tang-vu/reasoning-receipt |
 | Demo video | `[YouTube unlisted URL — fill in after recording]` |
-| Live dashboard | https://tang-vu.github.io/reasoning-receipt/ |
+| Live dashboard | https://rrtrace.xyz |
 | Contract on Arc — ReceiptRegistry (source-verified) | https://testnet.arcscan.app/address/0x59022EFd46a697bbf2fAd36CcfA8F2099f0bd1Bf |
 | Contract on Arc — CanteenUSDC wrapper (source-verified) | https://testnet.arcscan.app/address/0x7473d0db92F77aA89F19A2D74174D14D14CBD3E1 |
 | Latest release | https://github.com/tang-vu/reasoning-receipt/releases/tag/v0.1.0-rc1 |
@@ -129,7 +129,7 @@ Repo hygiene (run each before submitting):
 - [x] `git ls-files | grep -E "^(CLAUDE|notes/|\.claude|AGENTS)"` returns empty
 - [x] `git ls-files | xargs grep -l "sk-ant\\|0x[a-f0-9]\\{64\\}"` returns empty (no committed secrets)
 - [x] CI green on main: https://github.com/tang-vu/reasoning-receipt/actions
-- [x] Dashboard live: https://tang-vu.github.io/reasoning-receipt/
+- [x] Dashboard live: https://rrtrace.xyz
 - [x] Contract source-verified on Arc Testnet explorer (`forge verify-contract` via Blockscout, Solidity 0.8.26 with `via_ir`)
 
 Submission deliverables (Harvey fills these in the final week):
