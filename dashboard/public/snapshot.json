@@ -1,14 +1,70 @@
 {
   "version": "rr-snapshot/1",
-  "exported_at": "2026-05-13T23:21:28.726302+07:00",
+  "exported_at": "2026-05-13T23:31:13.433750+07:00",
   "stats": {
-    "total_receipts": 1550,
+    "total_receipts": 1554,
     "total_paid_micro_usdc": 60000,
-    "distinct_markets": 98,
+    "distinct_markets": 99,
     "distinct_consumers": 1,
-    "latest_receipt_at": "2026-05-13T16:18:23.366226"
+    "latest_receipt_at": "2026-05-13T16:29:20.903850"
   },
   "receipts": [
+    {
+      "id": 1554,
+      "market_id": "2123237",
+      "market_source": "polymarket",
+      "market_question": "Will FC Barcelona win on 2026-05-13?",
+      "probability": 0.35,
+      "confidence": 0.2,
+      "trace_hash": "0x1137fc092d5b800b7260ec4369c67e3ae1d3871045434e342a78c3411d1fcb3e",
+      "trace_cid": "ar://4ozcvktRNVXJkde9uic4n11u3RH4jzHKmCbrCatj46Jg",
+      "consumer_address": null,
+      "arc_tx_hash": "e3308b8f947d628cc9796dbe00df20c81cdeee6cc212fe594cd4fa3dda0b2cf3",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-13T16:29:20.903850"
+    },
+    {
+      "id": 1553,
+      "market_id": "2181667",
+      "market_source": "polymarket",
+      "market_question": "Chicago Cubs vs. Atlanta Braves",
+      "probability": 0.585,
+      "confidence": 0.72,
+      "trace_hash": "0x5109d330caaa9cd76dfa67ea27ff084684156b166896eee856b3fb1b9bbb3085",
+      "trace_cid": "ar://13Kfbs4zc2RtNjrTZacU4MYBxsfwxZARLeGwUgjPZ2zv",
+      "consumer_address": null,
+      "arc_tx_hash": "50e8b7b5ab81060429d95812cc1e48ae63dbc04e43d5b6d5f3ee5f4553dbd159",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-13T16:26:38.415610"
+    },
+    {
+      "id": 1552,
+      "market_id": "1087541",
+      "market_source": "polymarket",
+      "market_question": "Will Matteo Berrettini win the 2026 Men's French Open?",
+      "probability": 0.015,
+      "confidence": 0.85,
+      "trace_hash": "0xc964f5a92ca34fd16e10952e9717592556f67cc9822f1aef2f9a972ea650a5b9",
+      "trace_cid": "ar://BeShiJHcoYMq1tPNZAU5mjkjNVmaymbFPenoMyXDrdkf",
+      "consumer_address": null,
+      "arc_tx_hash": "57f02f0a99320d7336bf0c7b5311d2e5ac90b1a956236d53739d289b7c31b436",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-13T16:25:43.785169"
+    },
+    {
+      "id": 1551,
+      "market_id": "569344",
+      "market_source": "polymarket",
+      "market_question": "Will Abelardo de la Espriella win the 1st round of the 2026 Colombian presidential election?",
+      "probability": 0.01,
+      "confidence": 0.9,
+      "trace_hash": "0x0d033f33460e06798c1d006ece92d2e88c13bdd7089a5f54ac788cd4eb1baea8",
+      "trace_cid": "ar://AdVbnZ8UxWcaHC2HABpxNFMqNWuEVPjJj8Rpx2bLpdFm",
+      "consumer_address": null,
+      "arc_tx_hash": "38e0684de7b462c6bbdf7ab74b939acb14b015d2a4b992f31e323b29c9d62281",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-13T16:23:58.149376"
+    },
     {
       "id": 1550,
       "market_id": "2181667",
@@ -21714,9 +21770,9 @@
     {
       "market_id": "1087541",
       "question": "Will Matteo Berrettini win the 2026 Men's French Open?",
-      "count": 281,
-      "avg_probability": 0.010035587188612069,
-      "last_at": "2026-05-13T16:00:08.839437"
+      "count": 282,
+      "avg_probability": 0.01005319148936167,
+      "last_at": "2026-05-13T16:25:43.785169"
     },
     {
       "market_id": "2175685",
@@ -21735,9 +21791,9 @@
     {
       "market_id": "569344",
       "question": "Will Abelardo de la Espriella win the 1st round of the 2026 Colombian presidential election?",
-      "count": 115,
-      "avg_probability": 0.07486956521739131,
-      "last_at": "2026-05-13T16:07:52.744516"
+      "count": 116,
+      "avg_probability": 0.07431034482758628,
+      "last_at": "2026-05-13T16:23:58.149376"
     },
     {
       "market_id": "2132801",
@@ -21985,6 +22041,13 @@
       "last_at": "2026-05-12T12:55:08.987722"
     },
     {
+      "market_id": "2181667",
+      "question": "Chicago Cubs vs. Atlanta Braves",
+      "count": 4,
+      "avg_probability": 0.569,
+      "last_at": "2026-05-13T16:26:38.415610"
+    },
+    {
       "market_id": "2122044",
       "question": "Will Paris Saint-Germain FC win on 2026-05-13?",
       "count": 4,
@@ -22018,13 +22081,6 @@
       "count": 4,
       "avg_probability": 0.456802,
       "last_at": "2026-05-12T14:43:05.899271"
-    },
-    {
-      "market_id": "2181667",
-      "question": "Chicago Cubs vs. Atlanta Braves",
-      "count": 3,
-      "avg_probability": 0.5636666666666666,
-      "last_at": "2026-05-13T16:18:23.366226"
     },
     {
       "market_id": "2231720",
@@ -22151,6 +22207,13 @@
       "count": 2,
       "avg_probability": 0.64,
       "last_at": "2026-05-12T13:46:25.377874"
+    },
+    {
+      "market_id": "2123237",
+      "question": "Will FC Barcelona win on 2026-05-13?",
+      "count": 1,
+      "avg_probability": 0.35,
+      "last_at": "2026-05-13T16:29:20.903850"
     },
     {
       "market_id": "2236229",
@@ -22401,99 +22464,99 @@
   "volume_chart": [
     {
       "label": "08:32",
-      "count": 61
+      "count": 62
     },
     {
       "label": "09:52",
       "count": 60
     },
     {
-      "label": "11:11",
+      "label": "11:12",
       "count": 68
     },
     {
-      "label": "12:30",
-      "count": 79
+      "label": "12:32",
+      "count": 80
     },
     {
-      "label": "13:50",
+      "label": "13:52",
       "count": 65
     },
     {
-      "label": "15:09",
-      "count": 57
-    },
-    {
-      "label": "16:29",
-      "count": 64
-    },
-    {
-      "label": "17:48",
-      "count": 68
-    },
-    {
-      "label": "19:07",
-      "count": 56
-    },
-    {
-      "label": "20:27",
-      "count": 50
-    },
-    {
-      "label": "21:46",
-      "count": 60
-    },
-    {
-      "label": "23:06",
-      "count": 82
-    },
-    {
-      "label": "00:25",
-      "count": 64
-    },
-    {
-      "label": "01:44",
-      "count": 73
-    },
-    {
-      "label": "03:04",
-      "count": 94
-    },
-    {
-      "label": "04:23",
-      "count": 79
-    },
-    {
-      "label": "05:43",
-      "count": 57
-    },
-    {
-      "label": "07:02",
-      "count": 72
-    },
-    {
-      "label": "08:21",
-      "count": 69
-    },
-    {
-      "label": "09:41",
-      "count": 54
-    },
-    {
-      "label": "11:00",
-      "count": 49
-    },
-    {
-      "label": "12:20",
+      "label": "15:11",
       "count": 58
     },
     {
-      "label": "13:39",
+      "label": "16:31",
+      "count": 63
+    },
+    {
+      "label": "17:51",
+      "count": 69
+    },
+    {
+      "label": "19:11",
+      "count": 56
+    },
+    {
+      "label": "20:31",
+      "count": 50
+    },
+    {
+      "label": "21:51",
+      "count": 60
+    },
+    {
+      "label": "23:11",
+      "count": 83
+    },
+    {
+      "label": "00:30",
+      "count": 64
+    },
+    {
+      "label": "01:50",
+      "count": 78
+    },
+    {
+      "label": "03:10",
+      "count": 92
+    },
+    {
+      "label": "04:30",
+      "count": 78
+    },
+    {
+      "label": "05:50",
+      "count": 58
+    },
+    {
+      "label": "07:10",
+      "count": 73
+    },
+    {
+      "label": "08:30",
       "count": 66
     },
     {
-      "label": "14:58",
-      "count": 45
+      "label": "09:50",
+      "count": 57
+    },
+    {
+      "label": "11:09",
+      "count": 48
+    },
+    {
+      "label": "12:29",
+      "count": 64
+    },
+    {
+      "label": "13:49",
+      "count": 58
+    },
+    {
+      "label": "15:09",
+      "count": 44
     }
   ],
   "calibration": {
