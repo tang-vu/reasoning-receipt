@@ -43,6 +43,7 @@ interface Snapshot {
     last_at: string;
   }>;
   volume_chart: Array<{ label: string; count: number }>;
+  calibration?: CalibrationResponse;
 }
 
 const useSnapshot = process.env.NEXT_PUBLIC_USE_SNAPSHOT === "1";
@@ -83,6 +84,17 @@ async function getJSON<T>(path: string): Promise<T> {
       return row as unknown as T;
     }
     if (path === "/stats") return snap.stats as unknown as T;
+    if (path === "/calibration") {
+      const cal = snap.calibration ?? {
+        total_resolved: 0,
+        distinct_resolved_markets: 0,
+        brier_score: 0,
+        brier_high_conf: null,
+        brier_low_conf: null,
+        buckets: [],
+      };
+      return cal as unknown as T;
+    }
     if (path.startsWith("/verify/")) {
       // Static snapshot can't verify against Irys — return a synthetic response
       // so the UI doesn't crash. Live deployment uses the real /verify endpoint.
@@ -102,6 +114,24 @@ async function getJSON<T>(path: string): Promise<T> {
   const r = await fetch(`${base}${path}`, { cache: "no-store" });
   if (!r.ok) throw new Error(`${path} failed: ${r.status}`);
   return (await r.json()) as T;
+}
+
+export interface CalibrationBucket {
+  label: string;
+  bucket_min: number;
+  bucket_max: number;
+  n: number;
+  mean_predicted: number;
+  mean_actual: number;
+}
+
+export interface CalibrationResponse {
+  total_resolved: number;
+  distinct_resolved_markets: number;
+  brier_score: number;
+  brier_high_conf: number | null;
+  brier_low_conf: number | null;
+  buckets: CalibrationBucket[];
 }
 
 export interface VerifyResponse {
@@ -130,6 +160,7 @@ export const api = {
   receipt: (id: number) => getJSON<TraceRow>(`/receipts/${id}`),
   stats: () => getJSON<StatsResponse>("/stats"),
   verify: (id: number) => getJSON<VerifyResponse>(`/verify/${id}`),
+  calibration: () => getJSON<CalibrationResponse>("/calibration"),
 };
 
 /** SWR fetcher used by client components. */
