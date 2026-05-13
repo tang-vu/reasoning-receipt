@@ -19,7 +19,7 @@ from agent.analyst import MarketCandidate
 from agent.ensemble import Ensemble, EnsembleConfig
 from agent.ensemble_assembly import assemble_trace_v3, stance_from_dict
 from agent.ensemble_mocks import mock_stance, mock_supervisor
-from agent.trace_v3 import ReasoningTraceV3, SCHEMA_VERSION
+from agent.trace_v3 import SCHEMA_VERSION, ReasoningTraceV3
 
 
 def _candidate(market_id: str = "poly-test-1") -> MarketCandidate:

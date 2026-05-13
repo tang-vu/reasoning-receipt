@@ -68,7 +68,7 @@ def _make_trace() -> ReasoningTraceV3:
         weight_in_synthesis=0.20,
     )
     audit = CriticAudit(
-        version="ara-rigor-v1",
+        version="rr-critic-v1",
         evidence_relevance=CriticDimension(score=0.85, notes="sources on-topic"),
         falsifiability=CriticDimension(score=0.9, notes="concrete falsifier present"),
         scope=CriticDimension(score=0.8, notes="scope matches market end date"),

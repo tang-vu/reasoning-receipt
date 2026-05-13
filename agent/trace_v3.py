@@ -83,9 +83,15 @@ class CriticDimension:
 
 @dataclass(slots=True)
 class CriticAudit:
-    """ARA Rigor Reviewer 6-dim audit. Filled by `agent.critic_v2`."""
+    """Six-dimensional rigor audit. Filled by `agent.critic_v2` (Phase 3).
 
-    version: str  # "ara-rigor-v1"
+    Dimensions: evidence relevance, falsifiability, scope, coherence,
+    exploration integrity, methodology. Each scored in [0, 1] with notes.
+    Verdict: approved (all ≥ 0.6) / needs_revision (any < 0.4 once) /
+    rejected (still failing after one revision pass).
+    """
+
+    version: str  # "rr-critic-v1"
     evidence_relevance: CriticDimension
     falsifiability: CriticDimension
     scope: CriticDimension

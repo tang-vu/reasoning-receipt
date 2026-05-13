@@ -126,7 +126,7 @@ def _placeholder_audit() -> CriticAudit:
     """Open audit until Phase 3 wires the real critic_v2."""
     pending = CriticDimension(score=1.0, notes="critic_v2 pending (Phase 3)")
     return CriticAudit(
-        version="ara-rigor-v1-placeholder",
+        version="rr-critic-v1-placeholder",
         evidence_relevance=pending,
         falsifiability=pending,
         scope=pending,

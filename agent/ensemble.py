@@ -7,9 +7,10 @@ falsifiable claims + sensitivity + counter-arguments. Output is a
 `ReasoningTraceV3` with a placeholder CriticAudit — Phase 3's `critic_v2`
 replaces it before the trace ships on-chain.
 
-Why parallel + supervisor: deer-flow / agentscope-style. Isolated context per
-stance prevents groupthink. Supervisor sees only the drafts, not each
-stance's chain of thought.
+Why parallel + supervisor: isolated context per stance prevents groupthink.
+Each sub-researcher sees only the market prompt — not the others' drafts.
+The Supervisor sees the three finished drafts, but not the chains of thought
+that produced them.
 
 Cost: 4 Gemini calls per market (3 stances + supervisor). At 50 receipts/h
 that's ~200 Pro calls/h — stays in the Vertex global free tier. The fallback

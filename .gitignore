@@ -43,6 +43,7 @@ contracts/lib/
 # AI tooling — NEVER commit any of these
 CLAUDE.md
 notes/
+plans/
 .claude/
 .claude-*
 .aider*
@@ -54,6 +55,7 @@ AGENTS.md
 .copilot/
 **/.claude/
 **/notes/
+**/plans/
 
 # Local build/run artifacts
 *.log
