@@ -70,6 +70,14 @@ class Receipt(Base):
     resolved_at = Column(DateTime(timezone=True), nullable=True, index=True)
     resolved_outcome = Column(Float, nullable=True)
 
+    # rr-trace/3 columns: schema lineage + multi-agent disagreement signal +
+    # the trace's category for per-category calibration (Phase 5).
+    # Defaults preserve back-compat — existing rr-trace/2 rows read as such.
+    schema_version = Column(String(16), nullable=False, default="rr-trace/2", index=True)
+    disagreement_pp = Column(Float, nullable=True)
+    merkle_root = Column(String(70), nullable=True, index=True)
+    category = Column(String(16), nullable=True, index=True)
+
     __table_args__ = (Index("ix_receipts_market_created", "market_id", "created_at"),)
 
 
@@ -132,6 +140,11 @@ def _migrate(engine) -> None:
         # rr-trace/2 backtest columns
         "ALTER TABLE receipts ADD COLUMN resolved_at DATETIME",
         "ALTER TABLE receipts ADD COLUMN resolved_outcome FLOAT",
+        # rr-trace/3 columns — schema lineage + ensemble signal + category
+        "ALTER TABLE receipts ADD COLUMN schema_version VARCHAR(16) DEFAULT 'rr-trace/2'",
+        "ALTER TABLE receipts ADD COLUMN disagreement_pp FLOAT",
+        "ALTER TABLE receipts ADD COLUMN merkle_root VARCHAR(70)",
+        "ALTER TABLE receipts ADD COLUMN category VARCHAR(16)",
     ]
     import contextlib
 

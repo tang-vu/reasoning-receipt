@@ -26,9 +26,11 @@ from wallets.portfolio import Portfolio
 
 from .analyst import Analyst, MarketCandidate
 from .critic import Critic
+from .ensemble import Ensemble
 from .resolver import resolve_open_markets
 from .scanner import Scanner
 from .trace import SealedTrace, TraceSealer
+from .trace_v3 import ReasoningTraceV3
 from .trader import Trader
 
 logger = logging.getLogger("rr.agent")
@@ -64,7 +66,12 @@ class AgentLoop:
         self.scanner = Scanner()
         self.analyst = Analyst()
         self.critic = Critic()
-        self.sealer = TraceSealer(IrysClient())
+        # Ensemble is constructed lazily so existing rr-trace/2 deployments
+        # don't pay the Vertex-client init cost unless RR_USE_ENSEMBLE=1.
+        self.use_ensemble = os.getenv("RR_USE_ENSEMBLE", "").lower() in {"1", "true", "yes"}
+        self._ensemble: Ensemble | None = Ensemble() if self.use_ensemble else None
+        self._irys = IrysClient()
+        self.sealer = TraceSealer(self._irys)
         self.chain = ChainClient()
         self.portfolio = Portfolio()
         self.trader = Trader(bankroll_provider=self.portfolio.bankroll)
@@ -132,6 +139,9 @@ class AgentLoop:
             self._processed[candidate.market_id] = time.time()
 
     def _process_candidate(self, candidate: MarketCandidate) -> None:
+        if self._ensemble is not None:
+            self._process_candidate_ensemble(candidate)
+            return
         start = time.perf_counter()
         trace = self.analyst.analyse_with_critic(candidate, critic=self.critic)
         sealed: SealedTrace = self.sealer.seal(trace)
@@ -160,6 +170,7 @@ class AgentLoop:
                 arc_tx_hash=result.tx_hash,
                 arc_block_number=result.block_number,
                 latency_ms=latency_ms,
+                schema_version=trace.schema_version or "rr-trace/2",
             )
             session.add(row)
             session.flush()
@@ -179,6 +190,61 @@ class AgentLoop:
                 decision=decision,
                 receipt_id=receipt_id,
             )
+
+    def _process_candidate_ensemble(self, candidate: MarketCandidate) -> None:
+        """rr-trace/3 path. Bull/Bear/Edge + Supervisor → v3 trace → Irys → V1 emit.
+
+        The V1 contract emit is byte-agnostic: it stores a hash + CID, schema-
+        version-blind. Phase 4 swaps in V2 contract emit with the Merkle root
+        as a second on-chain field. Trader is disabled on this path until
+        Phase 5 wires the v3-trace projection — the ensemble probability is
+        still recorded in DB so Phase 5's calibration loop has the data.
+        """
+        assert self._ensemble is not None
+        start = time.perf_counter()
+        trace_v3: ReasoningTraceV3 = self._ensemble.analyse(candidate)
+        upload = self._irys.upload(trace_v3.to_dict())
+        result = self.chain.publish(
+            consumer_address=None,
+            market_id=candidate.market_id,
+            probability=trace_v3.claim.probability,
+            confidence=trace_v3.claim.confidence,
+            trace_hash_hex=upload.hash_hex,
+            trace_cid=upload.cid,
+        )
+        latency_ms = int((time.perf_counter() - start) * 1000)
+        with Session() as session:
+            row = ReceiptRow(
+                chain_receipt_id=result.receipt_id,
+                market_id=candidate.market_id,
+                market_question=candidate.question,
+                market_source=candidate.source,
+                probability=trace_v3.claim.probability,
+                confidence=trace_v3.claim.confidence,
+                trace_hash=upload.hash_hex,
+                trace_cid=upload.cid,
+                consumer_address=None,
+                publisher_address=self.chain.publisher_address,
+                paid_micro_usdc=0,
+                arc_tx_hash=result.tx_hash,
+                arc_block_number=result.block_number,
+                latency_ms=latency_ms,
+                schema_version=trace_v3.schema_version,
+                disagreement_pp=trace_v3.supervisor_synthesis.disagreement_pp,
+                merkle_root=trace_v3.merkle_root_hex(),
+                category=trace_v3.category,
+            )
+            session.add(row)
+            session.flush()
+        logger.info(
+            "loop[v3]: priced %s prob=%.3f conf=%.3f disagreement=%.1fpp cat=%s tx=%s",
+            candidate.market_id,
+            trace_v3.claim.probability,
+            trace_v3.claim.confidence,
+            trace_v3.supervisor_synthesis.disagreement_pp,
+            trace_v3.category,
+            result.tx_hash[:12],
+        )
 
 
 def main() -> None:
