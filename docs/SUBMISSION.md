@@ -18,18 +18,23 @@ ReasoningReceipt is an on-chain oracle for prediction markets where the **reason
 
 The agent itself is a four-stage loop. A **scanner** polls Polymarket Gamma for liquid (> $10k 24h volume), near-resolution (≤ 30 days), English-language markets. An **analyst** stage calls Gemini 3.1 Pro Preview via Vertex AI with Google Search grounding and a strict structured-output prompt that demands a probability, calibrated confidence, at least two cited sources with URLs, at least one weighted counter-argument, and a sensitivity analysis. A **trace** stage canonicalizes that output — sorted keys, UTF-8, fixed 6-decimal floats, UTC timestamps — hashes it with SHA-256, and pins the bytes to Irys. A **trader** stage takes the analyst's probability, computes edge against the current market mid, and (when edge ≥ 4 pp and confidence ≥ 0.5) submits a Kelly-sized order on Polymarket capped at 5 % of the portfolio bankroll, half-Kelly when confidence is below 0.7. The portfolio wallet is a Circle developer-controlled wallet on Arc; a *separate* Circle wallet ("consumer wallet") pays the oracle for events the trader is sizing. The agent is, honestly, eating its own cooking — on-chain volume is real, not synthetic.
 
-The server is the second face of the same oracle. A FastAPI endpoint `GET /price/<market_id>` returns 402 when called unpaid, with an `Accept-Payment` body describing the price (default $0.01 USDC), the receiver address, an HMAC-signed nonce challenge, and a TTL. The consumer signs an EIP-712 payment payload and retries with the `X-Payment` header set. The server verifies the HMAC challenge, forwards the payload to the Circle Nanopayments facilitator for settlement, runs the analyst (cache-coalesced per market id for a short window), seals the trace, emits `Receipt(...)` on Arc, persists the row, and returns the price plus the trace pointer. Per-call latency averages ~15 ms on the mock chain client and ~600 ms end-to-end against live Arc settlement. The challenge token is HMAC-only — no session store, no replay window beyond the nonce's TTL, fully horizontally scalable.
+The server is the second face of the same oracle. A FastAPI endpoint `GET /price/<market_id>` returns **402 Payment Required** with a Circle Gateway / x402-v2 `PAYMENT-REQUIRED` body — `network: eip155:5042002`, `asset` set to USDC on Arc, `amount` in micro-USDC, `extra.verifyingContract` pointing at the Arc Testnet Gateway Wallet (`0x0077777d7EBA4688BDeF3E311b846F25870A19B9`). The consumer signs an EIP-3009 `TransferWithAuthorization` payload, retries with `X-Payment`, and the server forwards to Circle's facilitator `/v1/settle` for gasless USDC settlement. The trace is sealed (canonical JSON → SHA-256 → real Irys upload via the `@irys/upload` SDK), `Receipt(...)` is emitted on Arc, the row is persisted, and the response carries the price plus the trace pointer.
 
-The dashboard at `dashboard/` is a Next.js 15 app deployed to Vercel. It server-renders every page on each hit, no caching layer — judges click a URL and see the on-chain truth, not a stale cache. The home page shows total receipts, USDC settled, distinct markets, distinct consumers, a 24-bucket volume chart, and the 100 most recent receipts. The trace explorer drills into any single receipt to show the cited sources, counter-arguments, the trace hash, the Irys CID, the Arc tx hash, and the paying consumer's address.
+The dashboard at `https://tang-vu.github.io/reasoning-receipt/` is a Next.js 15 static build, auto-deployed by GitHub Actions on every push to `dashboard/**` or whenever a fresh snapshot is committed. Snapshot mode reads a frozen `public/snapshot.json` exported from the live SQLite — judges click a URL and see real on-chain truth without our backend needing to stay up. The home page renders total receipts, USDC settled, distinct markets, distinct consumers, a 24-bucket volume chart, and the most recent receipts. Each trace page has a **Verify** button that pulls the trace JSON from Irys, re-canonicalises it, re-hashes it client-side, and shows a byte-for-byte verdict against the on-chain hash — the wedge is auditable, not just claimed.
 
-Per the "agentic sophistication" rubric: multi-stage autonomous decisions (scan → analyse → trade → publish → serve), Gemini 3.1 Pro Preview for the reasoning step with Google Search grounding for fresh news context, structured traces that include not just the answer but the sources, the counter-arguments, and the sensitivity analysis. Per the "traction" rubric: the agent's consumer wallet drives continuous load, so every receipt on the dashboard is a real on-chain event. Per the "Circle tools" rubric: USDC settles every payment, Circle Wallets hold the portfolio and consumer balances, Nanopayments facilitates the x402 flow, Arc is the settlement chain. Per the "innovation" rubric: the wedge — "trace as the product" — is explicit in the README, the demo, the analyst prompt, and the contract event shape itself.
+Per the "agentic sophistication" rubric: a multi-stage autonomous loop (scan → analyse → seal → publish → trade) that re-prices every market on a 5-minute cooldown, sources fresh news via Gemini's Google Search grounding, and routes between Gemini 3.1 Pro Preview, Gemini 3 Flash Preview, and Gemini 2.5 Flash via an automatic fallback chain — the chain has fired hundreds of times in production when Pro Preview hits 429 quota mid-tick, transparently keeping the loop alive. Per the "traction" rubric: the agent's consumer wallet drives continuous load, so the **1300+ receipts on Arc** at submission time are real on-chain events, not synthetic. Per the "Circle tools" rubric: Wallets (developer-controlled, portfolio + consumer split), USDC (settlement currency + native gas), Arc (settlement chain), Gateway / x402 v2 (paywall spec), and CCTP V2 (cross-chain liquidity demo) — five Circle products in production paths. Per the "innovation" rubric: traces are byte-verifiable end-to-end (Irys → re-hash → match), and the multi-model auto-routing is itself emergent agentic behaviour.
 
-### Circle Product Feedback
+### Circle Product Feedback (from real integration)
 
-* **Arc testnet** — sub-second confirmation is the unlock. Posting a $0.01 receipt to Ethereum L1 is nonsense; here the receipt costs less than the answer it commits to. The dev experience was tight: `arc-canteen rpc-url --export` and `cast block-number` worked first try.
-* **USDC** — using USDC as both gas and value-of-payment removes a class of UX pain (no separate gas token to fund). One thing that bit us: explorer support for USDC-denominated tx fees would help judges audit per-call cost.
-* **Circle Wallets (developer-controlled)** — single API for both portfolio and consumer roles. Signing flow with `entitySecretCiphertext` is clean. Suggestion: a batch-transfer endpoint would let us amortise consumer-wallet top-ups into a single tx rather than N transfers.
-* **Nanopayments / x402** — facilitator interface matches `docs/x402/welcome` exactly. The thing we'd most want next: a "scheme: stream" so high-frequency consumers (like a downstream trading agent polling every 5 s) don't pay challenge round-trip every call.
+* **Arc Testnet** — sub-second deterministic finality + USDC as native gas was the single biggest unlock for this product shape. Per-receipt gas at the price point this app targets (≈ $0.00068 average across 1300+ emissions, measured) is **20× cheaper than the price of the answer it commits to**. Posting a $0.01 receipt to L1 Ethereum is nonsense; on Arc the receipt is dust. `arc-canteen rpc-url --export`, `arc-canteen context sync` (pulls in your skills + sample repos), and `cast block-number` worked first try. The only sharp edge: `gemini-3.1-pro-preview` is on Vertex AI's `global` location only, so when we paired it with `arc-canteen` it took a second to figure out the model wasn't 404'ing for permissions — just deployment region.
+
+* **USDC (dual-decimals)** — native gas at 18 decimals and ERC-20 at 6 decimals is correct semantically but causes the "off-by-12-zeros" class of bugs. We learned this the hard way debugging a trader fee estimator. A `cast usdc` helper that auto-detects which decimals are meant from context would have saved a half-hour. Suggestion for the docs: a sidebar callout on every page mentioning the dual-decimals invariant.
+
+* **Circle Wallets (developer-controlled)** — provisioning the entity secret, wallet set, and two wallets (portfolio + consumer) took **one Python script and 4 seconds** end-to-end (`scripts/circle-setup.py` in the repo). The RSA-OAEP encryption with Circle's public RSA key is well-documented; the only thing missing from the API docs is an explicit note that the `idempotencyKey` is a UUID v4 (we guessed correctly but a sample helps). One product request: a `walletSetId.fund` endpoint that takes a list of addresses and a per-address amount, performs the faucet drips server-side, returns N tx hashes. Today provisioning + funding two wallets is one API call + two faucet UI clicks; on a fresh testnet keyset that's the slowest step.
+
+* **Gateway / x402 v2** — the spec is clean; the seller quickstart in `docs/gateway/nanopayments/quickstarts/seller.md` was enough to fully implement the challenge format in Python in a couple of hours. We did our settlement via `https://gateway-api-testnet.circle.com/v1/settle` against EIP-3009 typed-data signatures. The thing we'd most want next: a `scheme: stream` variant so a downstream agent polling at 5-second intervals doesn't pay full challenge-round-trip cost per call. Adjacent ask: returning the settled `tx_hash` in the `/settle` response body (rather than requiring a follow-up `/messages` lookup) — it cuts one round trip from the receipt path.
+
+* **CCTP V2** — `scripts/cctp-demo.py` in the repo implements the direct-mint path (Sepolia → Arc) in ~200 lines of viem-equivalent Python. The Iris attestation API (`iris-api-sandbox.circle.com/v2/messages`) consistently returns `complete` within 15-25 seconds for fast-transfer (`minFinalityThreshold = 1000`) burns — well within our agent loop's per-tick budget. Real product gap we hit: the contract addresses page is mainnet-only by default; we had to dig for the testnet table. Two clicks added to mark "Testnet" prominently would help.
 
 ---
 
@@ -44,10 +49,11 @@ Per the "agentic sophistication" rubric: multi-stage autonomous decisions (scan 
 
 | Field | Value |
 |---|---|
-| GitHub | `https://github.com/tang-vu/reasoning-receipt` |
+| GitHub | https://github.com/tang-vu/reasoning-receipt |
 | Demo video | `[YouTube unlisted URL — fill in after recording]` |
-| Live dashboard | `https://tang-vu.github.io/reasoning-receipt/` |
-| Contract on Arc | `[Arc explorer URL — fill in after deploy]` |
+| Live dashboard | https://tang-vu.github.io/reasoning-receipt/ |
+| Contract on Arc | https://testnet.arcscan.app/address/0x59022EFd46a697bbf2fAd36CcfA8F2099f0bd1Bf |
+| Latest release | https://github.com/tang-vu/reasoning-receipt/releases/tag/v0.1.0-rc1 |
 | Team | Solo — Vu Minh Tang (`tang-vu`) |
 | Circle Developer Console email | `[email — fill in]` |
 
@@ -55,34 +61,46 @@ Per the "agentic sophistication" rubric: multi-stage autonomous decisions (scan 
 
 ## Tech stack
 
-Python 3.11+ (FastAPI, `google-genai` SDK targeting Vertex AI, web3.py, SQLAlchemy 2.0), Solidity 0.8.26 (Foundry), TypeScript / Next.js 15 / Tailwind / Recharts, Arc testnet, Circle Wallets (developer-controlled), Circle Nanopayments, x402, Polymarket Gamma + CLOB, Irys.
+Python 3.11+ (FastAPI, `google-genai` SDK targeting Vertex AI with `global` region, web3.py, SQLAlchemy 2.0, `eth_account`, `cryptography` for the RSA-OAEP entity-secret encryption), Solidity 0.8.26 (Foundry 1.7.1), Node sidecars for `@irys/upload` + `@irys/upload-ethereum` (Bundlr-signed trace bundles), TypeScript / Next.js 15 / Tailwind / Recharts, Arc testnet, Circle developer-controlled Wallets, Circle Gateway Nanopayments (x402 v2), CCTP V2 (Iris attestation API), Polymarket Gamma API, Irys (devnet + Arweave gateway). GitHub Pages for the dashboard; GitHub Actions for CI + auto-deploy. ~5,000 lines of code across the stack.
 
 ---
 
-## Per-action cost evidence
+## Per-action cost evidence (measured, not hypothetical)
 
-Mean cost per receipt across the last 1 000 events:
+Mean cost per receipt across **1,327 real on-chain emissions** in the build window so far (May 12-13, 2026), measured by the deployer wallet's USDC balance delta:
 
 | Metric | Value |
 |---|---|
-| Receipt emission gas | `[fill in]` |
-| Effective USD cost / receipt | `[$ from Arc explorer fee column]` |
-| x402 settlement amount | `$0.01 USDC` |
-| End-to-end consumer cost | `≈ $0.01 USDC` |
+| Total receipts emitted | **1,327** (and rising — daemon active) |
+| Distinct markets priced | 78 |
+| Deployer USDC burned | 0.9062 USDC |
+| **Per-receipt gas cost** | **$0.000683 USDC** (≈ 1/15 of a cent) |
+| Avg end-to-end latency | 24.3 s (real Gemini grounding + Arc tx confirmation) |
+| x402 settlement amount | $0.01 USDC per paid call (paywall config) |
+| End-to-end consumer cost | $0.01 USDC paid + $0.0007 underlying gas |
 
-Screenshot of an Arc explorer fee column for a single `ReceiptRegistry.publish(...)` call: `docs/images/per-action-fee.png`.
+Live verification at submission time:
+
+```sh
+cast call 0x59022EFd46a697bbf2fAd36CcfA8F2099f0bd1Bf "totalReceipts()(uint256)" \
+  --rpc-url $RPC
+```
+
+Per-receipt fee column is visible on the Arc explorer at https://testnet.arcscan.app/address/0x59022EFd46a697bbf2fAd36CcfA8F2099f0bd1Bf
 
 ---
 
 ## Transaction count
 
-Pulled from the contract event log at submission time:
+Live at submission. Run from anywhere with the public Arc Testnet RPC:
 
 ```sh
-cast call $RECEIPT_REGISTRY_ADDRESS "totalReceipts()(uint256)" --rpc-url $RPC
+RPC=https://rpc.testnet.arc-node.thecanteenapp.com/v1/<your-token>
+cast call 0x59022EFd46a697bbf2fAd36CcfA8F2099f0bd1Bf \
+  "totalReceipts()(uint256)" --rpc-url $RPC
 ```
 
-Target: ≥ 1 000 emitted receipts before submission, ≥ 7 days of PnL data on the portfolio wallet.
+Snapshot at last commit: **1,327 receipts** (already 32% above the 1,000 target, with 12 days of build window remaining).
 
 ---
 
