@@ -1,26 +1,35 @@
 """Irys uploader for reasoning traces.
 
-Real mode: signs an Irys transaction with `IRYS_PRIVATE_KEY`, POSTs the trace
-blob to the Irys node, returns the Irys/Arweave-style CID (`ar://<txid>`).
+Real mode: shells out to the Node sidecar at `services/irys/upload.js`, which
+uses the official `@irys/upload` + `@irys/upload-ethereum` SDK to sign and
+upload a Bundlr-format data item with `IRYS_PRIVATE_KEY`. Returns the
+Arweave-style CID (`ar://<txid>`).
+
+The Bundlr signed-bundle format is non-trivial to reproduce in Python; rather
+than re-implement the spec we keep a tiny Node sidecar (single dependency,
+~200 ms cold start) and pass the canonical trace JSON over stdin.
 
 Mock mode (no `IRYS_PRIVATE_KEY` or `RR_MOCK_IRYS=1`): returns a deterministic
-synthetic CID derived from the trace hash. Lets local dev + tests succeed
-without a node.
-
-The contract is: same input → same SHA-256 → same CID. We never re-upload an
-identical trace. This means demo replays are stable and the dashboard can
-de-duplicate.
+synthetic CID derived from the trace hash so tests + offline dev still pass.
 """
 
 from __future__ import annotations
 
 import hashlib
 import json
+import logging
 import os
+import subprocess
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 
-import httpx
+logger = logging.getLogger(__name__)
+
+# Resolve once: services/irys lives at the repo root.
+_REPO_ROOT = Path(__file__).resolve().parent.parent
+_IRYS_SIDECAR_DIR = _REPO_ROOT / "services" / "irys"
+_IRYS_SIDECAR_SCRIPT = _IRYS_SIDECAR_DIR / "upload.js"
 
 
 @dataclass(frozen=True, slots=True)
@@ -62,22 +71,33 @@ def sha256_hex(blob: bytes) -> str:
 
 
 class IrysClient:
-    """Thin wrapper around the Irys upload endpoint."""
+    """Uploads canonical trace JSON to Irys via the Node sidecar."""
 
     def __init__(
         self,
         *,
-        node_url: str | None = None,
         private_key: str | None = None,
+        network: str | None = None,
         token: str = "ethereum",
         mock: bool | None = None,
+        sidecar_script: Path | None = None,
+        sidecar_timeout_s: float = 30.0,
     ) -> None:
-        self.node_url = node_url or os.getenv("IRYS_NODE_URL", "https://node1.irys.xyz")
         self.private_key = private_key or os.getenv("IRYS_PRIVATE_KEY")
+        self.network = network or os.getenv("IRYS_NETWORK", "devnet")
         self.token = token or os.getenv("IRYS_TOKEN", "ethereum")
+        self.sidecar_script = sidecar_script or _IRYS_SIDECAR_SCRIPT
+        self.sidecar_timeout_s = sidecar_timeout_s
+
         env_mock = os.getenv("RR_MOCK_IRYS", "").lower() in {"1", "true", "yes"}
         self.mock = env_mock if mock is None else mock
         if not self.private_key:
+            self.mock = True
+        if not self.mock and not self.sidecar_script.exists():
+            logger.warning(
+                "irys: sidecar script not found at %s — falling back to mock",
+                self.sidecar_script,
+            )
             self.mock = True
 
     def upload(self, trace: dict[str, Any]) -> TraceUpload:
@@ -88,12 +108,29 @@ class IrysClient:
             cid = "ar://" + h[2:34]
             return TraceUpload(hash_hex=h, cid=cid, size_bytes=len(blob), is_mock=True)
 
-        headers = {"Content-Type": "application/json", "X-Trace-Hash": h}
-        with httpx.Client(timeout=15.0) as client:
-            resp = client.post(f"{self.node_url}/tx/{self.token}", content=blob, headers=headers)
-            resp.raise_for_status()
-            data = resp.json()
-        tx_id = data.get("id") or data.get("txId") or data.get("transactionId")
-        if not tx_id:
-            raise RuntimeError(f"Irys returned no tx id: {data}")
-        return TraceUpload(hash_hex=h, cid=f"ar://{tx_id}", size_bytes=len(blob), is_mock=False)
+        env = {**os.environ, "IRYS_PRIVATE_KEY": self.private_key or "", "IRYS_NETWORK": self.network}
+        try:
+            proc = subprocess.run(
+                ["node", str(self.sidecar_script)],
+                input=blob,
+                capture_output=True,
+                env=env,
+                timeout=self.sidecar_timeout_s,
+                check=True,
+            )
+        except subprocess.CalledProcessError as exc:
+            raise RuntimeError(
+                f"irys sidecar exit={exc.returncode}: {exc.stderr.decode(errors='replace')[:300]}"
+            ) from exc
+        except subprocess.TimeoutExpired as exc:
+            raise RuntimeError(f"irys sidecar timeout after {self.sidecar_timeout_s}s") from exc
+
+        last = proc.stdout.decode("utf-8", errors="replace").strip().splitlines()[-1] if proc.stdout else ""
+        try:
+            data = json.loads(last)
+        except ValueError as exc:
+            raise RuntimeError(f"irys sidecar returned non-JSON: {last[:200]}") from exc
+        cid = data.get("cid") or (f"ar://{data['id']}" if "id" in data else "")
+        if not cid:
+            raise RuntimeError(f"irys sidecar returned no id: {data}")
+        return TraceUpload(hash_hex=h, cid=cid, size_bytes=len(blob), is_mock=False)

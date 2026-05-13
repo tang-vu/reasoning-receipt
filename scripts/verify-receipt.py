@@ -54,7 +54,7 @@ def verify_offline(cid: str, expected_hash: str, gateway: str = DEFAULT_GATEWAY)
     print(f"expected hash     : {expected_hash}")
     print(f"recomputed hash   : {recomputed}")
     print(f"trace bytes (B)   : {len(canonical_bytes(trace))}")
-    print(f"verdict           : {'VERIFIED ✓' if ok else 'TAMPERED / STALE ✗'}")
+    print(f"verdict           : {'VERIFIED [OK]' if ok else 'TAMPERED / STALE [FAIL]'}")
     return 0 if ok else 1
 
 
@@ -69,7 +69,7 @@ def _print_report(body: dict) -> None:
     print(f"arc tx            : {stored.get('arc_tx_hash')}")
     if body.get("recomputed_hash"):
         print(f"recomputed hash   : {body['recomputed_hash']}")
-    print(f"verdict           : {'VERIFIED ✓' if body.get('verified') else 'UNVERIFIED ✗'}")
+    print(f"verdict           : {'VERIFIED [OK]' if body.get('verified') else 'UNVERIFIED [FAIL]'}")
     print(f"reason            : {body.get('reason')}")
     if body.get("irys_gateway_url"):
         print(f"irys gateway      : {body['irys_gateway_url']}")

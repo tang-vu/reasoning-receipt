@@ -60,3 +60,7 @@ AGENTS.md
 .cache/
 tmp/
 recordings/
+
+# Irys sidecar (Node.js)
+services/*/node_modules/
+

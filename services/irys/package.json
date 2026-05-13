@@ -1,0 +1,13 @@
+{
+  "name": "rr-irys-uploader",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "upload": "node upload.js"
+  },
+  "dependencies": {
+    "@irys/upload": "^0.0.15",
+    "@irys/upload-ethereum": "^0.0.16"
+  }
+}

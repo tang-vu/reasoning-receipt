@@ -1,14 +1,308 @@
 {
   "version": "rr-snapshot/1",
-  "exported_at": "2026-05-13T14:08:12.896059+07:00",
+  "exported_at": "2026-05-13T14:31:11.590259+07:00",
   "stats": {
-    "total_receipts": 1143,
+    "total_receipts": 1164,
     "total_paid_micro_usdc": 60000,
-    "distinct_markets": 72,
+    "distinct_markets": 73,
     "distinct_consumers": 1,
-    "latest_receipt_at": "2026-05-13T07:07:51.019427"
+    "latest_receipt_at": "2026-05-13T07:31:09.838378"
   },
   "receipts": [
+    {
+      "id": 1164,
+      "market_id": "2175685",
+      "market_source": "polymarket",
+      "market_question": "Will the price of XRP be above $1.90 on May 13?",
+      "probability": 0.385,
+      "confidence": 0.45,
+      "trace_hash": "0xcfce864a75dd9e95bd1393c046ae13dc3f6085d84a6fef3e9013fd9dea66b84e",
+      "trace_cid": "ar://3kTLN76nx27Kh3KtZXDaQ2RjXh3eszyohnhRs7bNhmTD",
+      "consumer_address": null,
+      "arc_tx_hash": "c7f54d089e860de08130312a3067f3691364bc0d7fe56ef77b7da53361d0fd69",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-13T07:31:09.838378"
+    },
+    {
+      "id": 1163,
+      "market_id": "1087541",
+      "market_source": "polymarket",
+      "market_question": "Will Matteo Berrettini win the 2026 Men's French Open?",
+      "probability": 0.015,
+      "confidence": 0.85,
+      "trace_hash": "0xd00bd13a0fc006c156de818714273802576dee6e9b64377b339c10175e9e0e4b",
+      "trace_cid": "ar://B8ocJ3wc4JUZiCc5wmXh5VBy5EEVzsEyzrieAUdfsf2T",
+      "consumer_address": null,
+      "arc_tx_hash": "9d8be5a49648f87d8758114d12545fb54d75db2c10920ab698e9fbdb34dc07fc",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-13T07:29:46.782110"
+    },
+    {
+      "id": 1162,
+      "market_id": "2182403",
+      "market_source": "polymarket",
+      "market_question": "Will the price of Bitcoin be above $70,000 on May 14?",
+      "probability": 0.685,
+      "confidence": 0.45,
+      "trace_hash": "0xecc23d44ef0008eef66c347a25deaac3c62ab805e9b7e30cd3dfd58c67024d44",
+      "trace_cid": "ar://GQkJn8BJ2qh1MjTkeQqnmstZu5ZMb25DoR534Wu9KYWm",
+      "consumer_address": null,
+      "arc_tx_hash": "a9231c6b1c3c4b19a99b4379f919088981927976fc605660f203aabc62e74cb2",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-13T07:28:31.897495"
+    },
+    {
+      "id": 1161,
+      "market_id": "2242123",
+      "market_source": "polymarket",
+      "market_question": "Internazionali BNL d'Italia: Casper Ruud vs Karen Khachanov",
+      "probability": 0.685,
+      "confidence": 0.82,
+      "trace_hash": "0xdb57953633586f9f961cd40b069792d9a593c6afc41f5cd5206291b2664feaa6",
+      "trace_cid": "ar://9oAWvHk5Qoy96B13thaw6G1GV54BwvMAbutCFBtMRnTo",
+      "consumer_address": null,
+      "arc_tx_hash": "7f674249297d6f0f10f0fd6d3b71292933cc6caa9f53dbd19c194a582a414bdb",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-13T07:27:15.929032"
+    },
+    {
+      "id": 1160,
+      "market_id": "569344",
+      "market_source": "polymarket",
+      "market_question": "Will Abelardo de la Espriella win the 1st round of the 2026 Colombian presidential election?",
+      "probability": 0.085,
+      "confidence": 0.45,
+      "trace_hash": "0xfa8d347ae0e12ad58c13c6e3231bacee4dccac2e77a8eb5aa34da48b6db95372",
+      "trace_cid": "ar://9snxgoFekXF11ESFLZqYSBjiueiN9pGctSMutYP5uyeN",
+      "consumer_address": null,
+      "arc_tx_hash": "2556501b599ea27ff716c3ac9a51d054734ed61e58a818521ebe8c5f384469b2",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-13T07:27:01.567142"
+    },
+    {
+      "id": 1159,
+      "market_id": "679500",
+      "market_source": "polymarket",
+      "market_question": "Will Won Hee-ryong win the 2026 Gyeonggi Province Gubernatorial Election?",
+      "probability": 0.38,
+      "confidence": 0.45,
+      "trace_hash": "0x8e0a90e1d62a3f95825065d14bd02427a07399e1b4ab3cc9181f12263ed0ffef",
+      "trace_cid": "ar://6JQuu3GcNXhjmQFvF6cjrMgTr3Tfh31s7TeaFEetxv6U",
+      "consumer_address": null,
+      "arc_tx_hash": "d58733c188da1756bb02418292bdd949616a3bddf2994926b8e8a98adf183877",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-13T07:26:45.700404"
+    },
+    {
+      "id": 1158,
+      "market_id": "2175685",
+      "market_source": "polymarket",
+      "market_question": "Will the price of XRP be above $1.90 on May 13?",
+      "probability": 0.385,
+      "confidence": 0.45,
+      "trace_hash": "0x815dd6d4c2ca06e1ba69d3b794ba2af113ae2a2bfb7a55d564c5b11dadbe100f",
+      "trace_cid": "ar://AaeBDS1SWk2w8qgAyg4H2EKFAVqccqn7V6MoEjnA3xqv",
+      "consumer_address": null,
+      "arc_tx_hash": "1f121792a4795d84470e1416453e16fd0c57c4c179b5e56f7e40703602487f60",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-13T07:25:30.931176"
+    },
+    {
+      "id": 1157,
+      "market_id": "1087541",
+      "market_source": "polymarket",
+      "market_question": "Will Matteo Berrettini win the 2026 Men's French Open?",
+      "probability": 0.015,
+      "confidence": 0.75,
+      "trace_hash": "0xa53a807ed365387be1339666118f9bd81f4adcd233fe2fe77ea6ed1ed9843eae",
+      "trace_cid": "ar://4NjovQH746mvk8BN2AjTUNV27CYiP5KzKYpAoDQHBDAF",
+      "consumer_address": null,
+      "arc_tx_hash": "285b0b4903e43af47ec517f72d29c64f10641b80738b55d0dbb878959bd32898",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-13T07:24:16.541096"
+    },
+    {
+      "id": 1156,
+      "market_id": "2242123",
+      "market_source": "polymarket",
+      "market_question": "Internazionali BNL d'Italia: Casper Ruud vs Karen Khachanov",
+      "probability": 0.685,
+      "confidence": 0.82,
+      "trace_hash": "0x71ff9abd632d855de09ddcfc3b49dd8f2a86eb043c20d427e0c561c34ce83df4",
+      "trace_cid": "ar://RxryJC17P1tkUdN2Hvb6LzFcQSZV4hPH4JyZ4ajULLY",
+      "consumer_address": null,
+      "arc_tx_hash": "2abc6e898a3aad7ec3464ab5e9f42a57dc50326d07d28d7b2f28f6a03497ecb3",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-13T07:20:58.877240"
+    },
+    {
+      "id": 1155,
+      "market_id": "569344",
+      "market_source": "polymarket",
+      "market_question": "Will Abelardo de la Espriella win the 1st round of the 2026 Colombian presidential election?",
+      "probability": 0.085,
+      "confidence": 0.45,
+      "trace_hash": "0x116ac347866d17e1f4326ea30afb7085e7be4f13c492d8225dd6b775a13d465c",
+      "trace_cid": "ar://H4nSqmuTmcuVC6J2DSNMBuDB9Yz4iFq31X6Ruk3LHbVw",
+      "consumer_address": null,
+      "arc_tx_hash": "7f083226fa4d4ef260c1fa00b957632096b580a225f9dc6b9d4bc2132e60d28e",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-13T07:20:44.494735"
+    },
+    {
+      "id": 1154,
+      "market_id": "679500",
+      "market_source": "polymarket",
+      "market_question": "Will Won Hee-ryong win the 2026 Gyeonggi Province Gubernatorial Election?",
+      "probability": 0.385,
+      "confidence": 0.45,
+      "trace_hash": "0xb4466a1d28055d57f178dd411decc801cd105a1e8954d033ff75ba98b9a9df18",
+      "trace_cid": "ar://CKkngHd9b3J3rCJwcZgcZh3T8pc3inEFCVTWmodiScbq",
+      "consumer_address": null,
+      "arc_tx_hash": "4956d2a84ffc76e1fba22c0a727ab0fdeb3af4a24168adbb4d02930050c91500",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-13T07:20:20.830034"
+    },
+    {
+      "id": 1153,
+      "market_id": "2175685",
+      "market_source": "polymarket",
+      "market_question": "Will the price of XRP be above $1.90 on May 13?",
+      "probability": 0.385,
+      "confidence": 0.45,
+      "trace_hash": "0xff0008d65ccbff55a479d76c862370885303a6d8f00bf5c22de50735535c2c15",
+      "trace_cid": "ar://ENHoy3ZE4wqZUVBCkcLDoPCUpnLprPTxEfNfg1TG3Syx",
+      "consumer_address": null,
+      "arc_tx_hash": "c874047f3a8881ee9e6472cc114274f4e1e774f487f589efb7a861813eb0d284",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-13T07:19:06.818566"
+    },
+    {
+      "id": 1152,
+      "market_id": "1087541",
+      "market_source": "polymarket",
+      "market_question": "Will Matteo Berrettini win the 2026 Men's French Open?",
+      "probability": 0.015,
+      "confidence": 0.75,
+      "trace_hash": "0xfde225509de58af3440f0a1031c484031904e55a154c2fdb79098969e3e96830",
+      "trace_cid": "ar://j2p1HMY5Vg8A5LThUKhnGJ2ZF3RW88MmBSdhmPpA5Gv",
+      "consumer_address": null,
+      "arc_tx_hash": "e9b1b5833bee78a6bcbd5d24493c15fbedf4086a37f8c481632332015fa5601c",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-13T07:18:53.434882"
+    },
+    {
+      "id": 1151,
+      "market_id": "679657",
+      "market_source": "polymarket",
+      "market_question": "Will Rick Temple be the Republican nominee for Senate in Georgia?",
+      "probability": 0.02,
+      "confidence": 0.85,
+      "trace_hash": "0xa115e43125295795869a031379abe3fb525105a3fa412f17c5710513db480200",
+      "trace_cid": "ar://CsQNMrZo5CRp86P2mj2tUK3qXhB7K4diViiiXugViKSg",
+      "consumer_address": null,
+      "arc_tx_hash": "214578e80d575107bebaf25c15365abe7ba32b9ee6bc5bcd3bd2518fd8f07b72",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-13T07:18:39.472686"
+    },
+    {
+      "id": 1150,
+      "market_id": "2242123",
+      "market_source": "polymarket",
+      "market_question": "Internazionali BNL d'Italia: Casper Ruud vs Karen Khachanov",
+      "probability": 0.785,
+      "confidence": 0.85,
+      "trace_hash": "0xbbe3756f0241c4d0cfaf92ee667c8992eefc1ab17d6628bce04410aad8c416ae",
+      "trace_cid": "ar://bbe3756f0241c4d0cfaf92ee667c8992",
+      "consumer_address": null,
+      "arc_tx_hash": "ee7ce879f95fa3e3e490ef785f1708f133a21253e2467d407a336694e831d598",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-13T07:16:47.439222"
+    },
+    {
+      "id": 1149,
+      "market_id": "1087541",
+      "market_source": "polymarket",
+      "market_question": "Will Matteo Berrettini win the 2026 Men's French Open?",
+      "probability": 0.015,
+      "confidence": 0.85,
+      "trace_hash": "0x0c2e4c0b2d52a53d4638beb7715c52b829bbcea3965d1975b791124d5c2ef372",
+      "trace_cid": "ar://0c2e4c0b2d52a53d4638beb7715c52b8",
+      "consumer_address": null,
+      "arc_tx_hash": "62774315946d6804bfb41a004e5441a8b823c97444da7075da963c5a4d4d9736",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-13T07:15:21.519602"
+    },
+    {
+      "id": 1148,
+      "market_id": "569344",
+      "market_source": "polymarket",
+      "market_question": "Will Abelardo de la Espriella win the 1st round of the 2026 Colombian presidential election?",
+      "probability": 0.085,
+      "confidence": 0.45,
+      "trace_hash": "0x9244815181a62a03a1d28f3737061fc0c08ea32615b794e12a1600c32d598921",
+      "trace_cid": "ar://9244815181a62a03a1d28f3737061fc0",
+      "consumer_address": null,
+      "arc_tx_hash": "6be35a8fd9eab6ddc5de8c2679c1a3f3ccf5fd5616af1951f32402e727387498",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-13T07:14:09.082685"
+    },
+    {
+      "id": 1147,
+      "market_id": "679500",
+      "market_source": "polymarket",
+      "market_question": "Will Won Hee-ryong win the 2026 Gyeonggi Province Gubernatorial Election?",
+      "probability": 0.38,
+      "confidence": 0.45,
+      "trace_hash": "0x3d3a04d4cac2f9511c97bc0da87caf63f6d07152a6af2647607fa8b7cbbb265f",
+      "trace_cid": "ar://3d3a04d4cac2f9511c97bc0da87caf63",
+      "consumer_address": null,
+      "arc_tx_hash": "dfce95d629a362b9c182e1882e84442bd7eb3dc68b1cdfdf73fd110cb33ebf00",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-13T07:11:50.333853"
+    },
+    {
+      "id": 1146,
+      "market_id": "2175685",
+      "market_source": "polymarket",
+      "market_question": "Will the price of XRP be above $1.90 on May 13?",
+      "probability": 0.385,
+      "confidence": 0.45,
+      "trace_hash": "0xddba2c3ec104b893e2c6815c1a2f3b5ac3d48ab2dde92f894dd9c151c45c2911",
+      "trace_cid": "ar://ddba2c3ec104b893e2c6815c1a2f3b5a",
+      "consumer_address": null,
+      "arc_tx_hash": "af79ed798e663e0d349baf555133bd80e1b609a8f33da7d2b96c876b076a4e65",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-13T07:11:31.551063"
+    },
+    {
+      "id": 1145,
+      "market_id": "2242123",
+      "market_source": "polymarket",
+      "market_question": "Internazionali BNL d'Italia: Casper Ruud vs Karen Khachanov",
+      "probability": 0.685,
+      "confidence": 0.82,
+      "trace_hash": "0x6eea2a6d35ed34b3ca8864c1567d133355075bc339fa774759abfcd2e44e81df",
+      "trace_cid": "ar://6eea2a6d35ed34b3ca8864c1567d1333",
+      "consumer_address": null,
+      "arc_tx_hash": "468ed1ac27cfbd4faa1a1dae5222a2d94882415be7a0c3e233d54de7757d814c",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-13T07:10:19.306300"
+    },
+    {
+      "id": 1144,
+      "market_id": "1087541",
+      "market_source": "polymarket",
+      "market_question": "Will Matteo Berrettini win the 2026 Men's French Open?",
+      "probability": 0.015,
+      "confidence": 0.45,
+      "trace_hash": "0xb4a3c3c03df8f153793a82d41d18e8c123ff4b128f3425df178f99945b70ade0",
+      "trace_cid": "ar://b4a3c3c03df8f153793a82d41d18e8c1",
+      "consumer_address": null,
+      "arc_tx_hash": "aefa271dab6975b70b56eca3cf61e57fe85e338e742867a8d5a7b7bd67206047",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-13T07:10:06.434346"
+    },
     {
       "id": 1143,
       "market_id": "569344",
@@ -16016,23 +16310,23 @@
     {
       "market_id": "1087541",
       "question": "Will Matteo Berrettini win the 2026 Men's French Open?",
-      "count": 206,
-      "avg_probability": 0.008485436893203835,
-      "last_at": "2026-05-13T07:03:52.656125"
+      "count": 211,
+      "avg_probability": 0.008639810426540233,
+      "last_at": "2026-05-13T07:29:46.782110"
     },
     {
       "market_id": "2175685",
       "question": "Will the price of XRP be above $1.90 on May 13?",
-      "count": 199,
-      "avg_probability": 0.18497989949748814,
-      "last_at": "2026-05-13T07:05:23.799227"
+      "count": 203,
+      "avg_probability": 0.18892118226601062,
+      "last_at": "2026-05-13T07:31:09.838378"
     },
     {
       "market_id": "679500",
       "question": "Will Won Hee-ryong win the 2026 Gyeonggi Province Gubernatorial Election?",
-      "count": 175,
-      "avg_probability": 0.1857707600000005,
-      "last_at": "2026-05-13T07:05:36.016982"
+      "count": 178,
+      "avg_probability": 0.18907237640449476,
+      "last_at": "2026-05-13T07:26:45.700404"
     },
     {
       "market_id": "2132801",
@@ -16044,9 +16338,9 @@
     {
       "market_id": "569344",
       "question": "Will Abelardo de la Espriella win the 1st round of the 2026 Colombian presidential election?",
-      "count": 49,
-      "avg_probability": 0.07428571428571427,
-      "last_at": "2026-05-13T07:07:51.019427"
+      "count": 52,
+      "avg_probability": 0.07490384615384614,
+      "last_at": "2026-05-13T07:27:01.567142"
     },
     {
       "market_id": "2099615",
@@ -16098,18 +16392,18 @@
       "last_at": "2026-05-13T04:46:00.536514"
     },
     {
+      "market_id": "679657",
+      "question": "Will Rick Temple be the Republican nominee for Senate in Georgia?",
+      "count": 18,
+      "avg_probability": 0.0048891666666666675,
+      "last_at": "2026-05-13T07:18:39.472686"
+    },
+    {
       "market_id": "2122041",
       "question": "Will Racing Club de Lens win on 2026-05-13?",
       "count": 17,
       "avg_probability": 0.4226235294117647,
       "last_at": "2026-05-13T04:16:37.268718"
-    },
-    {
-      "market_id": "679657",
-      "question": "Will Rick Temple be the Republican nominee for Senate in Georgia?",
-      "count": 17,
-      "avg_probability": 0.004000294117647059,
-      "last_at": "2026-05-12T19:01:19.993016"
     },
     {
       "market_id": "2204866",
@@ -16187,6 +16481,13 @@
       "count": 6,
       "avg_probability": 0.7793333333333333,
       "last_at": "2026-05-13T00:46:27.181291"
+    },
+    {
+      "market_id": "2242123",
+      "question": "Internazionali BNL d'Italia: Casper Ruud vs Karen Khachanov",
+      "count": 5,
+      "avg_probability": 0.7050000000000001,
+      "last_at": "2026-05-13T07:27:15.929032"
     },
     {
       "market_id": "mock-polymarket-btc-100k-by-jun-2026",
@@ -16364,11 +16665,11 @@
       "last_at": "2026-05-12T13:46:25.377874"
     },
     {
-      "market_id": "2242123",
-      "question": "Internazionali BNL d'Italia: Casper Ruud vs Karen Khachanov",
+      "market_id": "2182403",
+      "question": "Will the price of Bitcoin be above $70,000 on May 14?",
       "count": 1,
       "avg_probability": 0.685,
-      "last_at": "2026-05-13T07:04:11.872034"
+      "last_at": "2026-05-13T07:28:31.897495"
     },
     {
       "market_id": "2236647",
@@ -16524,96 +16825,96 @@
       "count": 40
     },
     {
-      "label": "09:29",
-      "count": 47
-    },
-    {
-      "label": "10:25",
-      "count": 44
-    },
-    {
-      "label": "11:22",
-      "count": 49
-    },
-    {
-      "label": "12:18",
-      "count": 52
-    },
-    {
-      "label": "13:14",
-      "count": 52
-    },
-    {
-      "label": "14:11",
+      "label": "09:30",
       "count": 48
     },
     {
-      "label": "15:07",
-      "count": 40
-    },
-    {
-      "label": "16:04",
+      "label": "10:27",
       "count": 45
     },
     {
-      "label": "17:00",
-      "count": 43
-    },
-    {
-      "label": "17:57",
-      "count": 49
-    },
-    {
-      "label": "18:53",
-      "count": 47
-    },
-    {
-      "label": "19:50",
-      "count": 33
-    },
-    {
-      "label": "20:46",
-      "count": 36
-    },
-    {
-      "label": "21:43",
-      "count": 41
-    },
-    {
-      "label": "22:39",
-      "count": 53
-    },
-    {
-      "label": "23:36",
-      "count": 56
-    },
-    {
-      "label": "00:32",
-      "count": 44
-    },
-    {
-      "label": "01:29",
-      "count": 47
-    },
-    {
-      "label": "02:25",
-      "count": 65
-    },
-    {
-      "label": "03:21",
-      "count": 64
-    },
-    {
-      "label": "04:18",
-      "count": 57
-    },
-    {
-      "label": "05:14",
+      "label": "11:24",
       "count": 50
     },
     {
-      "label": "06:11",
+      "label": "12:22",
+      "count": 54
+    },
+    {
+      "label": "13:19",
+      "count": 50
+    },
+    {
+      "label": "14:17",
+      "count": 50
+    },
+    {
+      "label": "15:14",
       "count": 41
+    },
+    {
+      "label": "16:12",
+      "count": 44
+    },
+    {
+      "label": "17:09",
+      "count": 45
+    },
+    {
+      "label": "18:07",
+      "count": 51
+    },
+    {
+      "label": "19:04",
+      "count": 47
+    },
+    {
+      "label": "20:01",
+      "count": 31
+    },
+    {
+      "label": "20:59",
+      "count": 40
+    },
+    {
+      "label": "21:56",
+      "count": 42
+    },
+    {
+      "label": "22:54",
+      "count": 57
+    },
+    {
+      "label": "23:51",
+      "count": 54
+    },
+    {
+      "label": "00:49",
+      "count": 46
+    },
+    {
+      "label": "01:46",
+      "count": 50
+    },
+    {
+      "label": "02:43",
+      "count": 66
+    },
+    {
+      "label": "03:41",
+      "count": 66
+    },
+    {
+      "label": "04:38",
+      "count": 59
+    },
+    {
+      "label": "05:36",
+      "count": 43
+    },
+    {
+      "label": "06:33",
+      "count": 45
     }
   ]
 }
