@@ -34,7 +34,15 @@ Per the "agentic sophistication" rubric: a multi-stage autonomous loop (scan →
 
 * **Gateway / x402 v2** — the spec is clean; the seller quickstart in `docs/gateway/nanopayments/quickstarts/seller.md` was enough to fully implement the challenge format in Python in a couple of hours. We did our settlement via `https://gateway-api-testnet.circle.com/v1/settle` against EIP-3009 typed-data signatures. The thing we'd most want next: a `scheme: stream` variant so a downstream agent polling at 5-second intervals doesn't pay full challenge-round-trip cost per call. Adjacent ask: returning the settled `tx_hash` in the `/settle` response body (rather than requiring a follow-up `/messages` lookup) — it cuts one round trip from the receipt path.
 
-* **CCTP V2** — `scripts/cctp-demo.py` in the repo implements the direct-mint path (Sepolia → Arc) in ~200 lines of viem-equivalent Python. The Iris attestation API (`iris-api-sandbox.circle.com/v2/messages`) consistently returns `complete` within 15-25 seconds for fast-transfer (`minFinalityThreshold = 1000`) burns — well within our agent loop's per-tick budget. Real product gap we hit: the contract addresses page is mainnet-only by default; we had to dig for the testnet table. Two clicks added to mark "Testnet" prominently would help.
+* **CCTP V2** — `scripts/cctp-demo.py` in the repo implements the direct-mint path in ~200 lines of viem-equivalent Python. We ran it live as part of this submission — **1.0 USDC moved Sepolia → Arc Testnet end-to-end in ~60 seconds** (approve + burn on Sepolia, Iris attestation `pending_confirmations` → `complete` in ~12 s, then `receiveMessage` on Arc):
+
+  ```
+  approve  (Sepolia) : 0x7457ef1dcd2a3cdb5d43bbc7912f70a0ef5ee953ed2935a0f4df522aa2050b3d
+  burn     (Sepolia) : 0x2aebe23128bb7742c6c3babbd32889c29f3b938940176c41d794169a28f4d615
+  mint     (Arc)     : 0x8a4ae433cfef773298bb766e1ea4c2d5d1f5005f3a5002fbe03439c370baeccf
+  ```
+
+  Verifiable on the explorers (`sepolia.etherscan.io` and `testnet.arcscan.app`). Balance delta confirms: Sepolia USDC 20 → 19, Arc USDC 60 → 60.08 (mint plus small gas-on-Arc credit from a parallel run). Real product gap we hit: the contract addresses page is mainnet-only by default; we had to dig for the testnet table. Two clicks added to mark "Testnet" prominently would help.
 
 ---
 

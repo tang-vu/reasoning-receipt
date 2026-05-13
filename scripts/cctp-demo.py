@@ -261,7 +261,7 @@ def main(argv: list[str] | None = None) -> int:
     print("--- DONE ---")
     print(f"  burn (Sepolia): {burn_tx}")
     print(f"  mint (Arc)    : {mint_tx}")
-    print(f"  {args.amount_usdc} USDC moved Sepolia → Arc Testnet via CCTP V2")
+    print(f"  {args.amount_usdc} USDC moved Sepolia -> Arc Testnet via CCTP V2")
     return 0
 
 
