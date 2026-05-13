@@ -64,7 +64,7 @@ We over-shot the "hello world" prompt — the merchant is the full ReasoningRece
 | Underlying chain | Arc Testnet (sub-second finality, USDC-as-gas) |
 | Wallets | Circle developer-controlled (provisioned via API in `scripts/circle-setup.py` — entity secret RSA-OAEP encrypted, walletSet + 2 wallets in one Python call) |
 
-For the `circle` CLI / agent-type wallet variant explicitly suggested in the slides (`circle wallet create --type agent`), see the open task in `notes/state.md` — it's a separate wallet flow from the developer-controlled wallets we built the receipt path on, and requires interactive email+OTP login.
+For the `circle` CLI / agent-type wallet variant explicitly suggested in the slides (`circle wallet create --type agent`): tried it on Windows native and hit a hard block — `@open-wallet-standard/core@1.3.2` (the latest version) ships native bindings for `linux-x64-gnu`, `linux-arm64-gnu`, `darwin-x64`, and `darwin-arm64` only. **No `win32-x64-msvc` binding.** `circle --help` immediately throws `MODULE_NOT_FOUND`. Workaround is WSL2, but it's a meaningful detour for any Windows-first developer. Documented this as a Circle product-feedback line in `docs/SUBMISSION.md`. The developer-controlled wallets we provisioned via API (`scripts/circle-setup.py`) cover the wallet primitive; what we miss out on is the agent-CLI's `wallet-policy` / `wallet-pay` / `discover-services` skills.
 
 ## Beyond the walkthrough
 
