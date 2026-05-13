@@ -60,7 +60,7 @@ Per the "agentic sophistication" rubric: a multi-stage autonomous loop (scan →
 | GitHub | https://github.com/tang-vu/reasoning-receipt |
 | Demo video | `[YouTube unlisted URL — fill in after recording]` |
 | Live dashboard | https://tang-vu.github.io/reasoning-receipt/ |
-| Contract on Arc | https://testnet.arcscan.app/address/0x59022EFd46a697bbf2fAd36CcfA8F2099f0bd1Bf |
+| Contract on Arc (source-verified) | https://testnet.arcscan.app/address/0x59022EFd46a697bbf2fAd36CcfA8F2099f0bd1Bf |
 | Latest release | https://github.com/tang-vu/reasoning-receipt/releases/tag/v0.1.0-rc1 |
 | Team | Solo — Vu Minh Tang (`tang-vu`) |
 | Circle Developer Console email | `[email — fill in]` |
@@ -127,6 +127,7 @@ Repo hygiene (run each before submitting):
 - [x] `git ls-files | xargs grep -l "sk-ant\\|0x[a-f0-9]\\{64\\}"` returns empty (no committed secrets)
 - [x] CI green on main: https://github.com/tang-vu/reasoning-receipt/actions
 - [x] Dashboard live: https://tang-vu.github.io/reasoning-receipt/
+- [x] Contract source-verified on Arc Testnet explorer (`forge verify-contract` via Blockscout, Solidity 0.8.26 with `via_ir`)
 
 Submission deliverables (Harvey fills these in the final week):
 
