@@ -63,9 +63,14 @@ class ReasoningTrace:
     produced_at: str
     consumer_address: str | None = None
     agent_version: str = "0.1.0"
+    # Optional fields added with schema "rr-trace/2". When None they are NOT
+    # emitted in to_dict(), so the canonical bytes (and therefore the SHA-256)
+    # of any pre-existing rr-trace/1 trace stay unchanged.
+    critic_review: dict[str, Any] | None = None
+    revision_count: int | None = None
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        out: dict[str, Any] = {
             "schema_version": self.schema_version,
             "market_id": self.market_id,
             "market_source": self.market_source,
@@ -83,6 +88,11 @@ class ReasoningTrace:
             "consumer_address": self.consumer_address,
             "agent_version": self.agent_version,
         }
+        if self.critic_review is not None:
+            out["critic_review"] = self.critic_review
+        if self.revision_count is not None:
+            out["revision_count"] = self.revision_count
+        return out
 
 
 @dataclass(slots=True)

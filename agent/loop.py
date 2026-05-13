@@ -25,6 +25,7 @@ from storage.irys import IrysClient
 from wallets.portfolio import Portfolio
 
 from .analyst import Analyst, MarketCandidate
+from .critic import Critic
 from .scanner import Scanner
 from .trace import SealedTrace, TraceSealer
 from .trader import Trader
@@ -61,6 +62,7 @@ class AgentLoop:
         self.config = config or LoopConfig.from_env()
         self.scanner = Scanner()
         self.analyst = Analyst()
+        self.critic = Critic()
         self.sealer = TraceSealer(IrysClient())
         self.chain = ChainClient()
         self.portfolio = Portfolio()
@@ -110,7 +112,7 @@ class AgentLoop:
 
     def _process_candidate(self, candidate: MarketCandidate) -> None:
         start = time.perf_counter()
-        trace = self.analyst.analyse(candidate)
+        trace = self.analyst.analyse_with_critic(candidate, critic=self.critic)
         sealed: SealedTrace = self.sealer.seal(trace)
         result = self.chain.publish(
             consumer_address=None,

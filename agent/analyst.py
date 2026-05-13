@@ -184,8 +184,9 @@ class Analyst:
         candidate: MarketCandidate,
         *,
         consumer_address: str | None = None,
+        revision_hint: str | None = None,
     ) -> ReasoningTrace:
-        raw = self._call_model(candidate)
+        raw = self._call_model(candidate, revision_hint=revision_hint)
         try:
             obj = _extract_first_json(raw)
         except Exception as exc:
@@ -227,7 +228,7 @@ class Analyst:
             consumer_address=consumer_address,
         )
 
-    def _call_model(self, candidate: MarketCandidate) -> str:
+    def _call_model(self, candidate: MarketCandidate, revision_hint: str | None = None) -> str:
         if self.mock or self._client is None:
             return json.dumps(_mock_answer(candidate))
 
@@ -241,6 +242,12 @@ class Analyst:
             f"On-platform liquidity: ${candidate.liquidity_usd:,.0f}\n\n"
             "Produce the JSON described in the system instruction. JSON only — no prose, no fences."
         )
+        if revision_hint:
+            user += (
+                "\n\nIMPORTANT: A critic flagged the previous draft. Revise per these notes "
+                "and return a fresh JSON that addresses them:\n"
+                f"{revision_hint}"
+            )
 
         tools: list = []
         if self.config.enable_web_search:
@@ -297,3 +304,72 @@ class Analyst:
                 raise
         assert last_exc is not None
         raise last_exc
+
+    def analyse_with_critic(
+        self,
+        candidate: MarketCandidate,
+        *,
+        consumer_address: str | None = None,
+        critic: object | None = None,
+        max_revisions: int = 1,
+    ) -> ReasoningTrace:
+        """Researcher + Critic pipeline.
+
+        1. Draft a trace via the Researcher (`self.analyse`).
+        2. Hand the draft to the Critic for a structured review.
+        3. If the Critic flags issues AND we have a revision budget left, re-run
+           the Researcher with the critic's `revision_request` inlined as a hint.
+        4. Return the final trace with `critic_review` + `revision_count` filled
+           in and `schema_version` bumped to `rr-trace/2`.
+
+        On any Critic failure (network down, parse error, mock), the draft is
+        returned unmodified with `revision_count=0` and a permissive review —
+        the loop never blocks on the critic.
+        """
+        # Late import: critic depends on analyst (this module) at import time.
+        if critic is None:
+            from .critic import Critic  # noqa: PLC0415
+
+            critic = Critic()
+
+        trace = self.analyse(candidate, consumer_address=consumer_address)
+
+        try:
+            review = critic.review(candidate, trace)
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("critic: review raised (%s); keeping draft", exc)
+            trace.schema_version = "rr-trace/2"
+            trace.critic_review = {
+                "passed": True,
+                "categories": {},
+                "revision_request": "",
+                "error": str(exc)[:200],
+            }
+            trace.revision_count = 0
+            return trace
+
+        revisions = 0
+        while not review.get("passed", True) and revisions < max_revisions:
+            hint = review.get("revision_request", "") or "Address the failures the critic flagged."
+            logger.info(
+                "critic: revision %d/%d requested (%s)",
+                revisions + 1,
+                max_revisions,
+                hint[:120],
+            )
+            revisions += 1
+            try:
+                trace = self.analyse(
+                    candidate,
+                    consumer_address=consumer_address,
+                    revision_hint=hint,
+                )
+                review = critic.review(candidate, trace)
+            except Exception as exc:  # noqa: BLE001
+                logger.warning("critic: revision %d raised (%s); accepting last draft", revisions, exc)
+                break
+
+        trace.schema_version = "rr-trace/2"
+        trace.critic_review = review
+        trace.revision_count = revisions
+        return trace

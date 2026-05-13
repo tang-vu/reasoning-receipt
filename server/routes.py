@@ -82,7 +82,12 @@ async def get_price(market_id: str, request: Request) -> PriceResponse:
 
     candidate = _candidate_for(market_id)
     analyst: Analyst = request.app.state.analyst
-    trace = analyst.analyse(candidate, consumer_address=evidence.payer_address)
+    critic = getattr(request.app.state, "critic", None)
+    trace = analyst.analyse_with_critic(
+        candidate,
+        consumer_address=evidence.payer_address,
+        critic=critic,
+    )
 
     sealer: TraceSealer = request.app.state.sealer
     sealed = sealer.seal(trace)

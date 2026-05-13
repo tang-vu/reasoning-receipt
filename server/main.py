@@ -21,6 +21,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from agent.analyst import Analyst
+from agent.critic import Critic
 from agent.trace import TraceSealer
 from storage.db import init_db
 from storage.irys import IrysClient
@@ -47,6 +48,7 @@ async def lifespan(app: FastAPI):
     init_db()
     app.state.paywall = X402Paywall()
     app.state.analyst = Analyst()
+    app.state.critic = Critic()
     app.state.sealer = TraceSealer(IrysClient())
     app.state.chain = ChainClient()
     app.state.broker = ReceiptBroker()
