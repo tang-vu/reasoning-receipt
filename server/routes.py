@@ -69,6 +69,24 @@ class StatsResponse(BaseModel):
     latest_receipt_at: str | None
 
 
+class CalibrationBucketOut(BaseModel):
+    label: str
+    bucket_min: float
+    bucket_max: float
+    n: int
+    mean_predicted: float
+    mean_actual: float
+
+
+class CalibrationResponse(BaseModel):
+    total_resolved: int
+    distinct_resolved_markets: int
+    brier_score: float
+    brier_high_conf: float | None
+    brier_low_conf: float | None
+    buckets: list[CalibrationBucketOut]
+
+
 @router.get("/price/{market_id}")
 async def get_price(market_id: str, request: Request) -> PriceResponse:
     start = time.perf_counter()
@@ -195,6 +213,32 @@ async def healthz(request: Request) -> dict:
         "chain_mock": chain.mock,
         "publisher": chain.publisher_address,
     }
+
+
+@router.get("/calibration", response_model=CalibrationResponse)
+async def calibration() -> CalibrationResponse:
+    """Brier score + reliability buckets over receipts whose market has resolved."""
+    from agent.calibration import compute
+
+    report = compute()
+    return CalibrationResponse(
+        total_resolved=report.total_resolved,
+        distinct_resolved_markets=report.distinct_resolved_markets,
+        brier_score=report.brier_score,
+        brier_high_conf=report.brier_high_conf,
+        brier_low_conf=report.brier_low_conf,
+        buckets=[
+            CalibrationBucketOut(
+                label=b.label,
+                bucket_min=b.bucket_min,
+                bucket_max=b.bucket_max,
+                n=b.n,
+                mean_predicted=b.mean_predicted,
+                mean_actual=b.mean_actual,
+            )
+            for b in report.buckets
+        ],
+    )
 
 
 def _candidate_for(market_id: str) -> MarketCandidate:

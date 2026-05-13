@@ -26,6 +26,7 @@ from wallets.portfolio import Portfolio
 
 from .analyst import Analyst, MarketCandidate
 from .critic import Critic
+from .resolver import resolve_open_markets
 from .scanner import Scanner
 from .trace import SealedTrace, TraceSealer
 from .trader import Trader
@@ -69,6 +70,10 @@ class AgentLoop:
         self.trader = Trader(bankroll_provider=self.portfolio.bankroll)
         self._stop = False
         self._processed: dict[str, float] = {}  # market_id → epoch seconds it was last priced
+        self._tick_count = 0
+        # Run the resolver every N ticks (~10 min at default 60s interval). It's
+        # a polite Gamma API poll, so we don't want to hammer it every tick.
+        self._resolver_every = int(os.getenv("RR_RESOLVER_EVERY_TICKS", "10"))
 
     def stop(self) -> None:
         self._stop = True
@@ -92,6 +97,22 @@ class AgentLoop:
 
     async def _tick(self) -> None:
         loop = asyncio.get_running_loop()
+        self._tick_count += 1
+
+        # Every Nth tick, back-fill resolved outcomes via Polymarket Gamma.
+        if self._resolver_every > 0 and self._tick_count % self._resolver_every == 0:
+            try:
+                report = await loop.run_in_executor(None, resolve_open_markets)
+                if report.newly_resolved_markets:
+                    logger.info(
+                        "resolver: polled=%d newly_resolved=%d rows_updated=%d",
+                        report.polled,
+                        report.newly_resolved_markets,
+                        report.rows_updated,
+                    )
+            except Exception as exc:  # noqa: BLE001
+                logger.warning("resolver: tick failed (%s)", str(exc)[:200])
+
         candidates = await loop.run_in_executor(None, self.scanner.scan)
         now = time.time()
         cooldown = self.config.market_cooldown_s

@@ -65,6 +65,11 @@ class Receipt(Base):
     latency_ms = Column(Integer, nullable=True)
     created_at = Column(DateTime(timezone=True), nullable=False, default=_now, index=True)
 
+    # Backtest: filled in later when the underlying market resolves.
+    # resolved_outcome in [0.0, 1.0] (binary outcome for YES/NO markets).
+    resolved_at = Column(DateTime(timezone=True), nullable=True, index=True)
+    resolved_outcome = Column(Float, nullable=True)
+
     __table_args__ = (Index("ix_receipts_market_created", "market_id", "created_at"),)
 
 
@@ -113,6 +118,27 @@ def init_db(url: str | None = None) -> None:
     _engine = create_engine(url or _db_url(), future=True, pool_pre_ping=True)
     Base.metadata.create_all(_engine)
     _Session = sessionmaker(bind=_engine, expire_on_commit=False, future=True)
+    _migrate(_engine)
+
+
+def _migrate(engine) -> None:
+    """Idempotent ALTER TABLE migrations for columns added after table creation.
+
+    SQLite-friendly. Each ADD COLUMN is wrapped in a try/except so re-runs are safe.
+    """
+    from sqlalchemy import text
+
+    statements = [
+        # rr-trace/2 backtest columns
+        "ALTER TABLE receipts ADD COLUMN resolved_at DATETIME",
+        "ALTER TABLE receipts ADD COLUMN resolved_outcome FLOAT",
+    ]
+    import contextlib
+
+    with engine.begin() as conn:
+        for sql in statements:
+            with contextlib.suppress(Exception):
+                conn.execute(text(sql))
 
 
 @contextmanager

@@ -107,6 +107,40 @@ def build_snapshot(limit: int = 1000) -> dict:
         )
         latest = session.scalar(select(func.max(ReceiptRow.created_at)))
 
+    # Calibration over resolved receipts (Brier score + reliability buckets).
+    try:
+        from agent.calibration import compute as compute_calibration
+
+        cal = compute_calibration()
+        calibration_block = {
+            "total_resolved": cal.total_resolved,
+            "distinct_resolved_markets": cal.distinct_resolved_markets,
+            "brier_score": cal.brier_score,
+            "brier_high_conf": cal.brier_high_conf,
+            "brier_low_conf": cal.brier_low_conf,
+            "buckets": [
+                {
+                    "label": b.label,
+                    "bucket_min": b.bucket_min,
+                    "bucket_max": b.bucket_max,
+                    "n": b.n,
+                    "mean_predicted": b.mean_predicted,
+                    "mean_actual": b.mean_actual,
+                }
+                for b in cal.buckets
+            ],
+        }
+    except Exception as exc:
+        logger.warning("snapshot: calibration compute failed (%s)", exc)
+        calibration_block = {
+            "total_resolved": 0,
+            "distinct_resolved_markets": 0,
+            "brier_score": 0.0,
+            "brier_high_conf": None,
+            "brier_low_conf": None,
+            "buckets": [],
+        }
+
     return {
         "version": "rr-snapshot/1",
         "exported_at": datetime.now().astimezone().isoformat(),
@@ -120,6 +154,7 @@ def build_snapshot(limit: int = 1000) -> dict:
         "receipts": rows,
         "per_market": _per_market(rows),
         "volume_chart": _bucketize(rows),
+        "calibration": calibration_block,
     }
 
 
