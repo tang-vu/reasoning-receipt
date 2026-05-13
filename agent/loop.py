@@ -203,6 +203,20 @@ class AgentLoop:
         assert self._ensemble is not None
         start = time.perf_counter()
         trace_v3: ReasoningTraceV3 = self._ensemble.analyse(candidate)
+
+        # Critic verdict gates publication. "rejected" means the trace failed
+        # the rigor audit even after a revision pass — emitting it would
+        # contaminate the calibration data, so log + skip.
+        if trace_v3.critic_audit.verdict == "rejected":
+            logger.warning(
+                "loop[v3]: REJECTED %s (critic) — not emitting; weak dims=%s",
+                candidate.market_id,
+                [d for d in ("evidence_relevance", "falsifiability", "scope", "coherence",
+                             "exploration_integrity", "methodology")
+                 if getattr(trace_v3.critic_audit, d).score < 0.4],
+            )
+            return
+
         upload = self._irys.upload(trace_v3.to_dict())
         result = self.chain.publish(
             consumer_address=None,
