@@ -60,7 +60,8 @@ Per the "agentic sophistication" rubric: a multi-stage autonomous loop (scan →
 | GitHub | https://github.com/tang-vu/reasoning-receipt |
 | Demo video | `[YouTube unlisted URL — fill in after recording]` |
 | Live dashboard | https://tang-vu.github.io/reasoning-receipt/ |
-| Contract on Arc (source-verified) | https://testnet.arcscan.app/address/0x59022EFd46a697bbf2fAd36CcfA8F2099f0bd1Bf |
+| Contract on Arc — ReceiptRegistry (source-verified) | https://testnet.arcscan.app/address/0x59022EFd46a697bbf2fAd36CcfA8F2099f0bd1Bf |
+| Contract on Arc — CanteenUSDC wrapper (source-verified) | https://testnet.arcscan.app/address/0x7473d0db92F77aA89F19A2D74174D14D14CBD3E1 |
 | Latest release | https://github.com/tang-vu/reasoning-receipt/releases/tag/v0.1.0-rc1 |
 | Team | Solo — Vu Minh Tang (`tang-vu`) |
 | Circle Developer Console email | `[email — fill in]` |
