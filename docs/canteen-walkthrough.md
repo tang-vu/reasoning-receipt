@@ -54,15 +54,17 @@ uv run python -m scripts.cusdc-cli unwrap 1.0
 
 > "Build a merchant on Circle's Agent stack! Our merchant says 'Hello world' on a paywalled /hello-world endpoint on Arc testnet"
 
-We over-shot the "hello world" prompt — the merchant is the full ReasoningReceipt oracle:
+We over-shot the "hello world" prompt — the merchant is the full ReasoningReceipt oracle with **two** paywalled surfaces:
 
 | Item | Detail |
 |---|---|
-| Paywalled endpoint | `GET /price/{market_id}` on the FastAPI server |
-| x402 version | **v2 spec-compliant** (PAYMENT-REQUIRED header, `eip155:5042002` CAIP-2, EIP-3009 typed data, Gateway Wallet `verifyingContract`) |
+| Public paywalled endpoint | `GET /price/{market_id}` — triggers a fresh ensemble + Arc emit |
+| Agent-to-agent MCP path | `GET /mcp/v1/get_price/{market_id}` and `/mcp/v1/audit/{receipt_id}` — same x402 v2 paywall, but returns the **cached** latest receipt (no Gemini call, no Arc gas). Pure agent-to-agent revenue path. |
+| x402 version | **v2 spec-compliant** (PAYMENT-REQUIRED header, `eip155:5042002` CAIP-2, EIP-3009 typed data, Gateway Wallet `verifyingContract`). End-to-end smoke test from Python confirmed both endpoints accept the EIP-3009 envelope. |
 | Facilitator | Circle Gateway: `https://gateway-api-testnet.circle.com/v1/settle` |
 | Underlying chain | Arc Testnet (sub-second finality, USDC-as-gas) |
 | Wallets | Circle developer-controlled (provisioned via API in `scripts/circle-setup.py` — entity secret RSA-OAEP encrypted, walletSet + 2 wallets in one Python call) |
+| Receipt contracts | Both V1 (`0x59022EFd46a697bbf2fAd36CcfA8F2099f0bd1Bf`) and V2 (`0x27d93c52fea923f956345af27f61d7bf47f0c4c1`) deployed + **source-verified** on Arc Testnet. V2 adds a Merkle root over the reasoning DAG + `verifyInclusion(root, leaf, proof)` view so any single evidence URL can be challenged with a ~200-byte proof. |
 
 For the `circle` CLI / agent-type wallet variant explicitly suggested in the slides (`circle wallet create --type agent`): tried it on Windows native and hit a hard block — `@open-wallet-standard/core@1.3.2` (the latest version) ships native bindings for `linux-x64-gnu`, `linux-arm64-gnu`, `darwin-x64`, and `darwin-arm64` only. **No `win32-x64-msvc` binding.** `circle --help` immediately throws `MODULE_NOT_FOUND`. Workaround is WSL2, but it's a meaningful detour for any Windows-first developer. Documented this as a Circle product-feedback line in `docs/SUBMISSION.md`. The developer-controlled wallets we provisioned via API (`scripts/circle-setup.py`) cover the wallet primitive; what we miss out on is the agent-CLI's `wallet-policy` / `wallet-pay` / `discover-services` skills.
 
@@ -72,6 +74,7 @@ We also shipped pieces not on the suggested path that strengthen the same thesis
 
 - **CCTP V2 demo** ([`scripts/cctp-demo.py`](../scripts/cctp-demo.py)) — 1 USDC Sepolia → Arc, end-to-end ~60s. Tx hashes in `docs/SUBMISSION.md`.
 - **Real Irys upload** ([`services/irys/upload.js`](../services/irys/upload.js)) — Bundlr-signed bundles via Node sidecar. Trace JSON is publicly retrievable from the Irys gateway and byte-matches the on-chain hash.
-- **Researcher + Critic two-agent loop** ([`agent/critic.py`](../agent/critic.py)) — Gemini Pro drafts, Gemini Flash audits across 5 categories (fabrication, strawmen, calibration, sensitivity, internal consistency), Pro revises if any fail. Trace records the critic review.
+- **5-agent ensemble** ([`agent/ensemble.py`](../agent/ensemble.py)) — Bull / Bear / Edge run in parallel with isolated context (Gemini Pro × 3), Supervisor merges weighted-Bayesian, Critic (Gemini Flash) audits across six rigor dimensions per the ARA Rigor Reviewer pattern. Single-pass revision loop. Verdict gates publication — rejected receipts never reach the chain. rr-trace/3 schema commits to a Merkle DAG, not a flat blob.
 - **Backtest** ([`agent/resolver.py`](../agent/resolver.py) + [`agent/calibration.py`](../agent/calibration.py)) — Polymarket resolution back-fill + Brier score + 10-bucket reliability curve, surfaced at `/calibration`.
-- **MCP server** ([`services/mcp/server.js`](../services/mcp/server.js)) — oracle exposed to Claude Desktop / Cursor / Cline as a first-class tool. See [`docs/mcp.md`](mcp.md).
+- **MCP server — two surfaces** — free stdio at [`services/mcp/server.js`](../services/mcp/server.js) for Claude Desktop / Cursor / Cline; paywalled HTTP at `/mcp/v1/{get_price,audit}` for agent-to-agent commerce ($0.01 USDC per call, full x402 v2 envelope). See [`docs/mcp.md`](mcp.md).
+- **Live deployment** — `https://rrtrace.xyz` GitHub Pages (custom domain, HTTPS), `https://api.rrtrace.xyz` FastAPI via Cloudflare Tunnel, `https://events.rrtrace.xyz` SSE stream. Daemon emits ~50 receipts/h continuously on Harvey's PC with the `services-watchdog.ps1` Task Scheduler entry restarting the process tree if anything dies.
