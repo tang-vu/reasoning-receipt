@@ -143,7 +143,7 @@ Repo hygiene (run each before submitting):
 - [x] CI green on main: https://github.com/tang-vu/reasoning-receipt/actions
 - [x] Dashboard live: https://rrtrace.xyz
 - [x] V1 contract source-verified on Arc Testnet explorer (`forge verify-contract` via Blockscout, Solidity 0.8.26 with `via_ir`)
-- [x] V2 contract deployed (source-verification pending — Blockscout queue)
+- [x] V2 contract source-verified on Arc Testnet explorer
 
 Submission deliverables (Harvey fills these in the final week):
 

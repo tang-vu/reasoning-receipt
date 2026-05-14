@@ -16,7 +16,8 @@
 | | |
 |---|---|
 | 🌐 **Dashboard** | https://rrtrace.xyz |
-| 🔍 **Contract on Arc** (source-verified) | https://testnet.arcscan.app/address/0x59022EFd46a697bbf2fAd36CcfA8F2099f0bd1Bf |
+| 🌳 **ReceiptRegistryV2** (Merkle root + schema version, source-verified) | https://testnet.arcscan.app/address/0x27d93c52fea923f956345af27f61d7bf47f0c4c1 |
+| 🔍 **ReceiptRegistry V1** (source-verified) | https://testnet.arcscan.app/address/0x59022EFd46a697bbf2fAd36CcfA8F2099f0bd1Bf |
 | 📜 **Receipts emitted on-chain** | **1,500+** and rising (~50/hour, deployer wallet drives it autonomously) |
 | 🎯 **Distinct Polymarket markets priced** | **90+** |
 | 💰 **Per-receipt gas cost** | **$0.000683 USDC** (~1/15 of a cent) |
