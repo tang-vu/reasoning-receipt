@@ -52,11 +52,7 @@ if git rev-parse --quiet --verify origin/main >/dev/null 2>&1; then
   done
 fi
 
-# === Jitter then push ===
-jitter=$(( RANDOM % 85 + 5 ))
-echo "[safe-push] Jitter: sleeping ${jitter}s before push…"
-sleep "$jitter"
-
+# === Push immediately ===
 git push origin main
 echo "$now" > "$last_push_file"
-echo "[safe-push] Pushed at $(TZ=Asia/Ho_Chi_Minh date '+%Y-%m-%d %H:%M %Z')"
+echo "[safe-push] Pushed."
