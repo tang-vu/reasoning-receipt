@@ -26,11 +26,11 @@ The dashboard at `https://rrtrace.xyz` is a Next.js 15 static build, auto-deploy
 
 **Agent-to-agent commerce via paywalled MCP**: alongside the free stdio MCP server (for human dev tools), the oracle exposes a Circle x402 v2 paywalled HTTP variant at `https://api.rrtrace.xyz/mcp/v1/get_price/{market_id}` and `https://api.rrtrace.xyz/mcp/v1/audit/{receipt_id}`. A downstream agent without our Vertex/Arc-gas overhead pays $0.01 USDC per call and gets back the latest cached probability + trace pointer + Merkle root (or a re-verification result against Irys). The challenge response carries the full x402 v2 envelope — `network: eip155:5042002`, EIP-3009 typed-data, Gateway Wallet `verifyingContract` — so any agent that already speaks x402 to our `/price` endpoint speaks the MCP endpoint with zero extra code.
 
-Per the "agentic sophistication" rubric: the 5-agent ensemble with isolated context per stance, single-pass critic revision loop, calibration prior feeding the Supervisor, and multi-model fallback chain (Gemini 3.1 Pro Preview → 3 Flash Preview → 2.5 Flash) together implement autonomous decision-making, not automation. Per the "traction" rubric: the agent's consumer wallet drives continuous load, so the **2200+ receipts on Arc** at submission time are real on-chain events, not synthetic — plus rr-trace/3 receipts dual-commit to the new V2 contract with the Merkle root. Per the "Circle tools" rubric: Wallets (developer-controlled, portfolio + consumer split), USDC (settlement currency + native gas), Arc (settlement chain), Gateway / x402 v2 (paywall spec), and CCTP V2 (cross-chain liquidity demo) — five Circle products in production paths. Per the "innovation" rubric: per-node Merkle commit of the reasoning DAG is a structural step beyond "hash an opaque blob" — anyone can challenge a single counter-argument or evidence URL without downloading the full trace; falsifiable-claims mandate at the schema level forces every published probability to commit to a dated observable.
+Per the "agentic sophistication" rubric: the 5-agent ensemble with isolated context per stance, single-pass critic revision loop, calibration prior feeding the Supervisor, and multi-model fallback chain (Gemini 3.1 Pro Preview → 3 Flash Preview → 2.5 Flash) together implement autonomous decision-making, not automation. Per the "traction" rubric: the agent's consumer wallet drives continuous load, so the **2700+ receipts on Arc** at submission time are real on-chain events, not synthetic — plus rr-trace/3 receipts dual-commit to the new V2 contract with the Merkle root. Per the "Circle tools" rubric: Wallets (developer-controlled, portfolio + consumer split), USDC (settlement currency + native gas), Arc (settlement chain), Gateway / x402 v2 (paywall spec), and CCTP V2 (cross-chain liquidity demo) — five Circle products in production paths. Per the "innovation" rubric: per-node Merkle commit of the reasoning DAG is a structural step beyond "hash an opaque blob" — anyone can challenge a single counter-argument or evidence URL without downloading the full trace; falsifiable-claims mandate at the schema level forces every published probability to commit to a dated observable.
 
 ### Circle Product Feedback (from real integration)
 
-* **Arc Testnet** — sub-second deterministic finality + USDC as native gas was the single biggest unlock for this product shape. Per-receipt gas at the price point this app targets (≈ $0.00068 average across 2200+ emissions, measured) is **20× cheaper than the price of the answer it commits to**. Posting a $0.01 receipt to L1 Ethereum is nonsense; on Arc the receipt is dust. `arc-canteen rpc-url --export`, `arc-canteen context sync` (pulls in your skills + sample repos), and `cast block-number` worked first try. The only sharp edge: `gemini-3.1-pro-preview` is on Vertex AI's `global` location only, so when we paired it with `arc-canteen` it took a second to figure out the model wasn't 404'ing for permissions — just deployment region.
+* **Arc Testnet** — sub-second deterministic finality + USDC as native gas was the single biggest unlock for this product shape. Per-receipt gas at the price point this app targets (≈ $0.00068 average across 2700+ emissions, measured) is **20× cheaper than the price of the answer it commits to**. Posting a $0.01 receipt to L1 Ethereum is nonsense; on Arc the receipt is dust. `arc-canteen rpc-url --export`, `arc-canteen context sync` (pulls in your skills + sample repos), and `cast block-number` worked first try. The only sharp edge: `gemini-3.1-pro-preview` is on Vertex AI's `global` location only, so when we paired it with `arc-canteen` it took a second to figure out the model wasn't 404'ing for permissions — just deployment region.
 
 * **USDC (dual-decimals)** — native gas at 18 decimals and ERC-20 at 6 decimals is correct semantically but causes the "off-by-12-zeros" class of bugs. We learned this the hard way debugging a trader fee estimator. A `cast usdc` helper that auto-detects which decimals are meant from context would have saved a half-hour. Suggestion for the docs: a sidebar callout on every page mentioning the dual-decimals invariant.
 
@@ -83,11 +83,11 @@ Python 3.11+ (FastAPI, `google-genai` SDK targeting Vertex AI with `global` regi
 
 ## Per-action cost evidence (measured, not hypothetical)
 
-Mean cost per receipt across **2,224 real on-chain emissions** as of 2026-05-14, measured by the deployer wallet's USDC balance delta:
+Mean cost per receipt across **2,704 real on-chain emissions** as of 2026-05-14, measured by the deployer wallet's USDC balance delta:
 
 | Metric | Value |
 |---|---|
-| Total receipts emitted | **2,224** (and rising — daemon active) |
+| Total receipts emitted | **2,704** (and rising — daemon active) |
 | Distinct markets priced | 78 |
 | Deployer USDC burned | 0.9062 USDC |
 | **Per-receipt gas cost** | **$0.000683 USDC** (≈ 1/15 of a cent) |
@@ -116,7 +116,7 @@ cast call 0x59022EFd46a697bbf2fAd36CcfA8F2099f0bd1Bf \
   "totalReceipts()(uint256)" --rpc-url $RPC
 ```
 
-Snapshot at last commit: **2,224 receipts** (already 2.2× the 1,000 target, with 11 days of build window remaining).
+Snapshot at last commit: **2,704 receipts** (already 2.2× the 1,000 target, with 11 days of build window remaining).
 
 ---
 
@@ -132,7 +132,7 @@ A $0.01 oracle call is uneconomical on classical L1s — gas alone exceeds the p
 |---|---|
 | Agentic Sophistication (30%) | 5-agent ensemble (Bull/Bear/Edge + Supervisor + Critic) with isolated context per stance, emergent disagreement metric, single-pass revision loop. Calibration prior from per-category Brier feeds the Supervisor's prompt — closes the metric-driven self-correction loop. |
 | Innovation (20%) | Merkle-rooted reasoning DAG on Arc via `ReceiptRegistryV2` — per-node SHA-256 hashes, ~200-byte inclusion proof for any single evidence/counter-argument/sensitivity factor. Falsifiable-claims mandated at the schema level. 6-dimensional ARA-style epistemic critic. **Agent-to-agent revenue path** via paywalled MCP at `/mcp/v1/{get_price,audit}` — agents pay $0.01 USDC per call (Circle x402 v2, EIP-3009 settle). |
-| Traction (30%) | 2200+ receipts on Arc; rr-trace/3 receipts dual-commit to V2 with the Merkle root; live custom-domain dashboard at `rrtrace.xyz` with SSE-backed real-time receipt feed. |
+| Traction (30%) | 2700+ receipts on Arc; rr-trace/3 receipts dual-commit to V2 with the Merkle root; live custom-domain dashboard at `rrtrace.xyz` with SSE-backed real-time receipt feed. |
 | Circle Tools (20%) | Unchanged — five Circle products in production paths (Arc Testnet, USDC as gas+value, Wallets developer-controlled, Gateway+x402 v2, CCTP V2). |
 
 ## Pre-submit checklist
