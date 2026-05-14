@@ -19,15 +19,15 @@ cd dashboard && npm install && npm run dev    # http://localhost:3000
 uv run python -m scripts.seed-demo --count 80
 ```
 
-## Segment 1 — Agent loop (30 s, terminal capture)
+## Segment 1 — 5-agent ensemble (30 s, terminal capture)
 
-Caption: *"The agent runs continuously. Scan markets → produce a probability with Gemini 3.1 Pro Preview (Google Search grounded, via Vertex AI) → hash the trace → emit a Receipt on Arc. Sub-second per cycle."*
+Caption: *"Each market goes through a structured debate. Bull / Bear / Edge run in parallel with isolated context. Supervisor merges. Critic audits across six rigor dimensions. Sub-second per stance, ~3 s per market end-to-end."*
 
-Show two scrolling log lines per second of the agent loop printing `priced X prob=Y conf=Z tx=0x…`. Stop after ~30 s.
+Show scrolling log lines: stance Gemini calls fire in parallel, supervisor synthesises, critic audits, V2 emit fires. Lines look like `loop[v3]: priced X prob=0.62 conf=0.74 disagreement=21.3pp cat=macro tx=0x…`.
 
-## Segment 2 — Paid query (60 s, terminal capture)
+## Segment 2 — Paid query through x402 (60 s, terminal capture)
 
-Caption: *"An external consumer pays $0.01 over x402. Server returns a 402 challenge, consumer signs, server settles on Arc, and returns a receipt."*
+Caption: *"An external consumer pays $0.01 over x402. Server returns a 402 challenge with the PAYMENT-REQUIRED body, consumer signs an EIP-3009 TransferWithAuthorization, server settles via Circle Gateway and emits a ReceiptV2 with the Merkle root of the reasoning DAG."*
 
 Run:
 
@@ -35,19 +35,28 @@ Run:
 uv run python -m scripts.demo-runner
 ```
 
-The script prints a markdown table of 5 receipts with probability, confidence, latency, and the Arc tx hash. Total cost: $0.05 USDC.
+The script prints a markdown table of 5 receipts with probability, confidence, latency, the Merkle root, and the Arc tx hash. Total cost: $0.05 USDC.
 
-## Segment 3 — Dashboard (45 s, headless browser)
+## Segment 3 — Dashboard tour (45 s, headless browser)
 
-Caption: *"The public dashboard reads on-chain receipts and renders PnL, trace explorer, and per-market volume. Anyone can verify any receipt by re-hashing the trace from Irys."*
+Caption: *"Live SSE-backed receipt feed at rrtrace.xyz. Click a v3 receipt → see the ensemble panel (3 stances + supervisor weights), the critic's 6-dim audit, the falsifiable claims. Click Verify → fetch the trace from Irys, re-canonicalise, re-hash client-side, compare to the on-chain hash. Byte-for-byte."*
 
-Headless Chrome walks through `/` → `/traces` → `/traces/{id}` → `/events` → `/stats`. Each page renders in <1 s, no client-side fetching, everything server-rendered.
+Playwright tour: `/` (hero + live feed + capability pills) → `/traces` (archive) → `/traces/{v3_id}` (ensemble panel, critic radar, falsifiables, verify button) → `/calibration` (Brier + reliability) → `/stats`.
 
-## Segment 4 — Arc explorer (30 s, browser capture)
+```bash
+uv run python -m scripts.record-demo --v3-trace-id <recent-v3-id>
+```
 
-Caption: *"Every receipt is a real on-chain event. Here's the contract event log on Arc testnet."*
+## Segment 4 — On-chain Merkle proof (30 s, terminal + explorer)
 
-Open the explorer URL for `RECEIPT_REGISTRY_ADDRESS`, switch to the **Events** tab, and scroll through the `Receipt` log lines emitted during the demo.
+Caption: *"Every node of the reasoning DAG — every evidence URL, every counter-argument, every sensitivity factor — gets its own SHA-256 and lives under the Merkle root on Arc. Here's a single-node inclusion proof passing on-chain via verifyInclusion."*
+
+```bash
+# Generate proof off-chain + verify on-chain (~200 bytes)
+uv run python -m scripts.verify-receipt --node <node_id> <receipt_id>
+```
+
+Then open the explorer URL for `RECEIPT_REGISTRY_V2_ADDRESS` and switch to the **Events** tab — judges see the `ReceiptV2(...)` log entries with the merkleRoot field populated.
 
 ## Segment 5 — Title card (15 s)
 
