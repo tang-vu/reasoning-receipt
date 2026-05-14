@@ -1,8 +1,20 @@
 /**
  * API client for the ReasoningReceipt FastAPI server.
  *
- * Reads from /api/* which is rewritten in next.config.mjs to the FastAPI
- * URL. In production set NEXT_PUBLIC_DASHBOARD_API_URL to the deployed API.
+ * Three modes, picked at build/runtime by env vars:
+ *
+ *  1. Live mode (production custom domain) — set
+ *     `NEXT_PUBLIC_LIVE_API_BASE=https://api.rrtrace.xyz`. Every call hits
+ *     the deployed FastAPI via Cloudflare Tunnel. If a call fails (tunnel
+ *     down, CORS, network), falls through to snapshot data if available.
+ *
+ *  2. Snapshot-only mode (build-time prerender) — set
+ *     `NEXT_PUBLIC_USE_SNAPSHOT=1` AND leave `NEXT_PUBLIC_LIVE_API_BASE`
+ *     unset. Pages render from the committed snapshot.json. No network.
+ *
+ *  3. Local dev mode — neither env var set. Calls `/api/*` which
+ *     `next.config.mjs` rewrites to `NEXT_PUBLIC_DASHBOARD_API_URL`
+ *     (defaults to http://localhost:8000).
  */
 
 export interface TraceRow {
@@ -28,7 +40,9 @@ export interface StatsResponse {
   latest_receipt_at: string | null;
 }
 
-const base = "/api";
+const liveApiBase =
+  (typeof process !== "undefined" && process.env.NEXT_PUBLIC_LIVE_API_BASE) || "";
+const devBase = "/api";
 
 interface Snapshot {
   version: string;
@@ -70,50 +84,86 @@ async function loadSnapshot(): Promise<Snapshot> {
   return _snapshot;
 }
 
-async function getJSON<T>(path: string): Promise<T> {
-  if (useSnapshot) {
-    const snap = await loadSnapshot();
-    if (path.startsWith("/receipts?")) {
-      const limit = Number(new URLSearchParams(path.split("?")[1]).get("limit") ?? 100);
-      return snap.receipts.slice(0, limit) as unknown as T;
-    }
-    if (path.startsWith("/receipts/")) {
-      const id = Number(path.split("/").pop());
-      const row = snap.receipts.find((r) => r.id === id);
-      if (!row) throw new Error("receipt not found");
-      return row as unknown as T;
-    }
-    if (path === "/stats") return snap.stats as unknown as T;
-    if (path === "/calibration") {
-      const cal = snap.calibration ?? {
-        total_resolved: 0,
-        distinct_resolved_markets: 0,
-        brier_score: 0,
-        brier_high_conf: null,
-        brier_low_conf: null,
-        buckets: [],
-      };
-      return cal as unknown as T;
-    }
-    if (path.startsWith("/verify/")) {
-      // Static snapshot can't verify against Irys — return a synthetic response
-      // so the UI doesn't crash. Live deployment uses the real /verify endpoint.
-      const id = Number(path.split("/")[2]);
-      const row = snap.receipts.find((r) => r.id === id);
-      return {
-        verified: false,
-        reason: "static snapshot mode — run locally to verify against Irys",
-        stored: row ?? null,
-        fetched_trace: null,
-        recomputed_hash: null,
-        irys_gateway_url: row?.trace_cid ? `https://gateway.irys.xyz/${row.trace_cid.replace("ar://", "")}` : null,
-      } as unknown as T;
-    }
-    throw new Error(`snapshot mode: unsupported path ${path}`);
+async function fromSnapshot<T>(path: string): Promise<T> {
+  const snap = await loadSnapshot();
+  if (path.startsWith("/receipts?")) {
+    const limit = Number(new URLSearchParams(path.split("?")[1]).get("limit") ?? 100);
+    return snap.receipts.slice(0, limit) as unknown as T;
   }
-  const r = await fetch(`${base}${path}`, { cache: "no-store" });
+  if (path.startsWith("/receipts/")) {
+    const id = Number(path.split("/").pop());
+    const row = snap.receipts.find((r) => r.id === id);
+    if (!row) throw new Error("receipt not found");
+    return row as unknown as T;
+  }
+  if (path === "/stats") return snap.stats as unknown as T;
+  if (path === "/calibration") {
+    const cal = snap.calibration ?? {
+      total_resolved: 0,
+      distinct_resolved_markets: 0,
+      brier_score: 0,
+      brier_high_conf: null,
+      brier_low_conf: null,
+      buckets: [],
+    };
+    return cal as unknown as T;
+  }
+  if (path.startsWith("/verify/")) {
+    // Static snapshot can't verify against Irys — return a synthetic response
+    // so the UI doesn't crash. Live deployment uses the real /verify endpoint.
+    const id = Number(path.split("/")[2]);
+    const row = snap.receipts.find((r) => r.id === id);
+    return {
+      verified: false,
+      reason: "static snapshot mode — run locally to verify against Irys",
+      stored: row ?? null,
+      fetched_trace: null,
+      recomputed_hash: null,
+      irys_gateway_url: row?.trace_cid
+        ? `https://gateway.irys.xyz/${row.trace_cid.replace("ar://", "")}`
+        : null,
+    } as unknown as T;
+  }
+  throw new Error(`snapshot mode: unsupported path ${path}`);
+}
+
+async function getJSON<T>(path: string): Promise<T> {
+  // Mode 1: live API base set — try the deployed backend first, snapshot as fallback.
+  if (liveApiBase) {
+    try {
+      const r = await fetch(`${liveApiBase}${path}`, { cache: "no-store" });
+      if (!r.ok) throw new Error(`${path} failed: ${r.status}`);
+      return (await r.json()) as T;
+    } catch (err) {
+      if (useSnapshot) {
+        // Backend unreachable but a snapshot exists — degrade gracefully.
+        return fromSnapshot<T>(path);
+      }
+      throw err;
+    }
+  }
+  // Mode 2: snapshot-only.
+  if (useSnapshot) return fromSnapshot<T>(path);
+  // Mode 3: local dev — Next rewrites /api/* to NEXT_PUBLIC_DASHBOARD_API_URL.
+  const r = await fetch(`${devBase}${path}`, { cache: "no-store" });
   if (!r.ok) throw new Error(`${path} failed: ${r.status}`);
   return (await r.json()) as T;
+}
+
+/** Base URL for the SSE event stream. Live mode uses events.rrtrace.xyz,
+ * snapshot/dev modes use the same `/api` base since they hit the local API.
+ * SSE doesn't have a snapshot fallback — when live is down, the UI just
+ * shows static last-known data without live updates. */
+export function eventsStreamUrl(): string {
+  if (liveApiBase) {
+    // Try a dedicated events subdomain first (longer keepalive in CF Tunnel
+    // config), fall back to the main API base.
+    if (typeof process !== "undefined" && process.env.NEXT_PUBLIC_EVENTS_BASE) {
+      return `${process.env.NEXT_PUBLIC_EVENTS_BASE}/events/stream`;
+    }
+    return `${liveApiBase}/events/stream`;
+  }
+  return `${devBase}/events/stream`;
 }
 
 export interface CalibrationBucket {

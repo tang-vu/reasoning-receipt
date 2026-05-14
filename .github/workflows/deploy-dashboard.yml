@@ -67,10 +67,14 @@ jobs:
           EOF
           fi
 
-      - name: Build (snapshot mode, custom-domain root)
+      - name: Build (live API + snapshot fallback, custom-domain root)
         working-directory: dashboard
         env:
+          # Snapshot is the build-time fallback if live API is down at page load.
           NEXT_PUBLIC_USE_SNAPSHOT: "1"
+          # Live API via Cloudflare Tunnel — backend on Harvey's PC.
+          NEXT_PUBLIC_LIVE_API_BASE: "https://api.rrtrace.xyz"
+          NEXT_PUBLIC_EVENTS_BASE: "https://events.rrtrace.xyz"
           # rrtrace.xyz custom domain serves from root → no basePath.
           # Keep this in sync with dashboard/public/CNAME.
           NEXT_PUBLIC_BASE_PATH: ""
