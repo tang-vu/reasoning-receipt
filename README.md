@@ -121,6 +121,17 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full design, [docs/DEMO
 
 Four tools: `get_price`, `verify_receipt`, `get_stats`, `get_calibration`. Full setup in [docs/mcp.md](docs/mcp.md).
 
+### Paywalled MCP — agents pay x402 to call the oracle
+
+For agent-to-agent commerce we also expose an x402-paywalled HTTP variant under `/mcp/v1/` on the same FastAPI server. Two tools:
+
+```
+GET https://api.rrtrace.xyz/mcp/v1/get_price/{market_id}    # $0.01 USDC
+GET https://api.rrtrace.xyz/mcp/v1/audit/{receipt_id}       # $0.01 USDC
+```
+
+Both return a Circle x402 v2 challenge on first call (`network: eip155:5042002`, `amount: 10000` micro-USDC, `payTo`: oracle receiver, `verifyingContract`: Arc Testnet Gateway Wallet). The consumer agent signs an EIP-3009 `TransferWithAuthorization`, retries with `X-Payment`, the server settles via `gateway-api-testnet.circle.com/v1/settle` and returns the cached latest price (or byte-for-byte audit) for that market. Pure agent-to-agent revenue path: no upstream Gemini / Arc gas cost per call because the receipt was already pre-minted by the daemon.
+
 ## Repo layout
 
 ```

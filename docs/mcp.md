@@ -10,6 +10,18 @@ The wedge of the project is *trace as the product* — a probability plus a hash
 - **Inside Cursor / Cline**, an agent writing trading code can call `verify_receipt` to byte-check a third-party oracle's claim before quoting it.
 - **For other AI agents** building on top of our oracle, MCP gives them a structured tool surface that's tracked across LLM frameworks (Anthropic, OpenAI, Google ADK).
 
+## Two surfaces: free stdio MCP + paywalled HTTP MCP
+
+ReasoningReceipt exposes **two** MCP-style integration paths:
+
+1. **Free stdio MCP** (`services/mcp/server.js`) — for human dev tools (Claude Desktop, Cursor, Cline, Continue). Reads from the public `/receipts` cache. No payment. Documented below.
+
+2. **Paywalled HTTP MCP** at `/mcp/v1/...` — for agent-to-agent commerce. Each tool call is gated by Circle x402 v2 ($0.01 USDC per call). Two endpoints:
+   - `GET https://api.rrtrace.xyz/mcp/v1/get_price/{market_id}` — latest cached price for a market id, complete with trace_hash + trace_cid + arc_tx_hash + merkle_root.
+   - `GET https://api.rrtrace.xyz/mcp/v1/audit/{receipt_id}` — re-verify a receipt by pulling the trace from Irys, re-canonicalising, re-hashing, comparing to the on-chain hash.
+
+   The first call to either endpoint returns a `402 Payment Required` with the standard x402 v2 challenge body (`network: eip155:5042002`, EIP-3009 `TransferWithAuthorization` typed data, Gateway Wallet `verifyingContract`). The consumer signs and retries with `X-Payment`; the server settles via `gateway-api-testnet.circle.com/v1/settle` and returns the cached data. Server-side cost is ~zero (the receipt was already minted by the daemon), so the endpoint is pure agent-to-agent revenue.
+
 ## Tools
 
 | Tool | Args | Returns |
