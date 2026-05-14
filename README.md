@@ -15,29 +15,39 @@
 
 | | |
 |---|---|
-| 🌐 **Dashboard** | https://rrtrace.xyz |
-| 🌳 **ReceiptRegistryV2** (Merkle root + schema version, source-verified) | https://testnet.arcscan.app/address/0x27d93c52fea923f956345af27f61d7bf47f0c4c1 |
+| 🌐 **Dashboard** (live + snapshot fallback) | https://rrtrace.xyz |
+| 🔌 **Live API** (FastAPI via Cloudflare Tunnel) | https://api.rrtrace.xyz/stats |
+| 📡 **SSE event stream** | https://events.rrtrace.xyz/events/stream |
+| 🌳 **ReceiptRegistryV2** (Merkle root + schemaVersion, source-verified) | https://testnet.arcscan.app/address/0x27d93c52fea923f956345af27f61d7bf47f0c4c1 |
 | 🔍 **ReceiptRegistry V1** (source-verified) | https://testnet.arcscan.app/address/0x59022EFd46a697bbf2fAd36CcfA8F2099f0bd1Bf |
-| 📜 **Receipts emitted on-chain** | **2,200+** and rising (~50/hour, deployer wallet drives it autonomously) |
-| 🎯 **Distinct Polymarket markets priced** | **90+** |
+| 📜 **Receipts emitted on-chain** | **2,580+** and rising (~50/hour, ensemble path on V2 — byte-verifiable from #2273 forward) |
+| 🎯 **Distinct Polymarket markets priced** | **160+** |
 | 💰 **Per-receipt gas cost** | **$0.000683 USDC** (~1/15 of a cent) |
 | 🧪 **Cross-chain demo** | 1 USDC moved Sepolia → Arc via CCTP V2 ([burn tx](https://sepolia.etherscan.io/tx/0x2aebe23128bb7742c6c3babbd32889c29f3b938940176c41d794169a28f4d615) / [mint tx](https://testnet.arcscan.app/tx/0x8a4ae433cfef773298bb766e1ea4c2d5d1f5005f3a5002fbe03439c370baeccf)) |
-| 🏷️ **Release** | [v0.1.0-rc1](https://github.com/tang-vu/reasoning-receipt/releases/tag/v0.1.0-rc1) |
+| 🏷️ **Latest release** | [v0.3.0](https://github.com/tang-vu/reasoning-receipt/releases/tag/v0.3.0) |
 
-**Verify the wedge yourself** — pull any trace from the public Irys gateway and re-hash it client-side:
+**Verify the wedge yourself** — pull any v3 trace from the public Irys gateway and re-hash it client-side:
 
 ```bash
-uv run python -m scripts.verify-receipt 1500 --base-url http://localhost:8000
+uv run python -m scripts.verify-receipt 2580 --base-url https://api.rrtrace.xyz
 # verdict           : VERIFIED [OK]
 ```
 
-Or offline, without trusting our server: pass a `--cid` and `--expected-hash`, the script fetches from `gateway.irys.xyz` directly and recomputes SHA-256.
+Or offline, without trusting our server: pass a `--cid` and `--expected-hash`, the script fetches from `gateway.irys.xyz` directly and recomputes SHA-256. For a single evidence URL inside the trace, the V2 contract's `verifyInclusion(root, leaf, proof)` view accepts a ~200-byte Merkle proof — no full trace download required.
 
 ---
 
 ## What it is
 
-A paid oracle: pay a few cents of USDC over [x402](https://docs.cdp.coinbase.com/x402/docs/welcome), get a probability for a Polymarket or Kalshi event, **plus a receipt** — a hashed, on-chain pointer to the full chain-of-thought that produced the number. The trace lives on Irys (Arweave-compatible). The SHA-256 of its canonical bytes lives on Arc inside `ReceiptRegistry.sol`. Anyone can pull the trace, re-canonicalize, re-hash, and byte-match. **There is no "trust the publisher" step.**
+A paid oracle: pay a few cents of USDC over [x402 v2](https://docs.cdp.coinbase.com/x402/docs/welcome), get a probability for a Polymarket event, **plus a receipt** — a hashed, byte-verifiable, **Merkle-rooted reasoning DAG** committed to Arc.
+
+Each market goes through a **5-agent ensemble**:
+
+1. **Bull**, **Bear**, **Edge** — three Gemini Pro researchers run in parallel with **isolated context**. Bull argues YES, Bear argues NO, Edge surfaces tail risks both partisans take for granted.
+2. **Supervisor** — weighted-Bayesian merge with stance weights ∈ [0.1, 0.7] summing to 1.0. Mandates ≥ 1 falsifiable claim with a `checkable_by` date. Consumes a per-category Brier prior from past resolutions.
+3. **Critic** (Gemini Flash) — audits across six rigor dimensions: evidence relevance, falsifiability, scope, coherence, exploration integrity, methodology. Verdict gates publication; rejected receipts never reach the chain.
+
+Every node of the resulting DAG (claim, evidence, counter-arguments, sensitivity factors, falsifiable claims, critic dimensions) gets its own SHA-256, and a **Merkle root** over all nodes lives on Arc inside `ReceiptRegistryV2.sol`. Anyone can pull the trace from Irys, re-canonicalise it, re-hash it, and byte-match — or challenge a single evidence URL with a ~200-byte inclusion proof via `verifyInclusion(root, leaf, proof)`. **There is no "trust the publisher" step.**
 
 The product isn't the number. The product is the auditable trace.
 
