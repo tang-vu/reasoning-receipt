@@ -6,23 +6,25 @@ Copy-paste-ready text for every form field. Fill in the bracketed placeholders b
 
 ## Short description (≤ 140 chars)
 
-> An x402-paywalled prediction-market oracle. Every price ships with a Gemini-grounded reasoning trace, settled on Arc in <1 s for ~$0.01.
+> Prediction-market oracle whose product is a 5-agent reasoning DAG, byte-verifiable on Arc via Merkle root. x402-paywalled.
 
-(134 chars.)
+(125 chars.)
 
 ---
 
 ## Long description (~800 words)
 
-ReasoningReceipt is an on-chain oracle for prediction markets where the **reasoning trace is the product, not just the number**. A consumer pays a few cents of USDC over x402, gets back a probability for a Polymarket or Kalshi event, and — critically — a **receipt**: a hashed, content-addressed pointer to the full chain-of-thought that produced the number. The trace lives on Irys (Arweave-compatible), the SHA-256 of its canonical bytes lives on Arc inside `ReceiptRegistry.sol`. Anyone can pull the trace, re-canonicalize it, hash it, and verify byte-for-byte that the published reasoning is what the oracle actually emitted. There is no "trust the publisher" step.
+ReasoningReceipt is an on-chain oracle for prediction markets where the **reasoning trace is the product, not just the number**. A consumer pays a few cents of USDC over x402, gets back a probability for a Polymarket or Kalshi event, and — critically — a **receipt**: a hashed, content-addressed pointer to the full chain-of-thought that produced the number. The trace lives on Irys (Arweave-compatible). In **rr-trace/3** (the current schema), every NODE of the reasoning DAG gets its own SHA-256, and a Merkle root over all node hashes lands on Arc inside `ReceiptRegistryV2.sol`. Anyone can pull the trace, re-canonicalize it, hash it, and verify byte-for-byte that the published reasoning is what the oracle actually emitted — **and** they can challenge a single evidence URL with a ~200-byte inclusion proof without downloading the full trace. There is no "trust the publisher" step.
 
-The agent itself is a four-stage loop. A **scanner** polls Polymarket Gamma for liquid (> $10k 24h volume), near-resolution (≤ 30 days), English-language markets. An **analyst** stage calls Gemini 3.1 Pro Preview via Vertex AI with Google Search grounding and a strict structured-output prompt that demands a probability, calibrated confidence, at least two cited sources with URLs, at least one weighted counter-argument, and a sensitivity analysis. A **trace** stage canonicalizes that output — sorted keys, UTF-8, fixed 6-decimal floats, UTC timestamps — hashes it with SHA-256, and pins the bytes to Irys. A **trader** stage takes the analyst's probability, computes edge against the current market mid, and (when edge ≥ 4 pp and confidence ≥ 0.5) submits a Kelly-sized order on Polymarket capped at 5 % of the portfolio bankroll, half-Kelly when confidence is below 0.7. The portfolio wallet is a Circle developer-controlled wallet on Arc; a *separate* Circle wallet ("consumer wallet") pays the oracle for events the trader is sizing. The agent is, honestly, eating its own cooking — on-chain volume is real, not synthetic.
+The agent runs a **5-agent ensemble** per market, not a single LLM call. Three sub-researchers run in parallel with isolated context — **Bull** advocates the strongest case for YES, **Bear** the strongest case for NO, and **Edge** surfaces the tail risks both partisans take for granted. A **Supervisor** then weighs their drafts (each weight in [0.1, 0.7], summing to 1.0), computes a weighted-Bayesian final probability, surfaces a disagreement_pp metric, and mandates at least one **falsifiable claim** — a concrete, dated observable that would invalidate the prediction. Finally a **Critic** (Gemini Flash) audits the supervisor's output across six rigor dimensions: evidence relevance, falsifiability, scope, coherence, exploration integrity, methodology. Verdict is approved / needs_revision (one revision pass) / rejected (not emitted). Receipts that fail audit never reach the chain. The whole ensemble runs continuously: a scanner polls Polymarket Gamma for liquid (> $10k 24h volume), near-resolution (≤ 30 days), English-language markets every five minutes; a trader stage takes the ensemble's probability, computes edge against the market mid, and (when edge ≥ 4 pp and confidence ≥ 0.5) Kelly-sizes a position from the portfolio wallet capped at 5% of bankroll. The agent eats its own cooking — on-chain volume is real consumer-wallet load on its own oracle.
+
+A **calibration feedback loop** closes the agentic story: a resolver polls Polymarket Gamma for resolved markets and back-fills outcomes; a per-category Brier + over-under bias is fed back into the Supervisor's prompt as a prior. If the past 30 days of macro predictions show overconfidence bias +0.06, the next macro market's Supervisor sees that line and tempers extremes accordingly. This is metric-driven self-correction, not a static prompt.
 
 The server is the second face of the same oracle. A FastAPI endpoint `GET /price/<market_id>` returns **402 Payment Required** with a Circle Gateway / x402-v2 `PAYMENT-REQUIRED` body — `network: eip155:5042002`, `asset` set to USDC on Arc, `amount` in micro-USDC, `extra.verifyingContract` pointing at the Arc Testnet Gateway Wallet (`0x0077777d7EBA4688BDeF3E311b846F25870A19B9`). The consumer signs an EIP-3009 `TransferWithAuthorization` payload, retries with `X-Payment`, and the server forwards to Circle's facilitator `/v1/settle` for gasless USDC settlement. The trace is sealed (canonical JSON → SHA-256 → real Irys upload via the `@irys/upload` SDK), `Receipt(...)` is emitted on Arc, the row is persisted, and the response carries the price plus the trace pointer.
 
-The dashboard at `https://rrtrace.xyz` is a Next.js 15 static build, auto-deployed by GitHub Actions on every push to `dashboard/**` or whenever a fresh snapshot is committed. Snapshot mode reads a frozen `public/snapshot.json` exported from the live SQLite — judges click a URL and see real on-chain truth without our backend needing to stay up. The home page renders total receipts, USDC settled, distinct markets, distinct consumers, a 24-bucket volume chart, and the most recent receipts. Each trace page has a **Verify** button that pulls the trace JSON from Irys, re-canonicalises it, re-hashes it client-side, and shows a byte-for-byte verdict against the on-chain hash — the wedge is auditable, not just claimed.
+The dashboard at `https://rrtrace.xyz` is a Next.js 15 static build, auto-deployed by GitHub Actions on every push to `dashboard/**` or whenever a fresh snapshot is committed. It runs in hybrid mode: live API (via Cloudflare Tunnel → backend on Harvey's PC) for real-time data, frozen `snapshot.json` as fallback when the tunnel hiccups. The home page has an SSE-backed **live receipts feed** — new receipts ticker in as the daemon emits them; a v3 pill flags ensemble-built traces alongside their disagreement_pp. Each trace page has a **Verify** button that pulls the trace JSON from Irys, re-canonicalises it, re-hashes it client-side, and shows a byte-for-byte verdict against the on-chain hash — for rr-trace/3 traces it also renders the **Ensemble panel** (Bull / Bear / Edge stance cards with per-stance weights), the **Critic radar** (six dim bars), and the **falsifiable-claims list**. The wedge is auditable, not just claimed.
 
-Per the "agentic sophistication" rubric: a multi-stage autonomous loop (scan → analyse → seal → publish → trade) that re-prices every market on a 5-minute cooldown, sources fresh news via Gemini's Google Search grounding, and routes between Gemini 3.1 Pro Preview, Gemini 3 Flash Preview, and Gemini 2.5 Flash via an automatic fallback chain — the chain has fired hundreds of times in production when Pro Preview hits 429 quota mid-tick, transparently keeping the loop alive. Per the "traction" rubric: the agent's consumer wallet drives continuous load, so the **1300+ receipts on Arc** at submission time are real on-chain events, not synthetic. Per the "Circle tools" rubric: Wallets (developer-controlled, portfolio + consumer split), USDC (settlement currency + native gas), Arc (settlement chain), Gateway / x402 v2 (paywall spec), and CCTP V2 (cross-chain liquidity demo) — five Circle products in production paths. Per the "innovation" rubric: traces are byte-verifiable end-to-end (Irys → re-hash → match), and the multi-model auto-routing is itself emergent agentic behaviour.
+Per the "agentic sophistication" rubric: the 5-agent ensemble with isolated context per stance, single-pass critic revision loop, calibration prior feeding the Supervisor, and multi-model fallback chain (Gemini 3.1 Pro Preview → 3 Flash Preview → 2.5 Flash) together implement autonomous decision-making, not automation. Per the "traction" rubric: the agent's consumer wallet drives continuous load, so the **1500+ receipts on Arc** at submission time are real on-chain events, not synthetic — plus rr-trace/3 receipts dual-commit to the new V2 contract with the Merkle root. Per the "Circle tools" rubric: Wallets (developer-controlled, portfolio + consumer split), USDC (settlement currency + native gas), Arc (settlement chain), Gateway / x402 v2 (paywall spec), and CCTP V2 (cross-chain liquidity demo) — five Circle products in production paths. Per the "innovation" rubric: per-node Merkle commit of the reasoning DAG is a structural step beyond "hash an opaque blob" — anyone can challenge a single counter-argument or evidence URL without downloading the full trace; falsifiable-claims mandate at the schema level forces every published probability to commit to a dated observable.
 
 ### Circle Product Feedback (from real integration)
 
@@ -62,7 +64,8 @@ Per the "agentic sophistication" rubric: a multi-stage autonomous loop (scan →
 | GitHub | https://github.com/tang-vu/reasoning-receipt |
 | Demo video | `[YouTube unlisted URL — fill in after recording]` |
 | Live dashboard | https://rrtrace.xyz |
-| Contract on Arc — ReceiptRegistry (source-verified) | https://testnet.arcscan.app/address/0x59022EFd46a697bbf2fAd36CcfA8F2099f0bd1Bf |
+| Contract on Arc — ReceiptRegistryV2 (Merkle root + schema version) | https://testnet.arcscan.app/address/0x27d93c52fea923f956345af27f61d7bf47f0c4c1 |
+| Contract on Arc — ReceiptRegistry V1 (source-verified) | https://testnet.arcscan.app/address/0x59022EFd46a697bbf2fAd36CcfA8F2099f0bd1Bf |
 | Contract on Arc — CanteenUSDC wrapper (source-verified) | https://testnet.arcscan.app/address/0x7473d0db92F77aA89F19A2D74174D14D14CBD3E1 |
 | Latest release | https://github.com/tang-vu/reasoning-receipt/releases/tag/v0.1.0-rc1 |
 | Team | Solo — Vu Minh Tang (`tang-vu`) |
@@ -72,7 +75,7 @@ Per the "agentic sophistication" rubric: a multi-stage autonomous loop (scan →
 
 ## Tech stack
 
-Python 3.11+ (FastAPI, `google-genai` SDK targeting Vertex AI with `global` region, web3.py, SQLAlchemy 2.0, `eth_account`, `cryptography` for the RSA-OAEP entity-secret encryption), Solidity 0.8.26 (Foundry 1.7.1), Node sidecars for `@irys/upload` + `@irys/upload-ethereum` (Bundlr-signed trace bundles), TypeScript / Next.js 15 / Tailwind / Recharts, Arc testnet, Circle developer-controlled Wallets, Circle Gateway Nanopayments (x402 v2), CCTP V2 (Iris attestation API), Polymarket Gamma API, Irys (devnet + Arweave gateway). GitHub Pages for the dashboard; GitHub Actions for CI + auto-deploy. ~5,000 lines of code across the stack.
+Python 3.11+ (FastAPI, `google-genai` SDK targeting Vertex AI with `global` region, web3.py, SQLAlchemy 2.0, `eth_account`, `cryptography` for the RSA-OAEP entity-secret encryption), Solidity 0.8.26 (Foundry 1.7.1) with `via_ir=true`, Node sidecars for `@irys/upload` + `@irys/upload-ethereum` (Bundlr-signed trace bundles), TypeScript / Next.js 15 / Tailwind / Recharts. Arc Testnet (chain id 5042002), Circle developer-controlled Wallets, Circle Gateway Nanopayments (x402 v2), CCTP V2 (Iris attestation API), Polymarket Gamma API, Irys (devnet + Arweave gateway). MCP server (`@modelcontextprotocol/sdk`) exposes the oracle as a stdio tool for Claude Desktop / Cursor / Cline. GitHub Pages with the rrtrace.xyz custom domain for the dashboard; Cloudflare Tunnel terminates TLS on `api.rrtrace.xyz` and `events.rrtrace.xyz` for the live API + SSE stream. GitHub Actions for CI + auto-deploy. ~6,500 lines of code across the stack.
 
 ---
 
@@ -121,16 +124,26 @@ A $0.01 oracle call is uneconomical on classical L1s — gas alone exceeds the p
 
 ---
 
+## What's new in rr-trace/3 (rubric-mapped delta from v0.2.0)
+
+| Lever | What's new |
+|---|---|
+| Agentic Sophistication (30%) | 5-agent ensemble (Bull/Bear/Edge + Supervisor + Critic) with isolated context per stance, emergent disagreement metric, single-pass revision loop. Calibration prior from per-category Brier feeds the Supervisor's prompt — closes the metric-driven self-correction loop. |
+| Innovation (20%) | Merkle-rooted reasoning DAG on Arc via `ReceiptRegistryV2` — per-node SHA-256 hashes, ~200-byte inclusion proof for any single evidence/counter-argument/sensitivity factor. Falsifiable-claims mandated at the schema level. 6-dimensional ARA-style epistemic critic. |
+| Traction (30%) | 1500+ receipts on Arc; rr-trace/3 receipts dual-commit to V2 with the Merkle root; live custom-domain dashboard at `rrtrace.xyz` with SSE-backed real-time receipt feed. |
+| Circle Tools (20%) | Unchanged — five Circle products in production paths (Arc Testnet, USDC as gas+value, Wallets developer-controlled, Gateway+x402 v2, CCTP V2). |
+
 ## Pre-submit checklist
 
 Repo hygiene (run each before submitting):
 
 - [x] `.env` is gitignored, not committed
-- [x] `git ls-files | grep -E "^(CLAUDE|notes/|\.claude|AGENTS)"` returns empty
+- [x] `git ls-files | grep -E "^(CLAUDE|notes/|plans/|\.claude|AGENTS)"` returns empty
 - [x] `git ls-files | xargs grep -l "sk-ant\\|0x[a-f0-9]\\{64\\}"` returns empty (no committed secrets)
 - [x] CI green on main: https://github.com/tang-vu/reasoning-receipt/actions
 - [x] Dashboard live: https://rrtrace.xyz
-- [x] Contract source-verified on Arc Testnet explorer (`forge verify-contract` via Blockscout, Solidity 0.8.26 with `via_ir`)
+- [x] V1 contract source-verified on Arc Testnet explorer (`forge verify-contract` via Blockscout, Solidity 0.8.26 with `via_ir`)
+- [x] V2 contract deployed (source-verification pending — Blockscout queue)
 
 Submission deliverables (Harvey fills these in the final week):
 
