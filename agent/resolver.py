@@ -1,22 +1,21 @@
 """resolver — back-fill `resolved_outcome` on receipts whose market has closed.
 
-Polls Polymarket Gamma for each distinct unresolved market the agent has
-priced. When Gamma reports the market as closed and the outcome is known,
-writes `resolved_at` + `resolved_outcome` (0.0 or 1.0) to every receipt for
-that market. After enough markets resolve, `agent.calibration` can compute
-Brier / reliability curves.
+Polls Polymarket Gamma + Kalshi Trade API for each distinct unresolved market
+the agent has priced. When the venue reports the market as closed and the
+outcome is known, writes `resolved_at` + `resolved_outcome` (0.0 or 1.0) to
+every receipt for that market. After enough markets resolve, `agent.calibration`
+can compute Brier / reliability curves split by source.
 
-Heuristic for the YES probability at resolution:
+Heuristics:
 
-  - Polymarket Gamma `/markets` returns `outcomes` (list of label strings)
-    and `outcomePrices` (matching list of stringified close prices in [0, 1]).
-  - For a binary market with outcomes = ["Yes", "No"]:
-      * If `closed` is true AND `outcomePrices[0]` parses to ~1.0 → YES
-      * If `closed` is true AND `outcomePrices[0]` parses to ~0.0 → NO
-      * Anything else is treated as "not yet conclusively resolved".
+* **Polymarket** (Gamma): a market has `closed=true` plus `outcomePrices`. For
+  binary outcomes (["Yes","No"]) the close price within 5% of 1.0 → YES,
+  within 5% of 0.0 → NO, else ambiguous (skip).
+* **Kalshi** (Trade API): a finalized binary market has
+  `status in {"finalized", "settled", "determined"}` plus `result in {"yes", "no"}`.
 
-Mock-friendly: if the Polymarket fetch fails or returns nothing useful, the
-resolver logs a warning and returns 0 — never crashes the caller.
+Mock-friendly: if a fetch fails or returns nothing useful, the resolver logs a
+warning and continues with the next market — never crashes the caller.
 """
 
 from __future__ import annotations
@@ -35,7 +34,9 @@ from storage.db import Session
 logger = logging.getLogger("rr.resolver")
 
 POLYMARKET_GAMMA_MARKET = "https://gamma-api.polymarket.com/markets"
+KALSHI_MARKET = "https://api.elections.kalshi.com/trade-api/v2/markets/{ticker}"
 RESOLVED_THRESHOLD = 0.95  # how close to 1.0 / 0.0 a close price must be to count
+_KALSHI_FINAL_STATES = {"finalized", "settled", "determined"}
 
 
 @dataclass(slots=True)
@@ -86,53 +87,88 @@ def _fetch_market(client: httpx.Client, market_id: str, url: str = POLYMARKET_GA
     return None
 
 
+def _fetch_kalshi(client: httpx.Client, ticker: str) -> dict | None:
+    """Pull a single Kalshi market by ticker. Returns the inner `market` dict."""
+    try:
+        resp = client.get(KALSHI_MARKET.format(ticker=ticker), timeout=10.0)
+        if resp.status_code != 200:
+            return None
+        body = resp.json() or {}
+    except Exception as exc:
+        logger.debug("resolver: kalshi fetch %s failed (%s)", ticker, exc)
+        return None
+    return body.get("market") if isinstance(body, dict) else None
+
+
+def _parse_kalshi_outcome(market: dict) -> float | None:
+    """Map a Kalshi market dict → YES probability at resolution, or None."""
+    status = (market.get("status") or "").lower()
+    if status not in _KALSHI_FINAL_STATES:
+        return None
+    result = (market.get("result") or "").lower()
+    if result == "yes":
+        return 1.0
+    if result == "no":
+        return 0.0
+    return None
+
+
 def resolve_open_markets(*, limit: int | None = None, base_url: str | None = None) -> ResolverReport:
-    """Visit every distinct unresolved market in the DB and try to resolve it."""
+    """Visit every distinct unresolved (market_id, source) pair and try to resolve it."""
     url = base_url or POLYMARKET_GAMMA_MARKET
     polled = 0
     newly_resolved = 0
     rows_updated_total = 0
 
     with Session() as session:
-        # Distinct markets that have no resolved_outcome anywhere yet.
+        # Distinct (market_id, source) pairs that have no resolved_outcome yet.
         rows = (
             session.execute(
                 ReceiptRow.__table__.select()
-                .with_only_columns(ReceiptRow.market_id)
+                .with_only_columns(ReceiptRow.market_id, ReceiptRow.market_source)
                 .distinct()
                 .where(ReceiptRow.resolved_outcome.is_(None))
             )
-            .scalars()
             .all()
         )
-    # Skip mock markets (prefixed `mock-`): they never resolve via Gamma.
-    market_ids = [m for m in rows if m and not m.startswith("mock-")]
+    # Skip mock markets (prefixed `mock-`): they never resolve via either venue.
+    pairs: list[tuple[str, str]] = [
+        (m, s or "polymarket")
+        for (m, s) in rows
+        if m and not m.startswith("mock-")
+    ]
     if limit is not None:
-        market_ids = market_ids[:limit]
+        pairs = pairs[:limit]
 
-    if not market_ids:
+    if not pairs:
         return ResolverReport(polled=0, newly_resolved_markets=0, rows_updated=0)
 
     with httpx.Client(timeout=15.0, follow_redirects=True) as client:
-        for market_id in market_ids:
+        for market_id, source in pairs:
             polled += 1
-            data = _fetch_market(client, market_id, url=url)
-            if data is None:
-                continue
-            outcome = _parse_outcome(data)
+            if source == "kalshi":
+                data = _fetch_kalshi(client, market_id)
+                outcome = _parse_kalshi_outcome(data) if data else None
+            else:  # polymarket / unknown → use Gamma path
+                data = _fetch_market(client, market_id, url=url)
+                outcome = _parse_outcome(data) if data else None
             if outcome is None:
                 continue
             with Session() as session:
                 stmt = (
                     update(ReceiptRow)
-                    .where(ReceiptRow.market_id == market_id, ReceiptRow.resolved_outcome.is_(None))
+                    .where(
+                        ReceiptRow.market_id == market_id,
+                        ReceiptRow.resolved_outcome.is_(None),
+                    )
                     .values(resolved_at=datetime.now(UTC), resolved_outcome=outcome)
                 )
                 result = session.execute(stmt)
                 rows_updated_total += result.rowcount or 0
             newly_resolved += 1
             logger.info(
-                "resolver: market %s resolved → outcome=%s, rows updated=%s",
+                "resolver[%s]: market %s resolved → outcome=%s, rows updated=%s",
+                source,
                 market_id,
                 outcome,
                 rows_updated_total,
