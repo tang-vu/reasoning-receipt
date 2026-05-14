@@ -1,6 +1,6 @@
 import { api } from "@/lib/api";
+import { LiveReceiptsFeed } from "@/components/live-receipts-feed";
 import { StatCard } from "@/components/stat-card";
-import { TracesTable } from "@/components/traces-table";
 import { VolumeChart } from "@/components/volume-chart";
 
 function microUsdcToString(micro: number): string {
@@ -53,13 +53,7 @@ export default async function Home() {
         <VolumeChart rows={recent} />
       </section>
 
-      <section className="space-y-3">
-        <div className="flex items-baseline justify-between">
-          <h2 className="text-xl font-semibold">Recent receipts</h2>
-          <span className="text-sm text-muted">latest 100</span>
-        </div>
-        <TracesTable rows={recent} />
-      </section>
+      <LiveReceiptsFeed initial={recent} />
     </div>
   );
 }
