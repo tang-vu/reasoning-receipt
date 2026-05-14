@@ -25,6 +25,7 @@ from storage.irys import IrysClient
 from wallets.portfolio import Portfolio
 
 from .analyst import Analyst, MarketCandidate
+from .calibration_store import CalibrationStore
 from .critic import Critic
 from .ensemble import Ensemble
 from .resolver import resolve_open_markets
@@ -70,6 +71,11 @@ class AgentLoop:
         # don't pay the Vertex-client init cost unless RR_USE_ENSEMBLE=1.
         self.use_ensemble = os.getenv("RR_USE_ENSEMBLE", "").lower() in {"1", "true", "yes"}
         self._ensemble: Ensemble | None = Ensemble() if self.use_ensemble else None
+        # Calibration feedback — supervisor reads per-category Brier + bias
+        # before each synthesis. 30-min cache, so per-tick cost is negligible.
+        self._calibration: CalibrationStore | None = (
+            CalibrationStore() if self.use_ensemble else None
+        )
         self._irys = IrysClient()
         self.sealer = TraceSealer(self._irys)
         self.chain = ChainClient()
@@ -202,7 +208,13 @@ class AgentLoop:
         """
         assert self._ensemble is not None
         start = time.perf_counter()
-        trace_v3: ReasoningTraceV3 = self._ensemble.analyse(candidate)
+        # Pull the calibration prior — empty string when no category has enough
+        # resolved markets yet. Empty → supervisor gets no PRIOR block in prompt.
+        prior = self._calibration.prior_text() if self._calibration else ""
+        trace_v3: ReasoningTraceV3 = self._ensemble.analyse(
+            candidate,
+            calibration_prior=prior or None,
+        )
 
         # Critic verdict gates publication. "rejected" means the trace failed
         # the rigor audit even after a revision pass — emitting it would
