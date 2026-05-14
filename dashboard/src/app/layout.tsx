@@ -114,6 +114,7 @@ const nav = [
   { href: "/", label: "Home" },
   { href: "/agents", label: "Agents" },
   { href: "/try", label: "Try it" },
+  { href: "/inclusion", label: "Inclusion" },
   { href: "/traces", label: "Traces" },
   { href: "/calibration", label: "Calibration" },
   { href: "/stats", label: "Stats" },
