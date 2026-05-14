@@ -59,9 +59,14 @@ fi
 if git rev-parse --quiet --verify origin/main >/dev/null 2>&1; then
   for sha in $(git rev-list origin/main..HEAD); do
     msg=$(git log -1 --format=%B "$sha")
-    # Anchor word boundaries on `generated with` so phrases like
-    # `regenerated with` / `pre-generated with` don't false-positive.
-    if echo "$msg" | grep -qiE '(\bgenerated with\b|co-authored-by:.*claude|co-authored-by:.*anthropic|🤖)'; then
+    # Match only the actual AI-attribution trailer formats — not any
+    # commit body that happens to contain the phrase 'generated with'.
+    # Trailers from AI tools always live on their own line and follow
+    # one of these exact shapes:
+    #   "🤖 Generated with [Claude Code](...)"
+    #   "Generated with Claude"
+    #   "Co-authored-by: Claude ..."
+    if echo "$msg" | grep -qiE '(🤖 generated with|generated with \[?claude|generated with anthropic|co-authored-by:.*claude|co-authored-by:.*anthropic)'; then
       echo "[safe-push] BLOCKED: commit $sha has AI-attribution trailer."
       echo "$msg"
       echo "Run: git rebase -i origin/main and strip the trailer."
