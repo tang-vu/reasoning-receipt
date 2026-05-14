@@ -61,7 +61,10 @@ def record_demo_runner(seconds: int = 60, base_url: str = "http://localhost:8000
     return out
 
 
-def record_dashboard(dashboard_url: str = "http://localhost:3000") -> Path:
+def record_dashboard(
+    dashboard_url: str = "http://localhost:3000",
+    v3_trace_id: int | None = None,
+) -> Path:
     out = SEGMENTS / "03-dashboard.mp4"
     print(f"[record] dashboard → {out}")
     try:
@@ -69,7 +72,12 @@ def record_dashboard(dashboard_url: str = "http://localhost:3000") -> Path:
     except ImportError:
         print("[record]  playwright not installed; skipping dashboard segment")
         return out
-    pages = ["/", "/traces", "/events", "/stats"]
+    # Tour: home (live feed + hero pills) → traces archive → individual v3 trace
+    # (ensemble + critic + falsifiables) → calibration → events stream → stats.
+    pages: list[str] = ["/", "/traces"]
+    if v3_trace_id is not None:
+        pages.append(f"/traces/{v3_trace_id}")
+    pages.extend(["/calibration", "/events", "/stats"])
     SEGMENTS.mkdir(parents=True, exist_ok=True)
     with sync_playwright() as p:
         browser = p.chromium.launch()
@@ -82,7 +90,9 @@ def record_dashboard(dashboard_url: str = "http://localhost:3000") -> Path:
         for path in pages:
             page.goto(f"{dashboard_url}{path}")
             page.wait_for_load_state("networkidle")
-            page.wait_for_timeout(3500)
+            # V3 trace pages need a beat for the async Irys fetch to land.
+            wait_ms = 6000 if path.startswith("/traces/") else 3500
+            page.wait_for_timeout(wait_ms)
             for _ in range(8):
                 page.mouse.wheel(0, 240)
                 page.wait_for_timeout(180)
@@ -116,6 +126,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--skip-loop", action="store_true")
     parser.add_argument("--skip-demo", action="store_true")
     parser.add_argument("--skip-dashboard", action="store_true")
+    parser.add_argument(
+        "--v3-trace-id",
+        type=int,
+        default=None,
+        help="receipt id of an rr-trace/3 row — visited in the dashboard tour",
+    )
     args = parser.parse_args(argv)
 
     SEGMENTS.mkdir(parents=True, exist_ok=True)
@@ -131,7 +147,7 @@ def main(argv: list[str] | None = None) -> int:
     if not args.skip_demo and shutil.which("asciinema"):
         segments.append(record_demo_runner(base_url=args.api))
     if not args.skip_dashboard:
-        seg = record_dashboard(dashboard_url=args.dashboard)
+        seg = record_dashboard(dashboard_url=args.dashboard, v3_trace_id=args.v3_trace_id)
         if seg.exists():
             segments.append(seg)
 
