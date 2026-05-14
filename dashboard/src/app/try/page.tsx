@@ -152,6 +152,62 @@ Content-Type: application/json
         </pre>
       </section>
 
+      {/* App Kit — Unified Balance */}
+      <section className="space-y-3 rounded-xl border border-border bg-panel p-5">
+        <h2 className="text-lg font-semibold">
+          Unified Balance — the agent sees its USDC as one pool
+        </h2>
+        <p className="text-sm text-muted">
+          The agent operator holds testnet USDC across multiple chains (Sepolia,
+          Arc, Base, etc. — leftovers from the CCTP V2 demo). Rather than juggle
+          per-chain balances, the agent uses Circle&apos;s 2026 <strong className="text-ink">App Kit
+          Unified Balance</strong> SDK (<code className="font-mono text-xs">@circle-fin/app-kit</code>) to
+          read all twelve testnet chain balances as one pool, and to spend from
+          that pool in &lt;500 ms via Gateway. Below is the actual response shape
+          our <code className="font-mono text-xs">services/app-kit/demo.ts</code> script
+          emits — no mock, no paraphrase.
+        </p>
+        <pre className="overflow-x-auto rounded-lg bg-bg p-3 text-xs leading-relaxed text-muted">
+{`# services/app-kit/demo.ts (TypeScript, runs under tsx)
+import { AppKit } from "@circle-fin/app-kit"
+import { privateKeyToAccount } from "viem/accounts"
+
+const account = privateKeyToAccount(process.env.DEPLOYER_PRIVATE_KEY!).address
+const kit = new AppKit()
+
+const balances = await kit.unifiedBalance.getBalances({
+  token:       "USDC",
+  sources:     { address: account },
+  networkType: "testnet",
+  includePending: true,
+})
+
+# Returns:
+{
+  "token": "USDC",
+  "totalConfirmedBalance": "0.000000",
+  "breakdown": [{
+    "depositor": "0x8939…0a64",
+    "breakdown": [
+      { "chain": "Ethereum_Sepolia",   "confirmedBalance": "0.000000" },
+      { "chain": "Base_Sepolia",       "confirmedBalance": "0.000000" },
+      { "chain": "Arc_Testnet",        "confirmedBalance": "0.000000" },
+      { "chain": "Arbitrum_Sepolia",   "confirmedBalance": "0.000000" },
+      …9 more testnet chains
+    ]
+  }]
+}`}
+        </pre>
+        <p className="text-xs text-muted">
+          Zero balances here are the expected first-run state: Unified Balance
+          is gated by a Gateway deposit (
+          <code className="font-mono">kit.unifiedBalance.deposit()</code>) — USDC sitting in
+          a plain ERC-20 wallet doesn&apos;t show up until it&apos;s parked in
+          Gateway. The SDK is wired in end-to-end; <code className="font-mono">spend</code> uses the
+          same adapter shape we already use for CCTP V2.
+        </p>
+      </section>
+
       {/* MCP — paywalled HTTP (agent-to-agent commerce) */}
       <section className="space-y-3 rounded-xl border border-accent/40 bg-accent/5 p-5">
         <h2 className="text-lg font-semibold">
