@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import type { TraceRow } from "@/lib/api";
-import { eventsStreamUrl } from "@/lib/api";
+import { api, eventsStreamUrl } from "@/lib/api";
 
 type Status = "idle" | "connecting" | "live" | "fallback";
 
@@ -21,15 +21,37 @@ function timeAgo(iso: string): string {
 }
 
 /**
- * Live SSE-backed receipts feed. Subscribes to the backend's /events/stream,
- * prepends new receipts as they arrive, and keeps the most recent 100 in
- * memory. Falls back to the initial seed (server-rendered snapshot) if the
- * SSE connection can't be established.
+ * Live SSE-backed receipts feed. On mount it pulls the latest 100 receipts
+ * from the live API (overriding the build-time seed so the static export
+ * doesn't show hour-old rows), then subscribes to /events/stream and
+ * prepends new receipts as they arrive. Falls back to the SSR seed if the
+ * client fetch fails.
  */
 export function LiveReceiptsFeed({ initial }: { initial: TraceRow[] }) {
   const [rows, setRows] = useState<TraceRow[]>(initial);
   const [status, setStatus] = useState<Status>("idle");
   const seenIds = useRef<Set<number>>(new Set(initial.map((r) => r.id)));
+
+  // On mount, refresh the table from the live API. The initial seed is baked
+  // at build time on GH Pages, so without this the table stays frozen at the
+  // build snapshot until SSE prepends new receipts — leaving an awkward gap
+  // between the latest fresh receipt and the next row.
+  useEffect(() => {
+    let cancelled = false;
+    api
+      .receipts(100)
+      .then((fresh) => {
+        if (cancelled || fresh.length === 0) return;
+        setRows(fresh);
+        seenIds.current = new Set(fresh.map((r) => r.id));
+      })
+      .catch(() => {
+        // Stay on the SSR seed — SSE will still add live receipts on top.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     setStatus("connecting");
