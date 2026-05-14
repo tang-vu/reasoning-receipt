@@ -71,7 +71,7 @@ Per the "agentic sophistication" rubric: the 5-agent ensemble with isolated cont
 | Contract on Arc — ReceiptRegistryV2 (Merkle root + schema version) | https://testnet.arcscan.app/address/0x27d93c52fea923f956345af27f61d7bf47f0c4c1 |
 | Contract on Arc — ReceiptRegistry V1 (source-verified) | https://testnet.arcscan.app/address/0x59022EFd46a697bbf2fAd36CcfA8F2099f0bd1Bf |
 | Contract on Arc — CanteenUSDC wrapper (source-verified) | https://testnet.arcscan.app/address/0x7473d0db92F77aA89F19A2D74174D14D14CBD3E1 |
-| Latest release | https://github.com/tang-vu/reasoning-receipt/releases/tag/v0.3.0 |
+| Latest release | https://github.com/tang-vu/reasoning-receipt/releases/tag/v0.4.0 |
 | Team | Solo — Vu Minh Tang (`tang-vu`) |
 | Circle Developer Console email | `[email — fill in]` |
 
