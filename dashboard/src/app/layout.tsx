@@ -5,13 +5,17 @@ import "./globals.css";
 
 const SITE_URL = "https://rrtrace.xyz";
 const SITE_NAME = "ReasoningReceipt";
+// 130 chars — Open Graph / Twitter Card sweet spot is 110-160.
 const SITE_DESC =
-  "x402-paywalled AI oracle for prediction markets — every price ships with a byte-verifiable reasoning trace, Merkle-rooted on Arc Testnet for ~$0.0007 per receipt. Bull / Bear / Edge ensemble + Supervisor + 6-dim Critic.";
+  "x402-paywalled AI oracle for prediction markets. Every price ships with a byte-verifiable reasoning trace, Merkle-rooted on Arc.";
+// 55 chars — title sweet spot is 50-60. Same value for HTML <title>,
+// OG title, and Twitter title so previews are consistent everywhere.
+const SITE_TITLE = "ReasoningReceipt — Byte-verifiable AI oracle on Arc";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} — Oracle for prediction markets, byte-verifiable on Arc`,
+    default: SITE_TITLE,
     template: `%s · ${SITE_NAME}`,
   },
   description: SITE_DESC,
@@ -52,7 +56,7 @@ export const metadata: Metadata = {
     type: "website",
     url: SITE_URL,
     siteName: SITE_NAME,
-    title: `${SITE_NAME} — The trace is the product`,
+    title: SITE_TITLE,
     description: SITE_DESC,
     locale: "en_US",
     images: [
@@ -78,7 +82,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     site: "@tangvu_dev",
     creator: "@tangvu_dev",
-    title: `${SITE_NAME} — The trace is the product`,
+    title: SITE_TITLE,
     description: SITE_DESC,
     images: ["/og-banner.png"],
   },
