@@ -4,8 +4,13 @@ set -euo pipefail
 
 cd "$(git rev-parse --show-toplevel)"
 
-hour=$(TZ=Asia/Ho_Chi_Minh date +%H)
-minute=$(TZ=Asia/Ho_Chi_Minh date +%M)
+# Use local time directly. Harvey's machine is in VN (UTC+7).
+# `TZ=Asia/Ho_Chi_Minh` works on Linux/macOS, but Git Bash on Windows reads
+# the Windows system clock as already-local and then "re-converts" it via
+# the TZ env — yielding a 7-hour-wrong figure that falsely trips the dead
+# zone. Plain `date` here matches the wall clock the human actually sees.
+hour=$(date +%H)
+minute=$(date +%M)
 now=$(date +%s)
 
 # === Cadence: dead zone (02:00 – 07:29 VN time) ===
