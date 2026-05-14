@@ -27,7 +27,7 @@ from storage.db import init_db
 from storage.irys import IrysClient
 
 from .chain import ChainClient
-from .events import ReceiptBroker
+from .events import ReceiptBroker, poll_db_and_broadcast
 from .events import router as events_router
 from .facilitator import router as facilitator_router
 from .mcp_paywalled import router as mcp_router
@@ -46,6 +46,8 @@ logger = logging.getLogger("rr.server")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    import asyncio as _asyncio
+
     init_db()
     app.state.paywall = X402Paywall()
     app.state.analyst = Analyst()
@@ -60,7 +62,18 @@ async def lifespan(app: FastAPI):
         app.state.sealer.uploader.mock,
         app.state.chain.mock,
     )
-    yield
+    # Bridge the daemon's direct emits (chain.publish_v2 → DB row, no HTTP)
+    # into the SSE broker so dashboard subscribers see live updates.
+    poll_interval = float(os.getenv("RR_BROKER_POLL_S", "2.0"))
+    poll_task = _asyncio.create_task(poll_db_and_broadcast(app.state.broker, interval_s=poll_interval))
+    import contextlib
+
+    try:
+        yield
+    finally:
+        poll_task.cancel()
+        with contextlib.suppress(Exception, BaseException):
+            await poll_task
 
 
 def create_app() -> FastAPI:

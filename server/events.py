@@ -64,6 +64,87 @@ class ReceiptBroker:
         return len(self._subscribers)
 
 
+async def poll_db_and_broadcast(broker: ReceiptBroker, *, interval_s: float = 2.0) -> None:
+    """Watch the DB for new receipts and fan them out to SSE subscribers.
+
+    The agent loop emits via `chain.publish_v2` directly — it never hits the
+    FastAPI `/price` endpoint, so the broker's in-process publish never
+    fires for those rows. This background task closes that gap by polling
+    `SELECT id FROM receipts WHERE id > last_seen` every `interval_s`
+    seconds and broadcasting each new row.
+
+    Cheap: SQLite single-row lookup, no joins. Restarts gracefully if the
+    DB is briefly locked during a daemon write.
+    """
+    from sqlalchemy import desc, select
+
+    from storage.db import Receipt as ReceiptRow
+    from storage.db import Session
+
+    def _to_event(r: ReceiptRow) -> dict[str, Any]:
+        return {
+            "id": r.id,
+            "market_id": r.market_id,
+            "market_source": r.market_source,
+            "market_question": r.market_question,
+            "probability": r.probability,
+            "confidence": r.confidence,
+            "trace_hash": r.trace_hash,
+            "trace_cid": r.trace_cid,
+            "consumer_address": r.consumer_address,
+            "arc_tx_hash": r.arc_tx_hash,
+            "paid_micro_usdc": r.paid_micro_usdc,
+            "created_at": _iso_utc(r.created_at),
+            "schema_version": r.schema_version,
+            "disagreement_pp": r.disagreement_pp,
+            "merkle_root": r.merkle_root,
+            "category": r.category,
+        }
+
+    def _iso_utc(dt):
+        if dt is None:
+            return None
+        s = dt.isoformat()
+        return s if s.endswith("Z") or "+" in s[10:] else s + "Z"
+
+    # Initial high-water mark = current max id so we don't replay history.
+    last_seen = 0
+    try:
+        with Session() as session:
+            top = session.execute(
+                select(ReceiptRow.id).order_by(desc(ReceiptRow.id)).limit(1)
+            ).scalar_one_or_none()
+            if top is not None:
+                last_seen = int(top)
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("poll-broadcast: initial high-water lookup failed (%s)", exc)
+
+    logger.info("poll-broadcast: starting from id=%d (interval=%.1fs)", last_seen, interval_s)
+
+    while True:
+        try:
+            await asyncio.sleep(interval_s)
+            new_rows: list[ReceiptRow] = []
+            with Session() as session:
+                stmt = (
+                    select(ReceiptRow)
+                    .where(ReceiptRow.id > last_seen)
+                    .order_by(ReceiptRow.id)
+                    .limit(50)
+                )
+                for r in session.execute(stmt).scalars():
+                    new_rows.append(r)
+            for r in new_rows:
+                await broker.publish(_to_event(r))
+                last_seen = max(last_seen, r.id)
+            if new_rows:
+                logger.debug("poll-broadcast: fan-out %d row(s), last_seen=%d", len(new_rows), last_seen)
+        except asyncio.CancelledError:
+            raise
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("poll-broadcast: tick failed (%s); continuing", exc)
+
+
 @router.get("/events/stream")
 async def receipt_stream(request: Request) -> EventSourceResponse:
     """Server-Sent Events stream of receipt events.
