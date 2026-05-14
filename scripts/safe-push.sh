@@ -1,37 +1,14 @@
 #!/usr/bin/env bash
-# safe-push.sh — banned-file gate + cadence gate + AI-trailer strip
+# safe-push.sh — banned-file gate + AI-trailer strip
+#
+# Dead-zone (02:00-07:30 VN) and 90-min-gap cadence rules removed —
+# Harvey explicitly asked to push freely after infra was wired live.
 set -euo pipefail
 
 cd "$(git rev-parse --show-toplevel)"
 
-# Use local time directly. Harvey's machine is in VN (UTC+7).
-# `TZ=Asia/Ho_Chi_Minh` works on Linux/macOS, but Git Bash on Windows reads
-# the Windows system clock as already-local and then "re-converts" it via
-# the TZ env — yielding a 7-hour-wrong figure that falsely trips the dead
-# zone. Plain `date` here matches the wall clock the human actually sees.
-hour=$(date +%H)
-minute=$(date +%M)
 now=$(date +%s)
-
-# === Cadence: dead zone (02:00 – 07:29 VN time) ===
-if (( 10#$hour >= 2 && 10#$hour < 8 )); then
-  if ! (( 10#$hour == 7 && 10#$minute >= 30 )); then
-    echo "[safe-push] DEAD ZONE ($hour:$minute VN). Push deferred. Commits stay local."
-    exit 0
-  fi
-fi
-
-# === Cadence: 90-minute min gap between pushes ===
 last_push_file=".git/.last_push"
-if [[ -f "$last_push_file" ]]; then
-  last=$(cat "$last_push_file" 2>/dev/null || echo 0)
-  elapsed=$(( now - last ))
-  if (( elapsed < 5400 )); then
-    remaining=$(( (5400 - elapsed) / 60 ))
-    echo "[safe-push] Last push was $((elapsed/60))m ago. Wait ${remaining}m. Skipping."
-    exit 0
-  fi
-fi
 
 banned='^(CLAUDE\.md|notes/|\.claude|AGENTS\.md|\.aider|\.cursor|\.continue|\.codeium)'
 

@@ -40,8 +40,13 @@ export const metadata: Metadata = {
   },
   manifest: "/site.webmanifest",
   icons: {
-    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon-192.png", type: "image/png", sizes: "192x192" },
+      { url: "/favicon-512.png", type: "image/png", sizes: "512x512" },
+    ],
     shortcut: "/favicon.svg",
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
   },
   openGraph: {
     type: "website",
@@ -51,6 +56,15 @@ export const metadata: Metadata = {
     description: SITE_DESC,
     locale: "en_US",
     images: [
+      // PNG primary — universal social-card support (iOS Messages, Telegram, etc).
+      {
+        url: "/og-banner.png",
+        width: 1200,
+        height: 630,
+        alt: "ReasoningReceipt — Five agents debate. Supervisor merges. Critic audits. Merkle-rooted reasoning DAG on Arc.",
+        type: "image/png",
+      },
+      // SVG fallback for crawlers that prefer vector.
       {
         url: "/og-banner.svg",
         width: 1200,
@@ -62,9 +76,11 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
+    site: "@tangvu_dev",
+    creator: "@tangvu_dev",
     title: `${SITE_NAME} — The trace is the product`,
     description: SITE_DESC,
-    images: ["/og-banner.svg"],
+    images: ["/og-banner.png"],
   },
   robots: {
     index: true,
@@ -116,7 +132,7 @@ const structuredData = {
       "@id": `${SITE_URL}/#person`,
       name: "Vu Minh Tang",
       url: "https://github.com/tang-vu",
-      sameAs: ["https://github.com/tang-vu"],
+      sameAs: ["https://github.com/tang-vu", "https://x.com/tangvu_dev"],
     },
     {
       "@type": "SoftwareApplication",
