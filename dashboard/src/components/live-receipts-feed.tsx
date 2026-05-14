@@ -7,7 +7,8 @@ import { eventsStreamUrl } from "@/lib/api";
 
 type Status = "idle" | "connecting" | "live" | "fallback";
 
-const ARC_TX_URL = (h: string) => `https://testnet.arcscan.app/tx/${h.replace(/^0x/, "")}`;
+// Blockscout (Arc explorer) requires a 0x-prefixed hash; reject otherwise.
+const ARC_TX_URL = (h: string) => `https://testnet.arcscan.app/tx/${h.startsWith("0x") ? h : `0x${h}`}`;
 
 function timeAgo(iso: string): string {
   const ms = Date.now() - new Date(iso).getTime();

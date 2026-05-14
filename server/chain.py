@@ -111,6 +111,14 @@ def _hex_to_bytes32(hex_str: str) -> bytes:
     return b
 
 
+def _hex_with_prefix(tx_hash) -> str:
+    """Web3 .hex() returns bare hex on some versions, 0x-prefixed on others.
+    Block explorers (Blockscout / Arcscan) reject hashes without 0x — always
+    return canonical 0x-prefixed form here."""
+    s = tx_hash.hex() if isinstance(tx_hash, bytes) else str(tx_hash)
+    return s if s.startswith("0x") else f"0x{s}"
+
+
 def _scale_unit_to_ppm(x: float) -> int:
     """Clamp a 0..1 float to 0..1_000_000 (PROBABILITY_SCALE)."""
     if x < 0.0:
@@ -227,7 +235,7 @@ class ChainClient:
         receipt_id = int(self._contract.functions.totalReceipts().call())
         return PublishResult(
             receipt_id=receipt_id,
-            tx_hash=tx_hash.hex() if isinstance(tx_hash, bytes) else str(tx_hash),
+            tx_hash=_hex_with_prefix(tx_hash),
             block_number=rcpt["blockNumber"],
             is_mock=False,
         )
@@ -285,7 +293,7 @@ class ChainClient:
         receipt_id = int(self._contract_v2.functions.totalReceipts().call())
         return PublishResult(
             receipt_id=receipt_id,
-            tx_hash=tx_hash.hex() if isinstance(tx_hash, bytes) else str(tx_hash),
+            tx_hash=_hex_with_prefix(tx_hash),
             block_number=rcpt["blockNumber"],
             is_mock=False,
         )
