@@ -45,6 +45,11 @@ def _row_to_dict(r: ReceiptRow) -> dict:
         "arc_tx_hash": r.arc_tx_hash,
         "paid_micro_usdc": r.paid_micro_usdc,
         "created_at": r.created_at.isoformat() if r.created_at else None,
+        # rr-trace/3 — None for older rows.
+        "schema_version": getattr(r, "schema_version", None),
+        "disagreement_pp": getattr(r, "disagreement_pp", None),
+        "merkle_root": getattr(r, "merkle_root", None),
+        "category": getattr(r, "category", None),
     }
 
 

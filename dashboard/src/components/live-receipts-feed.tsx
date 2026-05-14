@@ -77,6 +77,7 @@ export function LiveReceiptsFeed({ initial }: { initial: TraceRow[] }) {
               <th className="px-3 py-2">Market</th>
               <th className="px-3 py-2 text-right">Prob</th>
               <th className="px-3 py-2 text-right">Conf</th>
+              <th className="px-3 py-2">Schema</th>
               <th className="px-3 py-2">When</th>
               <th className="px-3 py-2">On chain</th>
               <th className="px-3 py-2">Trace</th>
@@ -94,6 +95,9 @@ export function LiveReceiptsFeed({ initial }: { initial: TraceRow[] }) {
                 </td>
                 <td className="px-3 py-2 text-right font-mono tabular-nums text-muted">
                   {(r.confidence * 100).toFixed(0)}%
+                </td>
+                <td className="px-3 py-2">
+                  <SchemaBadge schema={r.schema_version} disagreement={r.disagreement_pp} />
                 </td>
                 <td className="px-3 py-2 text-muted">{timeAgo(r.created_at)}</td>
                 <td className="px-3 py-2">
@@ -122,7 +126,7 @@ export function LiveReceiptsFeed({ initial }: { initial: TraceRow[] }) {
             ))}
             {rows.length === 0 && (
               <tr>
-                <td colSpan={7} className="px-3 py-8 text-center text-sm text-muted">
+                <td colSpan={8} className="px-3 py-8 text-center text-sm text-muted">
                   No receipts yet. Run the agent loop or hit <code>/price/&lt;market_id&gt;</code>.
                 </td>
               </tr>
@@ -131,6 +135,37 @@ export function LiveReceiptsFeed({ initial }: { initial: TraceRow[] }) {
         </table>
       </div>
     </section>
+  );
+}
+
+function SchemaBadge({
+  schema,
+  disagreement,
+}: {
+  schema?: string | null;
+  disagreement?: number | null;
+}) {
+  if (schema === "rr-trace/3") {
+    return (
+      <span
+        className="inline-flex items-center gap-1 rounded-full bg-accent2/10 px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wider text-accent2"
+        title={
+          disagreement != null
+            ? `Ensemble Bull/Bear/Edge disagreement: ${disagreement.toFixed(1)}pp`
+            : "5-agent ensemble + Merkle DAG"
+        }
+      >
+        v3
+        {disagreement != null && disagreement > 0 && (
+          <span className="text-muted">·{disagreement.toFixed(0)}pp</span>
+        )}
+      </span>
+    );
+  }
+  return (
+    <span className="inline-flex items-center rounded-full bg-muted/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-muted">
+      {schema?.replace("rr-trace/", "v") ?? "v2"}
+    </span>
   );
 }
 

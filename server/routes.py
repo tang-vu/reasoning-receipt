@@ -59,6 +59,11 @@ class TraceRow(BaseModel):
     arc_tx_hash: str | None
     paid_micro_usdc: int
     created_at: str
+    # rr-trace/3 fields — null for older rr-trace/2 rows.
+    schema_version: str | None = None
+    disagreement_pp: float | None = None
+    merkle_root: str | None = None
+    category: str | None = None
 
 
 class StatsResponse(BaseModel):
@@ -275,4 +280,8 @@ def _to_trace_row(r: ReceiptRow) -> TraceRow:
         arc_tx_hash=r.arc_tx_hash,
         paid_micro_usdc=r.paid_micro_usdc,
         created_at=r.created_at.isoformat() if r.created_at else "",
+        schema_version=getattr(r, "schema_version", None),
+        disagreement_pp=getattr(r, "disagreement_pp", None),
+        merkle_root=getattr(r, "merkle_root", None),
+        category=getattr(r, "category", None),
     )

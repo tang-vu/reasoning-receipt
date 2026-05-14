@@ -30,6 +30,11 @@ export interface TraceRow {
   arc_tx_hash: string | null;
   paid_micro_usdc: number;
   created_at: string;
+  // rr-trace/3 fields. Null/undefined for rr-trace/2 rows.
+  schema_version?: string | null;
+  disagreement_pp?: number | null;
+  merkle_root?: string | null;
+  category?: string | null;
 }
 
 export interface StatsResponse {
