@@ -29,18 +29,18 @@ $agentPidFile  = Join-Path $logRoot "agent.pid"
 $serverLog     = Join-Path $logRoot "server.log"
 $agentLog      = Join-Path $logRoot "agent.log"
 
-function Stop-IfRunning($pidFile, $name) {
-    if (Test-Path $pidFile) {
-        $pid = Get-Content $pidFile -ErrorAction SilentlyContinue
-        if ($pid) {
+function Stop-IfRunning($svcPidFile, $name) {
+    if (Test-Path $svcPidFile) {
+        $svcPid = Get-Content $svcPidFile -ErrorAction SilentlyContinue
+        if ($svcPid) {
             try {
-                Stop-Process -Id $pid -Force -ErrorAction Stop
-                Write-Host "[run-services] stopped $name (pid $pid)"
+                Stop-Process -Id $svcPid -Force -ErrorAction Stop
+                Write-Host "[run-services] stopped $name (pid $svcPid)"
             } catch {
-                Write-Host "[run-services] $name (pid $pid) not running"
+                Write-Host "[run-services] $name (pid $svcPid) not running"
             }
         }
-        Remove-Item $pidFile -Force -ErrorAction SilentlyContinue
+        Remove-Item $svcPidFile -Force -ErrorAction SilentlyContinue
     }
 }
 

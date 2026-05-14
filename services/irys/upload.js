@@ -33,11 +33,15 @@ async function main() {
   const privateKey = envOrDie("IRYS_PRIVATE_KEY");
   const network = process.env.IRYS_NETWORK || "devnet";
 
-  let payload;
   const argFile = process.argv[2];
   const raw = argFile ? readFileSync(argFile, "utf8") : await readStdin();
+  // CRITICAL: upload the EXACT input bytes — Python's canonical_bytes is the
+  // source of truth for hashing. JSON.parse → JSON.stringify re-serializes
+  // with insertion-order keys and JS-default float formatting, which breaks
+  // byte-for-byte verification against the on-chain hash. Validate the input
+  // is JSON, but ship the original string.
   try {
-    payload = JSON.parse(raw);
+    JSON.parse(raw);
   } catch (e) {
     console.error("invalid JSON on stdin:", e.message);
     process.exit(3);
@@ -47,7 +51,7 @@ async function main() {
   const uploader = network === "mainnet" ? builder : builder.withRpc("https://rpc.sepolia.org").devnet();
   const irys = await uploader;
 
-  const body = JSON.stringify(payload);
+  const body = raw;
   const tags = [{ name: "Content-Type", value: "application/json" }, { name: "App-Name", value: "reasoning-receipt" }];
   const receipt = await irys.upload(body, { tags });
 
