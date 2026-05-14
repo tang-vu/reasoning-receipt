@@ -144,6 +144,11 @@ Repo hygiene (run each before submitting):
 - [x] Dashboard live: https://rrtrace.xyz
 - [x] V1 contract source-verified on Arc Testnet explorer (`forge verify-contract` via Blockscout, Solidity 0.8.26 with `via_ir`)
 - [x] V2 contract source-verified on Arc Testnet explorer
+- [x] Byte-for-byte trace verification proven against a live receipt (receipt ≥ #2273; see "Verifiability cutoff" note below)
+
+### Verifiability cutoff
+
+Mid-build, we caught a real bug in the Node Irys sidecar — it was `JSON.parse → JSON.stringify`-ing the input before upload, which re-serialized with JS-default insertion-order keys and float formatting. The on-chain `traceHash` (SHA-256 of Python's canonical bytes) therefore did not byte-match the bytes that ended up on Irys, even though the semantic content was identical. Receipts before **#2273** load the right trace JSON via CID but fail the byte-for-byte verify; from #2273 onward, `/verify/{id}` returns `verified: true` (the canonical pipeline is now Python-only end-to-end; the JS sidecar is a transport). At submission time the daemon will have emitted thousands of post-fix verifying receipts; we kept the bug+fix in the commit log (see `16ea6c1 fix: irys sidecar uploads raw bytes`) as evidence of the iteration.
 
 Submission deliverables (Harvey fills these in the final week):
 
