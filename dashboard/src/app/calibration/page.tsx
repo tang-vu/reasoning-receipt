@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { api } from "@/lib/api";
 import { ReliabilityChart } from "@/components/reliability-chart";
@@ -31,11 +32,11 @@ export default async function CalibrationPage() {
           Calibration — the agent <span className="text-accent">measures itself</span>
         </h1>
         <p className="mt-2 max-w-3xl text-muted">
-          Once a market on Polymarket resolves, the resolver back-fills the outcome onto every
-          receipt the agent emitted for it. That gives us ground truth for every prediction. We
-          then compute a <span className="font-mono text-ink">Brier score</span> (mean squared
-          error between predicted probability and actual outcome — lower is better, perfect
-          forecaster scores 0) plus a 10-bucket reliability curve.
+          Once a market on Polymarket or Kalshi resolves, the resolver back-fills the outcome
+          onto every receipt the agent emitted for it. That gives us ground truth for every
+          prediction. We then compute a <span className="font-mono text-ink">Brier score</span>{" "}
+          (mean squared error between predicted probability and actual outcome — lower is
+          better, perfect forecaster scores 0) plus a 10-bucket reliability curve.
         </p>
         <p className="mt-2 max-w-3xl text-sm text-muted">
           A trivial &ldquo;50% on everything&rdquo; forecaster scores ~0.25. A good
@@ -54,9 +55,9 @@ export default async function CalibrationPage() {
           </p>
           <p className="mt-3 max-w-2xl">
             View receipts piling up at{" "}
-            <a href="/reasoning-receipt/traces" className="text-accent underline">
+            <Link href="/traces/" className="text-accent underline">
               /traces
-            </a>{" "}
+            </Link>{" "}
             or check the on-chain log directly:
           </p>
           <pre className="mt-2 overflow-x-auto rounded bg-panel2 p-3 font-mono text-xs">

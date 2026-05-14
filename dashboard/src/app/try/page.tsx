@@ -128,7 +128,7 @@ Content-Type: application/json
         )}
       </Step>
 
-      {/* MCP shortcut */}
+      {/* MCP — stdio (dev tools) */}
       <section className="space-y-3 rounded-xl border border-border bg-panel p-5">
         <h2 className="text-lg font-semibold">Or skip HTTP — call it as an MCP tool</h2>
         <p className="text-sm text-muted">
@@ -149,6 +149,42 @@ Content-Type: application/json
     }
   }
 }`}
+        </pre>
+      </section>
+
+      {/* MCP — paywalled HTTP (agent-to-agent commerce) */}
+      <section className="space-y-3 rounded-xl border border-accent/40 bg-accent/5 p-5">
+        <h2 className="text-lg font-semibold">
+          Agent-to-agent commerce — paywalled MCP over x402
+        </h2>
+        <p className="text-sm text-muted">
+          For agents <strong className="text-ink">in production</strong> (no local stdio access),
+          the same four MCP tools are exposed as Circle x402 v2 paywalled HTTP endpoints. Pay
+          $0.01 USDC per call, get the cached probability + trace pointer + Merkle root back.
+          Any agent that already speaks x402 to <code className="font-mono text-xs">/price</code>{" "}
+          speaks this with zero extra code.
+        </p>
+        <pre className="overflow-x-auto rounded-lg bg-bg p-3 text-xs leading-relaxed text-muted">
+{`# First call — server replies 402
+curl -i https://api.rrtrace.xyz/mcp/v1/get_price/<market_id>
+
+HTTP/1.1 402 Payment Required
+{
+  "scheme":  "x402",
+  "version": "2.0",
+  "network": "${CHAIN_ID}",
+  "asset":   "USDC",
+  "amount":  "10000",
+  "extra":   { "verifyingContract": "${CIRCLE_GATEWAY}" }
+}
+
+# Sign EIP-3009 TransferWithAuthorization, retry
+curl -H "X-Payment: <base64-signed-payload>" \\
+     https://api.rrtrace.xyz/mcp/v1/get_price/<market_id>
+→ 200 { probability, trace_hash, trace_cid, merkle_root, arc_tx_hash, ... }
+
+# Same envelope for the audit endpoint
+curl https://api.rrtrace.xyz/mcp/v1/audit/<receipt_id>`}
         </pre>
       </section>
     </div>
