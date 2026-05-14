@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { api, type TraceRow } from "@/lib/api";
+import { V3DetailPanels } from "@/components/v3-detail-panels";
 import { VerifyButton } from "@/components/verify-button";
 
 const useSnapshot = process.env.NEXT_PUBLIC_USE_SNAPSHOT === "1";
@@ -69,6 +70,8 @@ export default async function TraceDetail({ params }: PageProps) {
           </div>
         </div>
       </section>
+
+      {row.schema_version === "rr-trace/3" && <V3DetailPanels receiptId={row.id} />}
 
       <VerifyButton receiptId={row.id} />
 
