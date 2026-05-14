@@ -11,8 +11,8 @@ Concrete on-chain evidence that we completed each part of the recommended Cantee
 | `arc-canteen rpc-url --export` | ✅ | `$RPC` populated; verified live with `cast block-number` |
 | `arc-canteen context sync` | ✅ | `~/.arc-canteen/context/` synced (docs + 5 sample repos + Circle skills) |
 | `arc-canteen update-product` | ✅ | ran 2× during build window (May 11, May 13) |
-| `arc-canteen update-traction` | ✅ | submitted with measured metrics (1500+ receipts, $0.000683/tx, 5/7 Circle products) |
-| Use testnet RPC | ✅ | **1,500+ paid receipts** emitted via the Canteen-hosted RPC |
+| `arc-canteen update-traction` | ✅ | submitted with measured metrics (3,000+ receipts across **Polymarket + Kalshi**, $0.000683/tx, **6/7 Circle products** — Arc, USDC, Wallets, Gateway+x402 v2, CCTP V2, App Kit Unified Balance) |
+| Use testnet RPC | ✅ | **3,000+ paid receipts** emitted via the Canteen-hosted RPC |
 | `arc-canteen submit-puzzle` | ⏳ | active puzzle status checked, no submission yet |
 
 ## Part 1 — cUSDC wrapper on Arc
@@ -74,7 +74,9 @@ We also shipped pieces not on the suggested path that strengthen the same thesis
 
 - **CCTP V2 demo** ([`scripts/cctp-demo.py`](../scripts/cctp-demo.py)) — 1 USDC Sepolia → Arc, end-to-end ~60s. Tx hashes in `docs/SUBMISSION.md`.
 - **Real Irys upload** ([`services/irys/upload.js`](../services/irys/upload.js)) — Bundlr-signed bundles via Node sidecar. Trace JSON is publicly retrievable from the Irys gateway and byte-matches the on-chain hash.
-- **5-agent ensemble** ([`agent/ensemble.py`](../agent/ensemble.py)) — Bull / Bear / Edge run in parallel with isolated context (Gemini Pro × 3), Supervisor merges weighted-Bayesian, Critic (Gemini Flash) audits across six rigor dimensions per the ARA Rigor Reviewer pattern. Single-pass revision loop. Verdict gates publication — rejected receipts never reach the chain. rr-trace/3 schema commits to a Merkle DAG, not a flat blob.
+- **5-agent ensemble** ([`agent/ensemble.py`](../agent/ensemble.py)) — Bull / Bear / Edge run in parallel with isolated context (Gemini Flash × 3 — advocacy generators don't need Pro reasoning, and Flash is ~50× cheaper output), Supervisor merges weighted-Bayesian (Gemini 3.1 Pro Preview), Critic (Gemini Flash) audits across six rigor dimensions per the ARA Rigor Reviewer pattern. Single-pass revision loop. Verdict gates publication — rejected receipts never reach the chain. rr-trace/3 schema commits to a Merkle DAG, not a flat blob.
+- **Two prediction venues — Polymarket + Kalshi** ([`agent/scanner.py`](../agent/scanner.py)) — scanner pulls from both Trade APIs in parallel, round-robin interleave so per-tick processing splits across sources. Source-specific liquidity floors. Kalshi parlay markets (`mve_collection_ticker`) explicitly skipped — analyst is single-question.
+- **App Kit Unified Balance** ([`services/app-kit/demo.ts`](../services/app-kit/demo.ts)) — `@circle-fin/app-kit@1.5.1` integration. The agent operator EOA's testnet USDC across 12 chains (incl. Arc) is read as a single pool. Sixth Circle product in the stack.
 - **Backtest** ([`agent/resolver.py`](../agent/resolver.py) + [`agent/calibration.py`](../agent/calibration.py)) — Polymarket resolution back-fill + Brier score + 10-bucket reliability curve, surfaced at `/calibration`.
 - **MCP server — two surfaces** — free stdio at [`services/mcp/server.js`](../services/mcp/server.js) for Claude Desktop / Cursor / Cline; paywalled HTTP at `/mcp/v1/{get_price,audit}` for agent-to-agent commerce ($0.01 USDC per call, full x402 v2 envelope). See [`docs/mcp.md`](mcp.md).
 - **Live deployment** — `https://rrtrace.xyz` GitHub Pages (custom domain, HTTPS), `https://api.rrtrace.xyz` FastAPI via Cloudflare Tunnel, `https://events.rrtrace.xyz` SSE stream. Daemon emits ~50 receipts/h continuously on Harvey's PC with the `services-watchdog.ps1` Task Scheduler entry restarting the process tree if anything dies.

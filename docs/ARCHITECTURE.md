@@ -4,11 +4,11 @@ ReasoningReceipt is an x402-paywalled prediction-market oracle where every price
 
 ```mermaid
 graph LR
-  A[Polymarket Gamma] -->|markets| B(Scanner)
-  B --> C1[Bull · Gemini Pro]
-  B --> C2[Bear · Gemini Pro]
-  B --> C3[Edge · Gemini Pro]
-  C1 & C2 & C3 --> D{Supervisor · weighted-Bayesian merge<br/>+ disagreement_pp<br/>+ calibration prior}
+  A[Polymarket Gamma + Kalshi Trade API] -->|markets, round-robin interleave| B(Scanner)
+  B --> C1[Bull · Gemini Flash]
+  B --> C2[Bear · Gemini Flash]
+  B --> C3[Edge · Gemini Flash]
+  C1 & C2 & C3 --> D{Supervisor · Gemini Pro · weighted-Bayesian merge<br/>+ disagreement_pp<br/>+ calibration prior}
   D --> CR{Critic · Gemini Flash<br/>6-dim ARA audit}
   CR -.->|needs_revision| D
   CR -->|approved| E[rr-trace/3 assembly<br/>per-node hash · Merkle root]
@@ -29,9 +29,9 @@ graph LR
 
 | Layer | Files | Job |
 |---|---|---|
-| Scanner | `agent/scanner.py` | Pull Polymarket Gamma markets, filter by liquidity / horizon / language. |
-| Stance researchers | `agent/ensemble.py`, `agent/prompts/{bull,bear,edge}.md` | Three Gemini Pro calls run in parallel with isolated context — Bull argues YES, Bear argues NO, Edge surfaces tail risks. Google Search grounding. |
-| Supervisor | `agent/ensemble.py`, `agent/prompts/supervisor.md` | Weighted-Bayesian merge of the three stances. Stance weights ∈ [0.1, 0.7] sum to 1.0. Mandates ≥ 1 falsifiable claim with `checkable_by` date. Consumes calibration prior from `agent/calibration_store.py`. |
+| Scanner | `agent/scanner.py` | Pull **Polymarket Gamma + Kalshi Trade API** markets in parallel, drop Kalshi parlays (`mve_collection_ticker`/`mve_selected_legs`), apply source-specific liquidity floors ($10k Polymarket 24h volume / $2k Kalshi open-interest×last-price), filter by horizon / language. Round-robin interleave so `per_tick=N` slices across both venues. |
+| Stance researchers | `agent/ensemble.py`, `agent/prompts/{bull,bear,edge}.md` | Three Gemini calls run in parallel with isolated context — Bull argues YES, Bear argues NO, Edge surfaces tail risks. **Default model: Gemini 3 Flash Preview** (advocacy generators, ~50× cheaper output than Pro). Google Search grounding. All six knobs (`RR_ENSEMBLE_STANCE_MODEL`, `_MAX_TOKENS`, `_THINKING`, supervisor equivalents) env-tunable. |
+| Supervisor | `agent/ensemble.py`, `agent/prompts/supervisor.md` | Weighted-Bayesian merge of the three stances. **Stays on Gemini 3.1 Pro Preview** — synthesis is where Pro reasoning earns its cost. Stance weights ∈ [0.1, 0.7] sum to 1.0. Mandates ≥ 1 falsifiable claim with `checkable_by` date. Consumes calibration prior from `agent/calibration_store.py`. |
 | Critic | `agent/critic_v2.py`, `agent/prompts/critic-v2.md` | Six-dim ARA audit: evidence relevance, falsifiability, scope, coherence, exploration integrity, methodology. Verdict ∈ {approved, needs_revision, rejected}. Single-pass revision loop if any dim < 0.4. |
 | Trace v3 | `agent/trace_v3.py`, `agent/merkle.py` | Per-node SHA-256 over the reasoning DAG, Merkle root over the node hashes (sorted-pair, SHA-256, OZ-style proofs). |
 | Irys | `storage/irys.py`, `services/irys/upload.js` | Bundlr-signed upload of the canonical trace JSON. Python is the single source of truth for canonical bytes; the Node sidecar ships them verbatim. |
@@ -40,11 +40,13 @@ graph LR
 | x402 paywall | `server/x402.py`, `server/facilitator.py` | x402 v2 spec — `PAYMENT-REQUIRED` body, EIP-3009 typed-data, Circle Gateway `/v1/settle`. |
 | FastAPI server | `server/main.py`, `server/routes.py`, `server/mcp_paywalled.py`, `server/verify.py`, `server/events.py` | `/price/{id}` paid oracle, `/verify/{id}` byte-match, `/events/stream` SSE, `/mcp/v1/{get_price,audit}` paywalled MCP. |
 | Agent loop | `agent/loop.py`, `scripts/run-services.ps1` | Continuous scan → ensemble → critic → emit → trade. Runs the resolver every 10 ticks. Driven by `RR_USE_ENSEMBLE=1`. |
-| Calibration | `agent/resolver.py`, `agent/calibration_store.py`, `agent/calibration.py` | Resolver polls Polymarket for closed markets and back-fills outcomes. Calibration store computes per-category Brier + over-under bias in a 30-min in-process cache. Prior text gets fed into the Supervisor prompt. |
+| Calibration | `agent/resolver.py`, `agent/calibration_store.py`, `agent/calibration.py` | Resolver polls **Polymarket Gamma + Kalshi Trade API** for closed markets and back-fills outcomes (Polymarket: `outcomePrices` ≈ 1.0 / 0.0; Kalshi: `status ∈ {finalized, settled, determined}` + `result ∈ {yes, no}`). Calibration store computes per-category Brier + over-under bias in a 30-min in-process cache. Prior text gets fed into the Supervisor prompt. |
 | Trader | `agent/trader.py`, `wallets/portfolio.py` | Kelly sizing on the v2 path (v3 trader integration is Phase 6+). |
 | Wallets | `wallets/circle.py` | Circle developer-controlled wallets — portfolio + consumer pair. |
 | MCP stdio | `services/mcp/server.js` | Free MCP tool surface for Claude Desktop / Cursor / Cline. |
-| Dashboard | `dashboard/` | Next.js 15 static export, deployed to GitHub Pages with the `rrtrace.xyz` custom domain. |
+| Paywalled MCP HTTP | `server/mcp_paywalled.py` | Same tools as the stdio variant, paywalled with x402 v2 at `/mcp/v1/{get_price,audit}` — agent-to-agent revenue. |
+| App Kit / Unified Balance | `services/app-kit/demo.ts` | `@circle-fin/app-kit@1.5.1` + `adapter-viem-v2@1.11.0`. Reads agent operator USDC across all 12 testnet chains (incl. Arc) as one pool. Sixth Circle product in production. |
+| Dashboard | `dashboard/` | Next.js 15 static export, deployed to GitHub Pages with the `rrtrace.xyz` custom domain. **Hybrid mode** — server-renders from snapshot at build time, then client-side `useEffect` refreshes the homepage stats grid + receipts table from the live API on mount, so visiting the site never shows hour-old build data. |
 
 ## Request flow — `GET /price/{market_id}` (and the paywalled MCP)
 
