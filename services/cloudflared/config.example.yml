@@ -1,0 +1,42 @@
+# Cloudflare Tunnel config for ReasoningReceipt backend.
+#
+# Copy to ~/.cloudflared/config.yml (or wherever cloudflared looks for it
+# on this OS) AFTER running:
+#
+#   cloudflared tunnel login                      # browser-auth once
+#   cloudflared tunnel create rrtrace-backend     # creates tunnel + credentials
+#
+# Replace <TUNNEL-UUID> with the UUID printed by the `create` command.
+# The credentials JSON lands in ~/.cloudflared/<TUNNEL-UUID>.json.
+
+tunnel: <TUNNEL-UUID>
+credentials-file: C:\Users\tangm\.cloudflared\<TUNNEL-UUID>.json
+
+# Disable QUIC if the network's flaky on UDP — Vietnamese ISPs sometimes
+# throttle UDP and tunnels go offline. HTTP/2 over TCP is the fallback.
+# protocol: http2
+
+ingress:
+  # api.rrtrace.xyz — the FastAPI backend. Tunnel decrypts the public TLS
+  # and proxies to localhost:8000 in plaintext. Add path-based routing if
+  # multiple services later.
+  - hostname: api.rrtrace.xyz
+    service: http://localhost:8000
+    originRequest:
+      noTLSVerify: true
+      connectTimeout: 10s
+      keepAliveConnections: 16
+      keepAliveTimeout: 1m30s
+
+  # SSE stream needs longer keepalive than a typical request.
+  - hostname: events.rrtrace.xyz
+    service: http://localhost:8000
+    originRequest:
+      noTLSVerify: true
+      connectTimeout: 10s
+      keepAliveTimeout: 5m
+      # SSE/long-poll — disable per-request idle timeout.
+      noHappyEyeballs: true
+
+  # Catch-all: any other host hitting the tunnel gets 404.
+  - service: http_status:404
