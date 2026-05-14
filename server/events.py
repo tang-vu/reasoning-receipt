@@ -124,7 +124,9 @@ async def poll_db_and_broadcast(broker: ReceiptBroker, *, interval_s: float = 2.
     while True:
         try:
             await asyncio.sleep(interval_s)
-            new_rows: list[ReceiptRow] = []
+            # Build event dicts INSIDE the session so column reads don't
+            # trigger DetachedInstanceError after the session closes.
+            events: list[dict[str, Any]] = []
             with Session() as session:
                 stmt = (
                     select(ReceiptRow)
@@ -133,12 +135,12 @@ async def poll_db_and_broadcast(broker: ReceiptBroker, *, interval_s: float = 2.
                     .limit(50)
                 )
                 for r in session.execute(stmt).scalars():
-                    new_rows.append(r)
-            for r in new_rows:
-                await broker.publish(_to_event(r))
-                last_seen = max(last_seen, r.id)
-            if new_rows:
-                logger.debug("poll-broadcast: fan-out %d row(s), last_seen=%d", len(new_rows), last_seen)
+                    events.append(_to_event(r))
+            for ev in events:
+                await broker.publish(ev)
+                last_seen = max(last_seen, ev["id"])
+            if events:
+                logger.info("poll-broadcast: fan-out %d row(s), last_seen=%d", len(events), last_seen)
         except asyncio.CancelledError:
             raise
         except Exception as exc:  # noqa: BLE001
