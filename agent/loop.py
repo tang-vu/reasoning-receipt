@@ -218,12 +218,15 @@ class AgentLoop:
             return
 
         upload = self._irys.upload(trace_v3.to_dict())
-        result = self.chain.publish(
+        merkle_root_hex = trace_v3.merkle_root_hex()
+        result = self.chain.publish_v2(
             consumer_address=None,
             market_id=candidate.market_id,
             probability=trace_v3.claim.probability,
             confidence=trace_v3.claim.confidence,
             trace_hash_hex=upload.hash_hex,
+            merkle_root_hex=merkle_root_hex,
+            schema_version=trace_v3.schema_version,
             trace_cid=upload.cid,
         )
         latency_ms = int((time.perf_counter() - start) * 1000)
@@ -245,7 +248,7 @@ class AgentLoop:
                 latency_ms=latency_ms,
                 schema_version=trace_v3.schema_version,
                 disagreement_pp=trace_v3.supervisor_synthesis.disagreement_pp,
-                merkle_root=trace_v3.merkle_root_hex(),
+                merkle_root=merkle_root_hex,
                 category=trace_v3.category,
             )
             session.add(row)
