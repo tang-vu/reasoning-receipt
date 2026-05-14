@@ -1,5 +1,14 @@
+import type { Metadata } from "next";
+
 import { api } from "@/lib/api";
 import { TracesTable } from "@/components/traces-table";
+
+export const metadata: Metadata = {
+  title: "Receipts — every paid query, on-chain",
+  description:
+    "Browse every reasoning receipt emitted on Arc. Each row links to a byte-verifiable trace pinned on Irys and a ReceiptV2 event with Merkle root.",
+  alternates: { canonical: "/traces/" },
+};
 
 export default async function TracesPage() {
   const rows = await api.receipts(200).catch(() => []);

@@ -1,0 +1,17 @@
+{
+  "name": "ReasoningReceipt",
+  "short_name": "rrtrace",
+  "description": "x402-paywalled AI oracle for prediction markets — every price ships with a byte-verifiable reasoning trace, Merkle-rooted on Arc.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0b",
+  "theme_color": "#5eead4",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

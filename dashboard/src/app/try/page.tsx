@@ -1,6 +1,14 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import { api } from "@/lib/api";
+
+export const metadata: Metadata = {
+  title: "Try it — how the paywall works",
+  description:
+    "Step-by-step walkthrough of the x402 v2 paywall: 402 challenge → EIP-3009 sign → settle on Arc → byte-verifiable receipt. No wallet required to read along.",
+  alternates: { canonical: "/try/" },
+};
 
 const ARC_USDC_GAS = "0.000683";
 const CIRCLE_GATEWAY = "0x0077777d7EBA4688BDeF3E311b846F25870A19B9";

@@ -1,0 +1,33 @@
+# ReasoningReceipt — x402-paywalled AI oracle for prediction markets.
+# All content is intentionally public and meant to be indexed.
+
+User-agent: *
+Allow: /
+
+# AI crawlers — explicit opt-in. The whole point of the project is that
+# reasoning traces are auditable, so we want them findable.
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+# Sitemap for crawlers
+Sitemap: https://rrtrace.xyz/sitemap.xml
+# LLM-readable digest (https://llmstxt.org)
+# X-LLMs-Txt: https://rrtrace.xyz/llms.txt

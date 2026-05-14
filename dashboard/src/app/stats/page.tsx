@@ -1,6 +1,15 @@
+import type { Metadata } from "next";
+
 import { api, type TraceRow } from "@/lib/api";
 import { StatCard } from "@/components/stat-card";
 import { VolumeChart } from "@/components/volume-chart";
+
+export const metadata: Metadata = {
+  title: "Stats — traction at a glance",
+  description:
+    "Live traction for the ReasoningReceipt oracle: total receipts on Arc, USDC settled, distinct markets, distinct consumers, hourly volume chart.",
+  alternates: { canonical: "/stats/" },
+};
 
 function microUsdc(micro: number): string {
   return (micro / 1_000_000).toFixed(4);

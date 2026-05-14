@@ -1,4 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "The five agents",
+  description:
+    "Bull, Bear, Edge run in parallel with isolated context. Supervisor merges weighted-Bayesian. Critic audits across six rigor dimensions. The 5-agent ensemble inside ReasoningReceipt.",
+  alternates: { canonical: "/agents/" },
+};
 
 const agents = [
   {

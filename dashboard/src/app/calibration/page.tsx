@@ -1,6 +1,15 @@
+import type { Metadata } from "next";
+
 import { api } from "@/lib/api";
 import { ReliabilityChart } from "@/components/reliability-chart";
 import { StatCard } from "@/components/stat-card";
+
+export const metadata: Metadata = {
+  title: "Calibration — Brier + reliability",
+  description:
+    "How well does ReasoningReceipt's probability map to reality? Brier score on resolved markets, 10-bucket reliability curve, confidence-tier breakdown.",
+  alternates: { canonical: "/calibration/" },
+};
 
 function fmtBrier(x: number | null | undefined): string {
   if (x === null || x === undefined) return "—";
