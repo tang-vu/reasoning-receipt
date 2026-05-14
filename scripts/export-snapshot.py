@@ -175,6 +175,15 @@ def build_snapshot(limit: int = 1000) -> dict:
 
 
 def main(argv: list[str] | None = None) -> int:
+    # Load .env before init_db() so DATABASE_URL points at the populated DB
+    # (e.g. the local SQLite the daemon writes to) instead of the default.
+    try:
+        from dotenv import load_dotenv  # noqa: PLC0415
+
+        load_dotenv()
+    except ImportError:
+        pass
+
     parser = argparse.ArgumentParser(description="Export receipts snapshot to JSON.")
     parser.add_argument("--out", default="dashboard/public/snapshot.json")
     parser.add_argument("--limit", type=int, default=1000)
