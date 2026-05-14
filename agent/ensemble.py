@@ -46,15 +46,36 @@ _STANCE_ROLES = ("bull", "bear", "edge")
 _ROLE_ORDER = {"bull": 0, "bear": 1, "edge_case": 2}
 
 
+_DEFAULT_STANCE_MODEL = os.getenv("RR_ENSEMBLE_STANCE_MODEL", "gemini-3-flash-preview")
+_DEFAULT_SUPERVISOR_MODEL = os.getenv("RR_ENSEMBLE_SUPERVISOR_MODEL", DEFAULT_REASONING_MODEL)
+
+
+def _env_int(name: str, default: int) -> int:
+    try:
+        return int(os.getenv(name, "") or default)
+    except (TypeError, ValueError):
+        return default
+
+
 @dataclass(slots=True)
 class EnsembleConfig:
-    stance_model: str = DEFAULT_REASONING_MODEL
-    supervisor_model: str = DEFAULT_REASONING_MODEL
+    # Stances are advocacy generators (Bull / Bear / Edge) — they produce
+    # bounded, structured JSON, so Flash is sufficient and ~50× cheaper than
+    # Pro on output. Supervisor stays on Pro because that's where the actual
+    # weighted-Bayesian synthesis happens. Both override via env.
+    stance_model: str = field(default_factory=lambda: _DEFAULT_STANCE_MODEL)
+    supervisor_model: str = field(default_factory=lambda: _DEFAULT_SUPERVISOR_MODEL)
     fallback_models: list[str] = field(default_factory=lambda: list(DEFAULT_FALLBACK_MODELS))
     stance_temperature: float = 0.8  # partisan advocates — let them disagree
     supervisor_temperature: float = 0.2
-    max_tokens: int = 12_288
-    thinking_budget: int = 1_024
+    # Stance JSON is < 2k tokens in practice; capping at 4k prevents thinking-
+    # mode runaway. Supervisor still gets 8k for the synthesis step.
+    stance_max_tokens: int = field(default_factory=lambda: _env_int("RR_ENSEMBLE_STANCE_MAX_TOKENS", 4_096))
+    supervisor_max_tokens: int = field(default_factory=lambda: _env_int("RR_ENSEMBLE_SUPERVISOR_MAX_TOKENS", 8_192))
+    # Stances don't need deep thinking — they just emit a partisan JSON.
+    # Supervisor merges three drafts and benefits from some thinking budget.
+    stance_thinking_budget: int = field(default_factory=lambda: _env_int("RR_ENSEMBLE_STANCE_THINKING", 256))
+    supervisor_thinking_budget: int = field(default_factory=lambda: _env_int("RR_ENSEMBLE_SUPERVISOR_THINKING", 1_024))
     enable_web_search: bool = True
     stance_timeout_s: float = 120.0
 
@@ -210,8 +231,8 @@ class Ensemble:
             system_prompt=self._stance_prompts[role],
             user=_user_msg_for_stance(candidate),
             temperature=self.config.stance_temperature,
-            max_output_tokens=self.config.max_tokens,
-            thinking_budget=self.config.thinking_budget,
+            max_output_tokens=self.config.stance_max_tokens,
+            thinking_budget=self.config.stance_thinking_budget,
             enable_web_search=self.config.enable_web_search,
             log_label=f"ensemble.{role}",
         )
@@ -237,8 +258,8 @@ class Ensemble:
             system_prompt=self._supervisor_prompt,
             user=_user_msg_for_supervisor(candidate, stances, calibration_prior, critic_feedback),
             temperature=self.config.supervisor_temperature,
-            max_output_tokens=self.config.max_tokens,
-            thinking_budget=self.config.thinking_budget,
+            max_output_tokens=self.config.supervisor_max_tokens,
+            thinking_budget=self.config.supervisor_thinking_budget,
             enable_web_search=False,
             log_label="ensemble.supervisor",
         )
