@@ -266,6 +266,16 @@ def _candidate_for(market_id: str) -> MarketCandidate:
     )
 
 
+def _iso_utc(dt) -> str:
+    """ISO string with explicit UTC suffix — JS Date parses naive ISO as local."""
+    if dt is None:
+        return ""
+    s = dt.isoformat()
+    if not s.endswith("Z") and "+" not in s[10:]:
+        s += "Z"
+    return s
+
+
 def _to_trace_row(r: ReceiptRow) -> TraceRow:
     return TraceRow(
         id=r.id,
@@ -279,7 +289,7 @@ def _to_trace_row(r: ReceiptRow) -> TraceRow:
         consumer_address=r.consumer_address,
         arc_tx_hash=r.arc_tx_hash,
         paid_micro_usdc=r.paid_micro_usdc,
-        created_at=r.created_at.isoformat() if r.created_at else "",
+        created_at=_iso_utc(r.created_at),
         schema_version=getattr(r, "schema_version", None),
         disagreement_pp=getattr(r, "disagreement_pp", None),
         merkle_root=getattr(r, "merkle_root", None),

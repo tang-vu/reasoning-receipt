@@ -31,6 +31,17 @@ from storage.db import Session, init_db
 logger = logging.getLogger("rr.snapshot")
 
 
+def _iso_utc(dt) -> str | None:
+    """ISO string with explicit UTC suffix so JS Date parses as UTC, not local."""
+    if dt is None:
+        return None
+    s = dt.isoformat()
+    # Naive datetime (no +HH:MM, no Z) — DB stored as UTC, mark it.
+    if not s.endswith("Z") and "+" not in s[10:]:
+        s += "Z"
+    return s
+
+
 def _row_to_dict(r: ReceiptRow) -> dict:
     return {
         "id": r.id,
@@ -44,7 +55,7 @@ def _row_to_dict(r: ReceiptRow) -> dict:
         "consumer_address": r.consumer_address,
         "arc_tx_hash": r.arc_tx_hash,
         "paid_micro_usdc": r.paid_micro_usdc,
-        "created_at": r.created_at.isoformat() if r.created_at else None,
+        "created_at": _iso_utc(r.created_at),
         # rr-trace/3 — None for older rows.
         "schema_version": getattr(r, "schema_version", None),
         "disagreement_pp": getattr(r, "disagreement_pp", None),
