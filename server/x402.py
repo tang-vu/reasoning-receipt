@@ -290,6 +290,14 @@ class X402Paywall:
                 detail=f"facilitator rejected: HTTP {resp.status_code} {resp.text[:300]}",
             )
         data = resp.json()
+        # Circle returns 200 OK even on logical failures — must inspect the
+        # `success` boolean per the Gateway-Nanopayments spec.
+        if data.get("success") is False:
+            err_detail = data.get("error") or data.get("reason") or str(data)[:300]
+            raise HTTPException(
+                status_code=402,
+                detail=f"facilitator settlement failed: {err_detail}",
+            )
         return PaymentEvidence(
             payer_address=str(data.get("payer", payer)),
             tx_hash=str(data.get("tx_hash") or data.get("transaction") or data.get("transactionHash") or "0x"),
