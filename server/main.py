@@ -30,6 +30,7 @@ from .chain import ChainClient
 from .events import ReceiptBroker
 from .events import router as events_router
 from .facilitator import router as facilitator_router
+from .mcp_paywalled import router as mcp_router
 from .routes import router as oracle_router
 from .verify import router as verify_router
 from .x402 import X402Paywall
@@ -81,6 +82,7 @@ def create_app() -> FastAPI:
     app.include_router(oracle_router)
     app.include_router(verify_router)
     app.include_router(events_router)
+    app.include_router(mcp_router)
     if os.getenv("RR_LOCAL_FACILITATOR", "").lower() in {"1", "true", "yes"}:
         app.include_router(facilitator_router)
     return app
