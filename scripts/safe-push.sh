@@ -59,7 +59,9 @@ fi
 if git rev-parse --quiet --verify origin/main >/dev/null 2>&1; then
   for sha in $(git rev-list origin/main..HEAD); do
     msg=$(git log -1 --format=%B "$sha")
-    if echo "$msg" | grep -qiE '(generated with|co-authored-by:.*claude|co-authored-by:.*anthropic|🤖)'; then
+    # Anchor word boundaries on `generated with` so phrases like
+    # `regenerated with` / `pre-generated with` don't false-positive.
+    if echo "$msg" | grep -qiE '(\bgenerated with\b|co-authored-by:.*claude|co-authored-by:.*anthropic|🤖)'; then
       echo "[safe-push] BLOCKED: commit $sha has AI-attribution trailer."
       echo "$msg"
       echo "Run: git rebase -i origin/main and strip the trailer."
