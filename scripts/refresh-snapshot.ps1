@@ -11,10 +11,11 @@
 #       -Argument "-WindowStyle Hidden -ExecutionPolicy Bypass -File C:\Users\tangm\Documents\GitHub\reasoning-receipt\scripts\refresh-snapshot.ps1"
 #   $trigger = New-ScheduledTaskTrigger -Once -At (Get-Date).AddMinutes(1) `
 #       -RepetitionInterval (New-TimeSpan -Minutes 60) `
-#       -RepetitionDuration ([TimeSpan]::MaxValue)
+#       -RepetitionDuration (New-TimeSpan -Days 3650)   # NOT MaxValue — overflows the XML schema
+#   $settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -DontStopOnIdleEnd `
+#       -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
 #   Register-ScheduledTask -TaskName "rrtrace-refresh-snapshot" `
-#       -Action $action -Trigger $trigger `
-#       -Settings (New-ScheduledTaskSettingsSet -StartWhenAvailable -DontStopOnIdleEnd) -Force
+#       -Action $action -Trigger $trigger -Settings $settings -Force
 #
 # Manual test:  powershell -ExecutionPolicy Bypass -File scripts/refresh-snapshot.ps1
 # Unregister:   Unregister-ScheduledTask -TaskName "rrtrace-refresh-snapshot" -Confirm:$false
