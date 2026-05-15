@@ -44,16 +44,41 @@ function Stop-IfRunning($svcPidFile, $name) {
     }
 }
 
+# Sweep ALL orphan processes whose CommandLine matches the given pattern.
+# The PID-file approach above only kills the *latest* PID we recorded — if a
+# previous restart lost track (PID file overwritten before the old process was
+# stopped), zombie daemons accumulate and emit receipts in parallel. This was
+# observed in production: seven concurrent agent.loop processes after multiple
+# restarts, blowing through the Gemini quota. Pattern-based kill closes that.
+function Stop-OrphansByCmdLine($pattern, $name) {
+    $orphans = Get-CimInstance Win32_Process -Filter "Name='python.exe'" -ErrorAction SilentlyContinue `
+        | Where-Object { $_.CommandLine -match $pattern }
+    if ($orphans) {
+        foreach ($proc in $orphans) {
+            try {
+                Stop-Process -Id $proc.ProcessId -Force -ErrorAction Stop
+                Write-Host "[run-services] swept orphan $name (pid $($proc.ProcessId), started $($proc.CreationDate))"
+            } catch {
+                # Already dead — fine.
+            }
+        }
+    }
+}
+
 # === Stop mode ===
 if ($Stop) {
     Stop-IfRunning $serverPidFile "uvicorn"
     Stop-IfRunning $agentPidFile  "agent loop"
+    Stop-OrphansByCmdLine 'uvicorn.*server\.main' "uvicorn"
+    Stop-OrphansByCmdLine '-m agent\.loop'        "agent loop"
     return
 }
 
-# Idempotency: kill stale instances first.
+# Idempotency: kill stale instances first (PID file + orphan sweep).
 Stop-IfRunning $serverPidFile "uvicorn (stale)"
 Stop-IfRunning $agentPidFile  "agent loop (stale)"
+Stop-OrphansByCmdLine 'uvicorn.*server\.main' "uvicorn (orphan)"
+Stop-OrphansByCmdLine '-m agent\.loop'        "agent loop (orphan)"
 
 # === Start uvicorn (FastAPI on :$Port) ===
 Write-Host "[run-services] starting uvicorn on :$Port -> $serverLog"
