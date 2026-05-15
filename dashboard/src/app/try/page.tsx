@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { api } from "@/lib/api";
+import { X402LivePaywall } from "@/components/x402-live-paywall";
 
 export const metadata: Metadata = {
   title: "Try it — how the paywall works",
@@ -25,11 +26,21 @@ export default async function TryPage() {
         <p className="max-w-3xl text-muted">
           ReasoningReceipt is built for <strong className="text-ink">agents</strong>, not browsers.
           The intended consumer is another piece of software that pays $0.01 over x402, gets back
-          a probability + a verifiable trace, and uses the answer to size a position. Here&apos;s the
-          exact HTTP dance the consumer goes through. No wallet required to read along —
-          everything you need to verify a receipt is on this page.
+          a probability + a verifiable trace, and uses the answer to size a position. The
+          interactive demo below walks the full x402 v2 protocol with your wallet; the four steps
+          underneath document the HTTP dance for non-browser callers.
         </p>
       </header>
+
+      <X402LivePaywall />
+
+      <hr className="border-border" />
+
+      <p className="text-sm text-muted">
+        For the friction-free version (sign a plaintext authorization, no
+        typed-data signing) see{" "}
+        <Link href="/try-live" className="text-accent hover:underline">/try-live</Link>.
+      </p>
 
       {/* Step 1 */}
       <Step
