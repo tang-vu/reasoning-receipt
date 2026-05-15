@@ -18,6 +18,16 @@ Set-Location $repoRoot
 
 $serverPidFile = "tmp/services/server.pid"
 $agentPidFile  = "tmp/services/agent.pid"
+$pauseFlag     = "tmp/services/PAUSED"
+
+# Manual override: dropping a file at tmp/services/PAUSED stops the watchdog
+# from auto-restarting the agent loop. Use this to halt Gemini spend without
+# kill-9ing the watchdog itself. Remove the file to resume.
+if (Test-Path $pauseFlag) {
+    $ts = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    Add-Content -Path "tmp/services/watchdog.log" -Value "$ts paused (PAUSED flag present)"
+    return
+}
 
 function Test-PidAlive($pidFile) {
     if (!(Test-Path $pidFile)) { return $false }
