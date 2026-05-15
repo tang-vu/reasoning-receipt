@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { api } from "@/lib/api";
-import { TracesTable } from "@/components/traces-table";
+import { LiveTracesTable } from "@/components/live-traces-table";
 
 export const metadata: Metadata = {
   title: "Receipts — every paid query, on-chain",
@@ -21,7 +21,7 @@ export default async function TracesPage() {
           settlement details.
         </p>
       </header>
-      <TracesTable rows={rows} />
+      <LiveTracesTable initial={rows} />
     </div>
   );
 }
