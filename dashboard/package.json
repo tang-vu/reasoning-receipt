@@ -11,11 +11,15 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.100.10",
+    "connectkit": "^1.9.2",
     "next": "^15.0.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "recharts": "^2.13.3",
-    "swr": "^2.2.5"
+    "swr": "^2.2.5",
+    "viem": "^2.49.2",
+    "wagmi": "^2.19.5"
   },
   "devDependencies": {
     "@types/node": "^22.9.0",

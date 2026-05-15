@@ -27,6 +27,7 @@ from storage.db import init_db
 from storage.irys import IrysClient
 
 from .chain import ChainClient
+from .demo import router as demo_router
 from .events import ReceiptBroker, poll_db_and_broadcast
 from .events import router as events_router
 from .facilitator import router as facilitator_router
@@ -96,6 +97,7 @@ def create_app() -> FastAPI:
     app.include_router(verify_router)
     app.include_router(events_router)
     app.include_router(mcp_router)
+    app.include_router(demo_router)
     if os.getenv("RR_LOCAL_FACILITATOR", "").lower() in {"1", "true", "yes"}:
         app.include_router(facilitator_router)
     return app
