@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ConnectKitButton } from "connectkit";
-import { useAccount } from "wagmi";
+import { useAccount, useSignMessage } from "wagmi";
 
 interface DemoMarket {
   market_id: string;
@@ -32,13 +32,43 @@ const API_BASE =
 const ARC_TX_URL = (h: string) =>
   `https://testnet.arcscan.app/tx/${h.startsWith("0x") ? h : `0x${h}`}`;
 
+/** Build the EXACT plaintext the server reconstructs in server/demo.py
+ * `_build_demo_message`. Any drift in whitespace/wording breaks ecrecover. */
+function buildDemoMessage(opts: {
+  marketId: string;
+  consumer: string;
+  nonce: string;
+  timestamp: string;
+}): string {
+  return (
+    "ReasoningReceipt - demo authorization\n" +
+    `market: ${opts.marketId}\n` +
+    `consumer: ${opts.consumer}\n` +
+    `nonce: ${opts.nonce}\n` +
+    `timestamp: ${opts.timestamp}\n` +
+    "\n" +
+    "By signing, I authorize the oracle to emit a demo receipt attributed to my " +
+    "wallet on Arc Testnet. No payment required."
+  );
+}
+
+function randomNonce(): string {
+  // 16 random hex chars — only collision protection is the 60s rate limit,
+  // so we don't need full 32-byte entropy.
+  const buf = new Uint8Array(8);
+  crypto.getRandomValues(buf);
+  return Array.from(buf, (b) => b.toString(16).padStart(2, "0")).join("");
+}
+
 export default function TryLivePage() {
   const { address, isConnected, chain } = useAccount();
+  const { signMessageAsync } = useSignMessage();
   const [markets, setMarkets] = useState<DemoMarket[]>([]);
   const [selectedMarketId, setSelectedMarketId] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<DemoResponse | null>(null);
+  const [phase, setPhase] = useState<"idle" | "signing" | "submitting">("idle");
 
   useEffect(() => {
     fetch(`${API_BASE}/demo/markets?limit=20`)
@@ -58,10 +88,31 @@ export default function TryLivePage() {
     setError(null);
     setResult(null);
     try {
+      // 1) Build the domain message + ask the wallet for a signature.
+      //    This is the proof-of-intent gate — no synthetic tagging.
+      const nonce = randomNonce();
+      const timestamp = new Date().toISOString();
+      const message = buildDemoMessage({
+        marketId: selectedMarketId,
+        consumer: address,
+        nonce,
+        timestamp,
+      });
+      setPhase("signing");
+      const signature = await signMessageAsync({ message });
+
+      // 2) POST to server with sig + nonce + timestamp. Server recovers the
+      //    signer and asserts it matches `consumer_address`.
+      setPhase("submitting");
       const r = await fetch(`${API_BASE}/demo/price/${selectedMarketId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ consumer_address: address }),
+        body: JSON.stringify({
+          consumer_address: address,
+          signature,
+          nonce,
+          timestamp,
+        }),
       });
       if (!r.ok) {
         const body = await r.json().catch(() => ({}));
@@ -69,9 +120,17 @@ export default function TryLivePage() {
       }
       setResult(await r.json());
     } catch (e) {
-      setError(e instanceof Error ? e.message : "fetch failed");
+      // wagmi throws { shortMessage, message } — prefer the short one.
+      const msg =
+        e && typeof e === "object" && "shortMessage" in e
+          ? String((e as { shortMessage: unknown }).shortMessage)
+          : e instanceof Error
+            ? e.message
+            : "request failed";
+      setError(msg);
     } finally {
       setLoading(false);
+      setPhase("idle");
     }
   }
 
@@ -84,16 +143,17 @@ export default function TryLivePage() {
           Try it live — your wallet, a real on-chain receipt
         </h1>
         <p className="max-w-3xl text-muted">
-          Connect any EVM wallet, pick a market, click <strong className="text-ink">Get reasoning</strong>.
-          The oracle re-emits the latest cached trace for that market with{" "}
-          <strong className="text-ink">your address as the consumer</strong> on
-          Arc Testnet. The operator covers gas (~$0.0007 USDC) — no testnet USDC
-          required on your end. Each address gets <strong className="text-ink">5 free demos per day, 1 per minute</strong>.
+          Connect any EVM wallet, pick a market, and <strong className="text-ink">sign a one-line authorization message</strong>.
+          The oracle verifies your signature off-chain (no gas to you), then re-emits the latest
+          cached trace for that market with <strong className="text-ink">your address as the consumer</strong> on
+          Arc Testnet. The operator covers gas (~$0.0007 USDC). Each address gets{" "}
+          <strong className="text-ink">5 free demos per day, 1 per minute</strong>.
         </p>
         <p className="text-xs text-muted">
-          The full paywalled path uses x402 v2 + EIP-3009 signing — see{" "}
-          <Link href="/try" className="text-accent hover:underline">/try</Link>{" "}
-          for that walkthrough. This page is the friction-free demo.
+          The signature is your proof of intent — without it the receipt would be a synthetic
+          tag-the-wallet, which doesn&apos;t count as &quot;real user activity&quot;. For the full
+          paywalled flow (real $0.01 USDC payment via x402 v2), see{" "}
+          <Link href="/try" className="text-accent hover:underline">/try</Link>.
         </p>
       </header>
 
@@ -146,7 +206,11 @@ export default function TryLivePage() {
             disabled={!isConnected || !selectedMarketId || loading}
             className="rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-bg hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
           >
-            {loading ? "Running…" : "Get reasoning"}
+            {phase === "signing"
+              ? "Confirm in wallet…"
+              : phase === "submitting"
+                ? "Emitting on Arc…"
+                : "Sign &amp; get reasoning"}
           </button>
         </div>
 

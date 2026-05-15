@@ -30,6 +30,8 @@ from collections import defaultdict, deque
 from datetime import UTC, datetime
 from threading import Lock
 
+from eth_account import Account
+from eth_account.messages import encode_defunct
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, Field
 from sqlalchemy import desc, select
@@ -42,8 +44,10 @@ logger = logging.getLogger(__name__)
 
 
 _ETH_ADDR = re.compile(r"^0x[0-9a-fA-F]{40}$")
+_HEX_SIG = re.compile(r"^0x[0-9a-fA-F]{130}$")
 _MIN_GAP_S = 60.0
 _MAX_PER_DAY = 5
+_MAX_SIG_AGE_S = 300  # 5-minute clock skew allowance
 
 # Rate-limit state — in-process, fine for a single-uvicorn deployment.
 # (Restart resets the limiter; that's acceptable for the trial surface.)
@@ -54,6 +58,62 @@ _calls_per_day: dict[str, deque[float]] = defaultdict(deque)
 
 class DemoRequest(BaseModel):
     consumer_address: str = Field(..., description="EIP-55 0x… address to attribute the receipt to.")
+    signature: str = Field(..., description="65-byte hex signature over the domain message below.")
+    nonce: str = Field(..., description="Random hex nonce included in the signed message.")
+    timestamp: str = Field(..., description="ISO 8601 timestamp included in the signed message. Must be within 5 min of server now.")
+
+
+def _build_demo_message(*, market_id: str, consumer: str, nonce: str, timestamp: str) -> str:
+    """The exact plaintext the client signs. Both sides reconstruct it identically — any
+    drift in whitespace, ordering, or wording breaks signature recovery."""
+    return (
+        "ReasoningReceipt - demo authorization\n"
+        f"market: {market_id}\n"
+        f"consumer: {consumer}\n"
+        f"nonce: {nonce}\n"
+        f"timestamp: {timestamp}\n"
+        "\n"
+        "By signing, I authorize the oracle to emit a demo receipt attributed to my "
+        "wallet on Arc Testnet. No payment required."
+    )
+
+
+def _verify_signed_demo(*, market_id: str, body: DemoRequest) -> None:
+    """Recover the signer from the signed domain message and assert it matches
+    `body.consumer_address`. Also enforces a 5-minute timestamp window so old
+    signatures can't be replayed indefinitely."""
+    if not _HEX_SIG.match(body.signature):
+        raise HTTPException(status_code=400, detail="invalid signature shape (expect 0x + 130 hex chars)")
+    try:
+        ts = datetime.fromisoformat(body.timestamp.replace("Z", "+00:00"))
+    except (TypeError, ValueError):
+        raise HTTPException(status_code=400, detail="invalid timestamp (need ISO 8601)") from None
+    age = (datetime.now(UTC) - (ts if ts.tzinfo else ts.replace(tzinfo=UTC))).total_seconds()
+    if abs(age) > _MAX_SIG_AGE_S:
+        raise HTTPException(
+            status_code=400,
+            detail=f"timestamp out of window (Δ={int(age)}s, max ±{_MAX_SIG_AGE_S}s). Re-sign with a fresh message.",
+        )
+    if not body.nonce or len(body.nonce) < 8:
+        raise HTTPException(status_code=400, detail="nonce too short (min 8 chars)")
+
+    message = _build_demo_message(
+        market_id=market_id,
+        consumer=body.consumer_address,
+        nonce=body.nonce,
+        timestamp=body.timestamp,
+    )
+    try:
+        encoded = encode_defunct(text=message)
+        recovered = Account.recover_message(encoded, signature=body.signature)
+    except Exception as exc:  # noqa: BLE001
+        raise HTTPException(status_code=400, detail=f"signature recovery failed: {exc!s}") from None
+
+    if recovered.lower() != body.consumer_address.lower():
+        raise HTTPException(
+            status_code=401,
+            detail=f"signer ({recovered}) does not match consumer_address ({body.consumer_address})",
+        )
 
 
 class DemoResponse(BaseModel):
@@ -152,9 +212,33 @@ async def list_demo_markets(limit: int = 25) -> dict:
     return {"markets": _list_markets_with_receipts(limit=limit)}
 
 
+@router.get("/message")
+async def get_demo_message(
+    market_id: str,
+    consumer: str,
+    nonce: str,
+    timestamp: str,
+) -> dict:
+    """Returns the EXACT plaintext the client should sign. Avoids any whitespace
+    drift between client and server — they construct from the same source.
+
+    The client can also build the message locally with the same template; this
+    endpoint exists mainly for debugging and to keep the format authoritative.
+    """
+    return {
+        "message": _build_demo_message(
+            market_id=market_id,
+            consumer=consumer,
+            nonce=nonce,
+            timestamp=timestamp,
+        )
+    }
+
+
 @router.post("/price/{market_id}", response_model=DemoResponse)
 async def demo_price(market_id: str, body: DemoRequest, request: Request) -> DemoResponse:
     addr = _normalize_address(body.consumer_address)
+    _verify_signed_demo(market_id=market_id, body=body)
     _check_rate_limit(addr)
 
     cached = _latest_receipt_for(market_id)
