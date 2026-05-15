@@ -2,75 +2,104 @@
 @tailwind components;
 @tailwind utilities;
 
-html,
-body {
-  background: #0a0a0b;
-  color: #e7e7ea;
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+/* === Palette ported verbatim from design-landing/index.html ============ */
+:root {
+  --ink:        oklch(0.14 0.006 80);
+  --ink-2:      oklch(0.18 0.006 80);
+  --ink-3:      oklch(0.22 0.006 80);
+  --rule:       oklch(0.30 0.006 80);
+  --bone:       oklch(0.95 0.006 80);
+  --bone-dim:   oklch(0.78 0.006 80);
+  --bone-faint: oklch(0.58 0.006 80);
+  --lime:       oklch(0.86 0.17 130);
+  --lime-soft:  oklch(0.86 0.17 130 / 0.18);
+  --terra:      oklch(0.68 0.18 28);
+  --terra-soft: oklch(0.68 0.18 28 / 0.18);
+  --amber:      oklch(0.82 0.15 78);
+
+  --f-display:  var(--font-instrument-serif, "Instrument Serif"), "Times New Roman", serif;
+  --f-body:     var(--font-inter, "Inter"), system-ui, -apple-system, sans-serif;
+  --f-mono:     var(--font-jetbrains-mono, "JetBrains Mono"), ui-monospace, monospace;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--ink);
+  color: var(--bone);
+  font-family: var(--f-body);
+  font-size: 15px;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
-::selection {
-  background: rgba(94, 234, 212, 0.25);
-}
+::selection { background: var(--lime); color: var(--ink); }
 
-/* === Landing-page utilities (Ethereal Glass archetype) === */
-
-.landing-orb {
-  position: absolute;
-  border-radius: 9999px;
-  filter: blur(96px);
-  opacity: 0.5;
+/* faint scanline overlay so the dark surface doesn't read as flat */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
   pointer-events: none;
-  animation: landing-orb-drift 18s ease-in-out infinite;
-}
-@keyframes landing-orb-drift {
-  0%, 100% { transform: translate3d(0, 0, 0); }
-  50%      { transform: translate3d(0, -24px, 0); }
-}
-
-.landing-grid {
-  background-image:
-    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-  background-size: 56px 56px;
-  -webkit-mask-image: radial-gradient(ellipse 60% 70% at 50% 30%, black 30%, transparent 80%);
-  mask-image: radial-gradient(ellipse 60% 70% at 50% 30%, black 30%, transparent 80%);
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 3px,
+    rgba(255, 255, 255, 0.012) 3px,
+    rgba(255, 255, 255, 0.012) 4px
+  );
+  z-index: 100;
+  mix-blend-mode: overlay;
 }
 
-.glass-card {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
-  transition: border-color 200ms ease, transform 200ms ease;
+/* === Typography utilities ============================================== */
+.font-display { font-family: var(--f-display); font-weight: 400; }
+.font-mono    { font-family: var(--f-mono); }
+.font-body    { font-family: var(--f-body); }
+.italic-it    { font-style: italic; }
+.upcase       { text-transform: uppercase; letter-spacing: 0.14em; }
+
+.micro {
+  font-family: var(--f-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--bone-faint);
 }
-.glass-card:hover {
-  border-color: rgba(94, 234, 212, 0.28);
-  transform: translateY(-1px);
+.label {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--bone-dim);
 }
 
-.live-dot {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 9999px;
-  background: #5eead4;
-  box-shadow: 0 0 0 0 rgba(94, 234, 212, 0.45);
-  animation: live-pulse 2s ease-out infinite;
+/* === Receipt motif lines =============================================== */
+.dotted-h {
+  height: 1px;
+  background-image: linear-gradient(to right, var(--rule) 50%, transparent 50%);
+  background-size: 6px 1px;
+  background-repeat: repeat-x;
 }
-@keyframes live-pulse {
-  0%   { box-shadow: 0 0 0 0 rgba(94, 234, 212, 0.45); }
-  70%  { box-shadow: 0 0 0 12px rgba(94, 234, 212, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(94, 234, 212, 0); }
+.solid-h { height: 1px; background: var(--rule); }
+
+/* === Ticker animation ================================================== */
+@keyframes ticker-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes blink-step { 50% { opacity: 0; } }
+@keyframes pulse-ring {
+  0%   { box-shadow: 0 0 0 0 color-mix(in oklab, var(--lime) 60%, transparent); }
+  70%  { box-shadow: 0 0 0 8px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
 }
 
-.hero-gradient-text {
-  background: linear-gradient(135deg, #e7e7ea 0%, #5eead4 55%, #fcd34d 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+/* Bigger pulse for hero status pip */
+@keyframes pulse-big {
+  0%   { box-shadow: 0 0 0 0 color-mix(in oklab, var(--lime) 50%, transparent); }
+  70%  { box-shadow: 0 0 0 12px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
 }

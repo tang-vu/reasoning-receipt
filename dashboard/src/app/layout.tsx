@@ -1,10 +1,31 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import Script from "next/script";
+import { Instrument_Serif, Inter, JetBrains_Mono } from "next/font/google";
 
 import { Web3Provider } from "@/components/web3-provider";
 
 import "./globals.css";
+
+const serifDisplay = Instrument_Serif({
+  subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
+  variable: "--font-instrument-serif",
+  display: "swap",
+});
+const bodySans = Inter({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-inter",
+  display: "swap",
+});
+const mono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
+  variable: "--font-jetbrains-mono",
+  display: "swap",
+});
 
 const SITE_URL = "https://rrtrace.xyz";
 const SITE_NAME = "ReasoningReceipt";
@@ -114,14 +135,13 @@ export const viewport: Viewport = {
 };
 
 const nav = [
-  { href: "/", label: "Home" },
-  { href: "/agents", label: "Agents" },
-  { href: "/try", label: "Try it" },
-  { href: "/try-live", label: "Try live" },
-  { href: "/inclusion", label: "Inclusion" },
-  { href: "/traces", label: "Traces" },
-  { href: "/calibration", label: "Calibration" },
-  { href: "/stats", label: "Stats" },
+  { href: "/agents", label: "agents" },
+  { href: "/try-live", label: "live" },
+  { href: "/try", label: "x402" },
+  { href: "/inclusion", label: "verify" },
+  { href: "/traces", label: "traces" },
+  { href: "/calibration", label: "calibration" },
+  { href: "/stats", label: "stats" },
 ];
 
 const structuredData = {
@@ -164,8 +184,11 @@ const structuredData = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className="min-h-screen bg-bg text-ink">
+    <html
+      lang="en"
+      className={`${serifDisplay.variable} ${bodySans.variable} ${mono.variable}`}
+    >
+      <body className="min-h-screen bg-bg text-bone">
         <Script
           id="structured-data"
           type="application/ld+json"
@@ -173,22 +196,47 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
         <Web3Provider>
-          <header className="border-b border-border">
-            <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-              <Link href="/" className="font-semibold tracking-tight">
-                ReasoningReceipt <span className="text-muted">·</span>
-                <span className="ml-1 text-accent">oracle</span>
+          <header
+            className="sticky top-0 z-40 border-b border-ink-3 backdrop-blur-md"
+            style={{ background: "color-mix(in oklab, var(--ink) 88%, transparent)" }}
+          >
+            <div className="mx-auto flex h-[60px] max-w-[1480px] items-center justify-between gap-4 px-8 sm:px-8">
+              <Link href="/" className="flex items-center gap-3 font-mono text-[13px] tracking-[0.02em]">
+                <span
+                  className="grid h-[30px] w-[30px] place-items-center rounded-full border border-bone font-display text-[18px] italic text-bone"
+                >
+                  R
+                </span>
+                <span>
+                  <b className="font-semibold text-bone">ReasoningReceipt</b>
+                  <span className="ml-2 text-bone-faint">/ rr-trace 3</span>
+                </span>
               </Link>
-              <nav className="flex gap-5 text-sm text-muted">
+              <nav className="hidden gap-7 md:flex">
                 {nav.map((n) => (
-                  <Link key={n.href} href={n.href} className="hover:text-ink">
+                  <Link
+                    key={n.href}
+                    href={n.href}
+                    className="font-mono text-[12px] lowercase tracking-[0.06em] text-bone-dim transition-colors hover:text-lime"
+                  >
                     {n.label}
                   </Link>
                 ))}
               </nav>
+              <Link
+                href="/try-live"
+                className="inline-flex items-center gap-2 border border-bone bg-bone px-3.5 py-2 font-mono text-[12px] tracking-[0.04em] text-ink transition-all hover:border-lime hover:bg-lime"
+              >
+                <span
+                  className="block h-[7px] w-[7px] rounded-full bg-terra"
+                  style={{ animation: "pulse-ring 1.4s ease-out infinite" }}
+                  aria-hidden
+                />
+                live oracle →
+              </Link>
             </div>
           </header>
-          <main className="mx-auto max-w-6xl px-6 py-8">{children}</main>
+          <main className="mx-auto max-w-[1480px] px-8 py-10">{children}</main>
           <footer className="mt-16 border-t border-border">
           <div className="mx-auto flex max-w-6xl flex-wrap items-baseline justify-between gap-3 px-6 py-6 text-xs text-muted">
             <div>
