@@ -200,16 +200,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             className="sticky top-0 z-40 border-b border-ink-3 backdrop-blur-md"
             style={{ background: "color-mix(in oklab, var(--ink) 88%, transparent)" }}
           >
-            <div className="mx-auto flex h-[60px] max-w-[1480px] items-center justify-between gap-4 px-8 sm:px-8">
-              <Link href="/" className="flex items-center gap-3 font-mono text-[13px] tracking-[0.02em]">
+            <div className="mx-auto flex h-[60px] max-w-[1480px] items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
+              <Link href="/" className="flex items-center gap-3 font-mono text-[12px] tracking-[0.02em] sm:text-[13px]">
                 <span
-                  className="grid h-[30px] w-[30px] place-items-center rounded-full border border-bone font-display text-[18px] italic text-bone"
+                  className="grid h-[30px] w-[30px] flex-none place-items-center rounded-full border border-bone font-display text-[18px] italic text-bone"
                 >
                   R
                 </span>
-                <span>
+                <span className="truncate">
                   <b className="font-semibold text-bone">ReasoningReceipt</b>
-                  <span className="ml-2 text-bone-faint">/ rr-trace 3</span>
+                  <span className="ml-2 hidden text-bone-faint sm:inline">/ rr-trace 3</span>
                 </span>
               </Link>
               <nav className="hidden gap-7 md:flex">
@@ -225,28 +225,29 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </nav>
               <Link
                 href="/try-live"
-                className="inline-flex items-center gap-2 border border-bone bg-bone px-3.5 py-2 font-mono text-[12px] tracking-[0.04em] text-ink transition-all hover:border-lime hover:bg-lime"
+                className="inline-flex flex-none items-center gap-2 border border-bone bg-bone px-2.5 py-1.5 font-mono text-[11px] tracking-[0.04em] text-ink transition-all hover:border-lime hover:bg-lime sm:px-3.5 sm:py-2 sm:text-[12px]"
               >
                 <span
-                  className="block h-[7px] w-[7px] rounded-full bg-terra"
+                  className="block h-[7px] w-[7px] flex-none rounded-full bg-terra"
                   style={{ animation: "pulse-ring 1.4s ease-out infinite" }}
                   aria-hidden
                 />
-                live oracle →
+                <span className="hidden sm:inline">live oracle →</span>
+                <span className="sm:hidden">live →</span>
               </Link>
             </div>
           </header>
-          <main className="mx-auto max-w-[1480px] px-8 py-10">{children}</main>
-          <footer className="mt-16 border-t border-border">
-          <div className="mx-auto flex max-w-6xl flex-wrap items-baseline justify-between gap-3 px-6 py-6 text-xs text-muted">
+          <main className="mx-auto max-w-[1480px] px-4 py-8 sm:px-6 sm:py-10 lg:px-8">{children}</main>
+          <footer className="mt-12 border-t border-ink-3 sm:mt-16">
+          <div className="mx-auto flex max-w-[1480px] flex-wrap items-baseline justify-between gap-3 px-4 py-6 text-[11px] text-bone-dim sm:px-6 sm:text-xs lg:px-8">
             <div>
               Settled on Arc testnet · per-receipt cost ≈ $0.01 · traces pinned to Irys
             </div>
-            <div className="flex gap-4">
-              <a href="https://github.com/tang-vu/reasoning-receipt" rel="noopener" className="hover:text-ink">GitHub</a>
-              <a href="https://testnet.arcscan.app/address/0x27d93c52fea923f956345af27f61d7bf47f0c4c1" rel="noopener" className="hover:text-ink">Contract V2</a>
-              <a href="/llms.txt" className="hover:text-ink">llms.txt</a>
-              <a href="/sitemap.xml" className="hover:text-ink">Sitemap</a>
+            <div className="flex flex-wrap gap-4">
+              <a href="https://github.com/tang-vu/reasoning-receipt" rel="noopener" className="hover:text-bone">GitHub</a>
+              <a href="https://testnet.arcscan.app/address/0x27d93c52fea923f956345af27f61d7bf47f0c4c1" rel="noopener" className="hover:text-bone">Contract V2</a>
+              <a href="/llms.txt" className="hover:text-bone">llms.txt</a>
+              <a href="/sitemap.xml" className="hover:text-bone">Sitemap</a>
             </div>
           </div>
         </footer>

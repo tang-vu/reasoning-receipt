@@ -11,12 +11,19 @@ const config: Config = {
         mono: ["var(--f-mono)", "JetBrains Mono", "ui-monospace", "Menlo", "monospace"],
         display: ["var(--f-display)", "Instrument Serif", "Times New Roman", "serif"],
       },
-      // Tokens map onto the CSS-var palette in globals.css. Keeping the
-      // legacy `bg`/`panel`/`accent` names so existing components compile;
-      // values now resolve to the design's oklch palette.
+      // Tokens map onto the CSS-var palette in globals.css. Legacy semantic
+      // in our pre-redesign code was `ink` = the primary *foreground* color,
+      // `bg` = page background. The new design palette inverts the naming —
+      // `--ink` is now the DARK background and `--bone` is the cream
+      // foreground. To keep all existing `text-ink`/`bg-bg` usages working,
+      // remap them here onto the design-spec roles.
       colors: {
+        // foreground / text — was `text-ink` in legacy components
+        ink: "var(--bone)",
+        // background — was `bg-bg`
         bg: "var(--ink)",
-        ink: "var(--ink)",
+        // design-native tokens (use these in new components)
+        "ink-1": "var(--ink)",
         "ink-2": "var(--ink-2)",
         "ink-3": "var(--ink-3)",
         rule: "var(--rule)",

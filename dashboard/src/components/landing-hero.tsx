@@ -35,29 +35,29 @@ export function LandingHero({
   }, []);
 
   return (
-    <section className="relative grid items-start gap-20 py-12 lg:grid-cols-[1.15fr_1fr] lg:gap-20">
+    <section className="relative grid items-start gap-12 py-8 sm:py-12 lg:grid-cols-[1.15fr_1fr] lg:gap-20">
       {/* LEFT column */}
-      <div>
+      <div className="min-w-0">
         {/* Eyebrow */}
         <div
-          className="mb-9 inline-flex items-center gap-2.5 border border-ink-3 px-3 py-1.5 text-[11px] uppercase tracking-[0.14em]"
+          className="mb-7 flex max-w-full flex-wrap items-center gap-2 border border-ink-3 px-2.5 py-1.5 text-[10px] uppercase tracking-[0.12em] sm:mb-9 sm:gap-2.5 sm:px-3 sm:text-[11px] sm:tracking-[0.14em]"
           style={{ fontFamily: "var(--f-mono)", color: "var(--bone-dim)" }}
         >
           <span
-            className="inline-block h-1.5 w-1.5 rounded-full"
+            className="inline-block h-1.5 w-1.5 flex-none rounded-full"
             style={{ background: "var(--lime)" }}
             aria-hidden
           />
-          An x402-paywalled AI oracle · Arc Testnet · ~$0.0007 / receipt
+          x402 oracle · Arc Testnet · ~$0.0007 / receipt
         </div>
 
         {/* Headline */}
         <h1
-          className="mb-12 text-balance leading-[0.96] tracking-[-0.02em]"
+          className="mb-9 text-balance leading-[1] tracking-[-0.02em] sm:mb-12 sm:leading-[0.96]"
           style={{
             fontFamily: "var(--f-display)",
             fontWeight: 400,
-            fontSize: "clamp(46px, 8.5vw, 134px)",
+            fontSize: "clamp(38px, 11vw, 134px)",
           }}
         >
           The trace{" "}
@@ -71,7 +71,7 @@ export function LandingHero({
         </h1>
 
         {/* Lede */}
-        <p className="mb-10 max-w-[560px] text-[18px] leading-relaxed text-bone-dim">
+        <p className="mb-8 max-w-[560px] text-[16px] leading-relaxed text-bone-dim sm:mb-10 sm:text-[18px]">
           ReasoningReceipt is a paid oracle for{" "}
           <b className="font-medium text-bone">Polymarket</b> and{" "}
           <b className="font-medium text-bone">Kalshi</b>. Pay a few cents of USDC over x402,
@@ -140,24 +140,24 @@ function MetaCell({
 }) {
   return (
     <div
-      className="py-5 pr-4.5"
+      className="min-w-0 py-3.5 pr-3 sm:py-5 sm:pr-4"
       style={{ borderRight: last ? "0" : "1px solid var(--ink-3)" }}
     >
       <div
-        className="mb-2 text-[10.5px] uppercase tracking-[0.14em]"
+        className="mb-1.5 truncate text-[10px] uppercase tracking-[0.12em] sm:mb-2 sm:text-[10.5px] sm:tracking-[0.14em]"
         style={{ fontFamily: "var(--f-mono)", color: "var(--bone-faint)" }}
       >
         {label}
       </div>
       <div
         className="italic leading-none text-bone"
-        style={{ fontFamily: "var(--f-display)", fontSize: 38 }}
+        style={{ fontFamily: "var(--f-display)", fontSize: "clamp(24px, 5vw, 38px)" }}
       >
         {value}
         {suffix && (
           <small
-            className="ml-1 align-top text-[12px] text-bone-dim"
-            style={{ fontFamily: "var(--f-mono)", fontStyle: "normal", position: "relative", top: 4 }}
+            className="ml-1 align-top text-[10px] text-bone-dim sm:text-[12px]"
+            style={{ fontFamily: "var(--f-mono)", fontStyle: "normal", position: "relative", top: 3 }}
           >
             {suffix}
           </small>

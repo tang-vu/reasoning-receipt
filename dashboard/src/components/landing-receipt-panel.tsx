@@ -42,25 +42,21 @@ export function LandingReceiptPanel({ initial }: { initial: TraceRow | null }) {
 
   return (
     <aside
-      className="font-mono"
+      className="mx-auto w-full max-w-[440px] font-mono lg:ml-auto lg:mr-0 lg:[transform:rotate(0.6deg)]"
       style={{
         background: "var(--bone)",
         color: "var(--ink)",
-        width: "100%",
-        maxWidth: 440,
-        marginLeft: "auto",
         boxShadow: "0 30px 60px -20px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04)",
-        transform: "rotate(0.6deg)",
       }}
     >
-      <div className="px-7 pb-3.5 pt-7">
+      <div className="px-5 pb-3 pt-5 sm:px-7 sm:pb-3.5 sm:pt-7">
         {/* Header */}
         <div
           className="pb-4 text-center"
           style={{ borderBottom: "1px dashed oklch(0.45 0.005 80)" }}
         >
           <div
-            className="text-[28px] italic leading-none text-ink"
+            className="text-[28px] italic leading-none text-[color:var(--ink)]"
             style={{ fontFamily: "var(--f-display)" }}
           >
             ReasoningReceipt
@@ -81,7 +77,7 @@ export function LandingReceiptPanel({ initial }: { initial: TraceRow | null }) {
 
         {/* Question */}
         <div
-          className="mt-3.5 mb-3.5 text-[18px] italic leading-snug text-ink"
+          className="mb-3 mt-3 break-words text-[15px] italic leading-snug text-[color:var(--ink)] sm:mb-3.5 sm:mt-3.5 sm:text-[18px]"
           style={{ fontFamily: "var(--f-display)" }}
         >
           {row.market_question || row.market_id}
@@ -89,18 +85,18 @@ export function LandingReceiptPanel({ initial }: { initial: TraceRow | null }) {
 
         {/* Probability block */}
         <div
-          className="my-2.5 flex items-baseline gap-2.5 py-2.5"
+          className="my-2.5 flex flex-wrap items-baseline gap-2 py-2.5 sm:gap-2.5"
           style={{
             borderTop: "1px dashed oklch(0.55 0.005 80)",
             borderBottom: "1px dashed oklch(0.55 0.005 80)",
           }}
         >
           <span
-            className="text-[56px] italic leading-[0.9] text-ink"
+            className="text-[44px] italic leading-[0.9] text-[color:var(--ink)] sm:text-[56px]"
             style={{ fontFamily: "var(--f-display)" }}
           >
             {(row.probability * 100).toFixed(0)}
-            <span className="text-[28px]">%</span>
+            <span className="text-[22px] sm:text-[28px]">%</span>
           </span>
           <span
             className="text-[11px]"
@@ -109,7 +105,7 @@ export function LandingReceiptPanel({ initial }: { initial: TraceRow | null }) {
             probability
           </span>
           <span
-            className="ml-auto inline-flex items-center gap-1.5 bg-ink px-2 py-1 text-[10px] uppercase tracking-[0.16em] text-bone"
+            className="ml-auto inline-flex items-center gap-1.5 bg-[color:var(--ink)] px-2 py-1 text-[10px] uppercase tracking-[0.16em] text-bone"
             style={{
               background: "var(--ink)",
               color: "var(--bone)",
@@ -129,29 +125,29 @@ export function LandingReceiptPanel({ initial }: { initial: TraceRow | null }) {
         <div className="space-y-1.5 text-[11.5px]" style={{ color: "oklch(0.30 0.005 80)" }}>
           <div className="flex items-baseline justify-between">
             <span>confidence</span>
-            <span className="font-medium text-ink">{(row.confidence * 100).toFixed(0)}%</span>
+            <span className="font-medium text-[color:var(--ink)]">{(row.confidence * 100).toFixed(0)}%</span>
           </div>
           <div className="flex items-baseline justify-between">
             <span>source</span>
-            <span className="font-medium text-ink">{row.market_source}</span>
+            <span className="font-medium text-[color:var(--ink)]">{row.market_source}</span>
           </div>
           {row.disagreement_pp != null && (
             <div className="flex items-baseline justify-between">
               <span>disagreement</span>
-              <span className="font-medium text-ink">{row.disagreement_pp.toFixed(1)} pp</span>
+              <span className="font-medium text-[color:var(--ink)]">{row.disagreement_pp.toFixed(1)} pp</span>
             </div>
           )}
           <div className="flex items-baseline justify-between">
             <span>gas</span>
-            <span className="font-medium text-ink">$0.000683 usdc</span>
+            <span className="font-medium text-[color:var(--ink)]">$0.000683 usdc</span>
           </div>
           <div className="flex items-baseline justify-between">
             <span>paid</span>
-            <span className="font-medium text-ink">$0.01 usdc</span>
+            <span className="font-medium text-[color:var(--ink)]">$0.01 usdc</span>
           </div>
           <div className="flex items-baseline justify-between">
             <span>settled</span>
-            <span className="font-medium text-ink">{tsFmt}</span>
+            <span className="font-medium text-[color:var(--ink)]">{tsFmt}</span>
           </div>
         </div>
 
@@ -164,11 +160,11 @@ export function LandingReceiptPanel({ initial }: { initial: TraceRow | null }) {
           }}
         >
           <div className="uppercase tracking-[0.2em]">trace_hash</div>
-          <div className="mt-1 break-all text-[9.5px] leading-snug text-ink">{shortHex(row.trace_hash)}</div>
+          <div className="mt-1 break-all text-[9.5px] leading-snug text-[color:var(--ink)]">{shortHex(row.trace_hash)}</div>
           {row.merkle_root && (
             <>
               <div className="mt-2 uppercase tracking-[0.2em]">merkle_root</div>
-              <div className="mt-1 break-all text-[9.5px] leading-snug text-ink">
+              <div className="mt-1 break-all text-[9.5px] leading-snug text-[color:var(--ink)]">
                 {shortHex(row.merkle_root)}
               </div>
             </>

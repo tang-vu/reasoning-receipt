@@ -96,22 +96,22 @@ const strips: Strip[] = [
 
 export function LandingDebate() {
   return (
-    <section className="space-y-12">
-      <header className="flex flex-wrap items-end justify-between gap-10">
-        <div>
+    <section className="space-y-8 sm:space-y-12">
+      <header className="flex flex-col gap-6 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between sm:gap-10">
+        <div className="min-w-0">
           <div
-            className="mb-4 inline-flex items-center gap-3 text-[11.5px] uppercase tracking-[0.18em]"
+            className="mb-3 inline-flex items-center gap-3 text-[11px] uppercase tracking-[0.16em] sm:mb-4 sm:text-[11.5px] sm:tracking-[0.18em]"
             style={{ fontFamily: "var(--f-mono)", color: "var(--bone-faint)" }}
           >
-            <span aria-hidden style={{ width: 30, height: 1, background: "var(--bone-faint)" }} />
+            <span aria-hidden style={{ width: 24, height: 1, background: "var(--bone-faint)" }} />
             01 · the debate
           </div>
           <h2
-            className="max-w-[14ch] leading-[0.96] tracking-[-0.015em] text-balance"
+            className="max-w-[14ch] text-balance leading-[1] tracking-[-0.015em] sm:leading-[0.96]"
             style={{
               fontFamily: "var(--f-display)",
               fontWeight: 400,
-              fontSize: "clamp(38px, 5.6vw, 84px)",
+              fontSize: "clamp(32px, 7vw, 84px)",
             }}
           >
             Five agents{" "}
@@ -122,7 +122,7 @@ export function LandingDebate() {
           </h2>
         </div>
         <p
-          className="max-w-[380px] text-[16px] leading-[1.55]"
+          className="max-w-[380px] text-[15px] leading-[1.55] sm:text-[16px]"
           style={{ color: "var(--bone-dim)" }}
         >
           Bull, Bear, Edge run in parallel with isolated context. A supervisor merges
@@ -156,9 +156,8 @@ function StripCol({ strip }: { strip: Strip }) {
   const isSpecial = strip.role === "super" || strip.role === "critic";
   return (
     <div
-      className="relative flex min-h-[480px] flex-col p-7 font-mono text-[12.5px]"
+      className="relative flex min-h-[320px] flex-col border-b border-r border-ink-3 p-5 font-mono text-[12.5px] last:border-b-0 last:border-r-0 sm:p-6 lg:min-h-[480px] lg:border-b-0 lg:p-7"
       style={{
-        borderRight: "1px solid var(--ink-3)",
         color: "var(--bone-dim)",
         background: isSpecial ? "oklch(0.17 0.006 80)" : "var(--ink)",
       }}

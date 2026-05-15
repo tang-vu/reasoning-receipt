@@ -15,26 +15,27 @@ export default async function Home() {
 
   return (
     <>
-      {/* Top ticker sits flush against the nav — break out of the layout padding. */}
-      <div className="-mx-8 -mt-10 mb-10">
+      {/* Top ticker sits flush against the nav — break out of the layout padding
+       *  (which is responsive: px-4 / sm:px-6 / lg:px-8). */}
+      <div className="-mx-4 -mt-8 mb-8 sm:-mx-6 sm:-mt-10 sm:mb-10 lg:-mx-8">
         <LandingTicker initial={recent} />
       </div>
 
       <LandingHero initialStats={stats} initialReceipt={latestReceipt} />
 
-      <section className="py-24" style={{ borderTop: "1px solid var(--ink-3)" }}>
+      <section className="py-14 sm:py-20 lg:py-24" style={{ borderTop: "1px solid var(--ink-3)" }}>
         <LandingDebate />
       </section>
 
-      <section className="py-24" style={{ borderTop: "1px solid var(--ink-3)" }}>
+      <section className="py-14 sm:py-20 lg:py-24" style={{ borderTop: "1px solid var(--ink-3)" }}>
         <LiveStatsGrid initial={stats} />
       </section>
 
-      <section className="py-16" style={{ borderTop: "1px solid var(--ink-3)" }}>
+      <section className="py-12 sm:py-16" style={{ borderTop: "1px solid var(--ink-3)" }}>
         <VolumeChart rows={recent} />
       </section>
 
-      <section className="py-16" style={{ borderTop: "1px solid var(--ink-3)" }}>
+      <section className="py-12 sm:py-16" style={{ borderTop: "1px solid var(--ink-3)" }}>
         <LiveReceiptsFeed initial={recent} />
       </section>
     </>
