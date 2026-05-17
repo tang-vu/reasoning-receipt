@@ -58,3 +58,8 @@ asyncio_mode = "auto"
 testpaths = ["tests"]
 python_files = ["test_*.py", "test-*.py"]
 filterwarnings = ["ignore::DeprecationWarning"]
+
+[dependency-groups]
+dev = [
+    "playwright>=1.59.0",
+]
