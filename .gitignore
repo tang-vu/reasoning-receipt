@@ -56,7 +56,7 @@ AGENTS.md
 **/.claude/
 **/notes/
 **/plans/
-
+design-landing
 # Local build/run artifacts
 *.log
 .cache/
