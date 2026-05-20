@@ -1,14 +1,158 @@
 {
   "version": "rr-snapshot/1",
-  "exported_at": "2026-05-15T21:52:00.940100+07:00",
+  "exported_at": "2026-05-20T23:39:41.780428+07:00",
   "stats": {
-    "total_receipts": 4551,
+    "total_receipts": 4559,
     "total_paid_micro_usdc": 180000,
-    "distinct_markets": 215,
-    "distinct_consumers": 16,
-    "latest_receipt_at": "2026-05-15T14:28:56.455670"
+    "distinct_markets": 218,
+    "distinct_consumers": 19,
+    "latest_receipt_at": "2026-05-20T16:33:58.835332"
   },
   "receipts": [
+    {
+      "id": 4559,
+      "market_id": "KXALBUMSALES-YOUS-PURE-225000",
+      "market_source": "kalshi",
+      "market_question": "Will you seem pretty sad for a girl so in love have at least 225,000 Pure Album Sales on the Hits Daily Double Top 50 Chart for the week immediately following the wide release of you seem pretty sad for a girl so in love?",
+      "probability": 0.58,
+      "confidence": 0.6,
+      "trace_hash": "0xfc89810523663a67a888b84dfdffbeb9b661210758544f145bda991c01268843",
+      "trace_cid": "ar://CuDoBKSYQbd8K5Zquiy2GL3DFKrwXgCav6QaJr5D2ptd",
+      "consumer_address": null,
+      "arc_tx_hash": "0xfbf3ac2007d82e6591e9570740c0bfab7357c609999b3712a1bf958cea282825",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-20T16:33:58.835332Z",
+      "schema_version": "rr-trace/3",
+      "disagreement_pp": 44.0,
+      "merkle_root": "0x8d094abf66d67cabb66c4efd15172fb8aaa300b982b017e2570de8dddacde857",
+      "category": "other"
+    },
+    {
+      "id": 4558,
+      "market_id": "KXSOCCERPLAYCRON-26",
+      "market_source": "kalshi",
+      "market_question": "Will Cristiano Ronaldo play in the World Cup?",
+      "probability": 0.65,
+      "confidence": 0.6,
+      "trace_hash": "0xfb9e4ad924d442d50b111dcbfddca3263593e360ecf3b18c1e020b7188b170f1",
+      "trace_cid": "ar://6qLkcq8nuhr2CPHTT3jBnnjHmp5HfZNzewL6wsV9DBWt",
+      "consumer_address": null,
+      "arc_tx_hash": "0x828a78e317ef50ac42ae10db02345632f0da5054da960a25b9c416a9117a17e6",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-18T12:08:44.782195Z",
+      "schema_version": "rr-trace/3",
+      "disagreement_pp": 54.0,
+      "merkle_root": "0x9d2789c19e12e2068794d4f5f4c36bed6f6da7ba4dc385ad39edc962eed1bb96",
+      "category": "sports"
+    },
+    {
+      "id": 4557,
+      "market_id": "KXWCSQUAD-26ESP-NWIL",
+      "market_source": "kalshi",
+      "market_question": "Will Nico Williams be in the Spain World Cup final squad?",
+      "probability": 0.57,
+      "confidence": 0.55,
+      "trace_hash": "0x7d789374539fde19da988b27dc1e92c85a72e107d8de6ceb2f2d020ff9457c08",
+      "trace_cid": "ar://7itumh2QPkWmC7rDM4jWqHz2akcEbmcjamTngw1rKjd2",
+      "consumer_address": "0xa0f106e569027f315c3cee2f3dd39f8eb4391a80",
+      "arc_tx_hash": "0x9b9026df20523f8e94459d3612406b5a2362dc31a4bf330cdebc559d8b874755",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-18T12:02:28.745354Z",
+      "schema_version": "rr-trace/3",
+      "disagreement_pp": 63.0,
+      "merkle_root": "0x1033e33fa4dc0366283699d07c6e913810081407c13b8e7a0d3d1a00e7a4227e",
+      "category": "sports"
+    },
+    {
+      "id": 4556,
+      "market_id": "KXWCSQUAD-26ESP-NWIL",
+      "market_source": "kalshi",
+      "market_question": "Will Nico Williams be in the Spain World Cup final squad?",
+      "probability": 0.57,
+      "confidence": 0.55,
+      "trace_hash": "0x7d789374539fde19da988b27dc1e92c85a72e107d8de6ceb2f2d020ff9457c08",
+      "trace_cid": "ar://7itumh2QPkWmC7rDM4jWqHz2akcEbmcjamTngw1rKjd2",
+      "consumer_address": null,
+      "arc_tx_hash": "0x7f71473f02931ee91c70a62d9884427b670eaf84d35039aa5169135c9c70eae2",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-17T17:43:49.793070Z",
+      "schema_version": "rr-trace/3",
+      "disagreement_pp": 63.0,
+      "merkle_root": "0x1033e33fa4dc0366283699d07c6e913810081407c13b8e7a0d3d1a00e7a4227e",
+      "category": "sports"
+    },
+    {
+      "id": 4555,
+      "market_id": "KXWCSQUAD-26ESP-NWIL",
+      "market_source": "kalshi",
+      "market_question": "Will Nico Williams be in the Spain World Cup final squad?",
+      "probability": 0.63,
+      "confidence": 0.55,
+      "trace_hash": "0xc737fca424ef7e19713793543726507f00af6f93d9d342e0c8d9ed33d1ef92b2",
+      "trace_cid": "ar://G59bYsHkXmHXh4gmVS5FsfRnCsYbkXUbx3BnSXVrsEg4",
+      "consumer_address": null,
+      "arc_tx_hash": "0x413412ca329e18e2f83d9c2e0e8c1f75846f4d6da421943b808fc0d9beea32bc",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-17T17:13:13.281853Z",
+      "schema_version": "rr-trace/3",
+      "disagreement_pp": 50.0,
+      "merkle_root": "0x189f44778115da9dbd50dd494358039a53033b633524bfafc2fbb771d90eaf75",
+      "category": "sports"
+    },
+    {
+      "id": 4554,
+      "market_id": "KXPGATOP5-PGC26-JSPA",
+      "market_source": "kalshi",
+      "market_question": "PGA Championship: Will J.J. Spaun finish top 5?",
+      "probability": 0.502,
+      "confidence": 0.72,
+      "trace_hash": "0xf7cfacfdd8ae2210941d19124a9663db5ed933a33aab67f86a0f935acafb0495",
+      "trace_cid": "ar://HUz2kAFS2TAA4bBav5gmLCxfLuz1sYyqVXs4s9xyVitP",
+      "consumer_address": "0xaa68e429319d065ce9fd5842497a8dbec786075a",
+      "arc_tx_hash": "0xb8d6a004a849400042bfd094433fbcbcac13ad1e8956244829fbb4d7f18aebf5",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-17T15:47:07.970511Z",
+      "schema_version": "rr-trace/3",
+      "disagreement_pp": 24.0,
+      "merkle_root": "0x2555827058e43fd6b1ee3cb49f8f38fe0884923f3b0d5a1fa7078d41efaf132e",
+      "category": "sports"
+    },
+    {
+      "id": 4553,
+      "market_id": "KXPGATOP5-PGC26-JSPA",
+      "market_source": "kalshi",
+      "market_question": "PGA Championship: Will J.J. Spaun finish top 5?",
+      "probability": 0.502,
+      "confidence": 0.72,
+      "trace_hash": "0xf7cfacfdd8ae2210941d19124a9663db5ed933a33aab67f86a0f935acafb0495",
+      "trace_cid": "ar://HUz2kAFS2TAA4bBav5gmLCxfLuz1sYyqVXs4s9xyVitP",
+      "consumer_address": "0xeb3b6a730680939a86fa7b48d949297db57f77fc",
+      "arc_tx_hash": "0x26d08ec81f0ea9631ce68c427abf30f1b09d28735f9251fc5a997c301548d9ca",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-16T12:10:01.046027Z",
+      "schema_version": "rr-trace/3",
+      "disagreement_pp": 24.0,
+      "merkle_root": "0x2555827058e43fd6b1ee3cb49f8f38fe0884923f3b0d5a1fa7078d41efaf132e",
+      "category": "sports"
+    },
+    {
+      "id": 4552,
+      "market_id": "KXPGATOP5-PGC26-JSPA",
+      "market_source": "kalshi",
+      "market_question": "PGA Championship: Will J.J. Spaun finish top 5?",
+      "probability": 0.502,
+      "confidence": 0.72,
+      "trace_hash": "0xf7cfacfdd8ae2210941d19124a9663db5ed933a33aab67f86a0f935acafb0495",
+      "trace_cid": "ar://HUz2kAFS2TAA4bBav5gmLCxfLuz1sYyqVXs4s9xyVitP",
+      "consumer_address": "0x72cf0d122dcda3fcc44bcab6cfea176c262bc157",
+      "arc_tx_hash": "0xbe8784cb15f31f063a83a8121274adcb5ff020f768c56860eda7e5f1e4c77b61",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-15T19:51:22.079552Z",
+      "schema_version": "rr-trace/3",
+      "disagreement_pp": 24.0,
+      "merkle_root": "0x2555827058e43fd6b1ee3cb49f8f38fe0884923f3b0d5a1fa7078d41efaf132e",
+      "category": "sports"
+    },
     {
       "id": 4551,
       "market_id": "KXPGATOP5-PGC26-JSPA",
@@ -17864,150 +18008,6 @@
       "disagreement_pp": 54.0,
       "merkle_root": "0xdfb0086ec5c014d344165a6c4b730af8d40a26085ce22a7eec51b3396c68d0b3",
       "category": "macro"
-    },
-    {
-      "id": 3559,
-      "market_id": "KXUCLGAME-26MAY30PSGARS-PSG",
-      "market_source": "kalshi",
-      "market_question": "PSG vs Arsenal Winner?",
-      "probability": 0.51,
-      "confidence": 0.72,
-      "trace_hash": "0xeffd324f727a4ffe81e78deacd836ca80bf2cbac95fa0a4a5a98773473d6c295",
-      "trace_cid": "ar://22Qwn9JDFhucWHs3G53pAPtkQQ2biua3LTTBombE331Y",
-      "consumer_address": null,
-      "arc_tx_hash": "0x1ca4605af5ce5cbc9e4b50be722be7ed5dd72592d62a1e014524df0326bf6b8a",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-15T00:38:32.348413Z",
-      "schema_version": "rr-trace/3",
-      "disagreement_pp": 24.0,
-      "merkle_root": "0x877c5326b06ce211bc0bfa9ee10731cf08de4698b0ce6fbf6b0d7da41429daeb",
-      "category": "sports"
-    },
-    {
-      "id": 3558,
-      "market_id": "KXCAVA-26MAYREST-457",
-      "market_source": "kalshi",
-      "market_question": "Will CAVA Group Inc. report above 457 cava restaurants in Q1 2026?",
-      "probability": 0.64,
-      "confidence": 0.72,
-      "trace_hash": "0xe5f087be4eba8ce22636fcd148df1298175ec862d84c7310f58b138c5ee4b101",
-      "trace_cid": "ar://7QTMS7z8GLAzv8MzcW5J5Jw31bGL43dzTQhgQqPyWsYu",
-      "consumer_address": null,
-      "arc_tx_hash": "0x3a3f77090b911c09ccc29b89c9d1a6615c776ff0fcfe35cdaf19a48c52ef2f3c",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-15T00:38:22.674502Z",
-      "schema_version": "rr-trace/3",
-      "disagreement_pp": 60.0,
-      "merkle_root": "0x5e0bd496e82e23204595714a18f0c128584c4df273572a8df8b7f5c0550812a9",
-      "category": "macro"
-    },
-    {
-      "id": 3557,
-      "market_id": "KXCAVA-26MAYREST-460",
-      "market_source": "kalshi",
-      "market_question": "Will CAVA Group Inc. report Above 460 cava restaurants in Q1 2026?",
-      "probability": 0.58,
-      "confidence": 0.7,
-      "trace_hash": "0xb03fb1288be120990bd7c1221b58d69ba86865e9df340ce732b82faa8c9c5787",
-      "trace_cid": "ar://DyAWKKi2t71K3DtUUTsW9tC3RvNdyw9U431Yu8XFMx1i",
-      "consumer_address": null,
-      "arc_tx_hash": "0x605366aa382bae087552348a4fa88b4f4985298113639b81ceac8530b2d778a7",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-15T00:38:13.986103Z",
-      "schema_version": "rr-trace/3",
-      "disagreement_pp": 60.0,
-      "merkle_root": "0xb329908a4fc4dee402c294de57afb65adc5419372661cca16272248647bab5de",
-      "category": "macro"
-    },
-    {
-      "id": 3556,
-      "market_id": "KXUCLSPREAD-26MAY30PSGARS-PSG1",
-      "market_source": "kalshi",
-      "market_question": "PSG wins by over 1.5 goals?",
-      "probability": 0.53,
-      "confidence": 0.68,
-      "trace_hash": "0xd6f40c88ecb133807b7b5b3123e05c8602e60a8f7342f1ac292e99159f43df0e",
-      "trace_cid": "ar://Gx7me6kfjqDCG2GvTw2xQzJTcPpHHQd7mw6c914fGtPS",
-      "consumer_address": null,
-      "arc_tx_hash": "0xdcabed2461a187934803db461f40941bbac8d4ddba61b2c0fa272673b33b5a08",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-15T00:38:03.878213Z",
-      "schema_version": "rr-trace/3",
-      "disagreement_pp": 25.0,
-      "merkle_root": "0x81d5b242f76d216b9f5896ec4e73a64af972eb7c7fcbc0102c6a449e210bb6a4",
-      "category": "sports"
-    },
-    {
-      "id": 3555,
-      "market_id": "2190022",
-      "market_source": "polymarket",
-      "market_question": "Will the price of XRP be above $1.50 on May 15?",
-      "probability": 0.61,
-      "confidence": 0.68,
-      "trace_hash": "0xeac863e94287364b5bcde1644889899bba5475bf29307220aa20d1caabfddb92",
-      "trace_cid": "ar://HQc4TGoZzvM9QY8s78ywuRwiATV23EtdV8bCFRSfZpAd",
-      "consumer_address": null,
-      "arc_tx_hash": "0xbd4fd037bcfb931e28c0ae3d0a803d4dda38511649ebf4013dae32fecb5c8c5c",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-15T00:37:53.721146Z",
-      "schema_version": "rr-trace/3",
-      "disagreement_pp": 50.0,
-      "merkle_root": "0xaf9a622b9a1dbfa43a5e581f5ae8bf230fb0efa478efd6275559838824070068",
-      "category": "crypto"
-    },
-    {
-      "id": 3554,
-      "market_id": "KXCAVA-26MAYREST-460",
-      "market_source": "kalshi",
-      "market_question": "Will CAVA Group Inc. report Above 460 cava restaurants in Q1 2026?",
-      "probability": 0.57,
-      "confidence": 0.78,
-      "trace_hash": "0x404358bc92ab334755001cbb2baf853749dc0e49fd1ef340026a8b56ec35a944",
-      "trace_cid": "ar://82EGecJu4A7oLzoW5ghwdQ9EuH6dyYFS1MjGF9k37H4a",
-      "consumer_address": null,
-      "arc_tx_hash": "0xc104837fbd068010d83bf1bc7b15cb0553b5f8a081b8366abd80199794ff394a",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-15T00:37:44.670445Z",
-      "schema_version": "rr-trace/3",
-      "disagreement_pp": 47.0,
-      "merkle_root": "0xec8fd5951bfa2b53d11c1f2a1b3883b1df8aa70053eca47bd31d96c9e0c5a8b1",
-      "category": "macro"
-    },
-    {
-      "id": 3553,
-      "market_id": "678937",
-      "market_source": "polymarket",
-      "market_question": "Will Chong Won-oh win the 2026 Seoul Mayoral Election",
-      "probability": 0.61,
-      "confidence": 0.68,
-      "trace_hash": "0x7b77e917b899889d89a43f5672c810315a233a32f3e1a9f8570c92838dd1893b",
-      "trace_cid": "ar://3VaLP9U1917cALSebLTHtQMd1HL5G2rwBmj3Topkft1V",
-      "consumer_address": null,
-      "arc_tx_hash": "0x96b214d0a2a0a3316a980d7281cc832fc42c465ae45618f28fd429bd0f1211b0",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-15T00:37:18.793594Z",
-      "schema_version": "rr-trace/3",
-      "disagreement_pp": 32.0,
-      "merkle_root": "0x341ab57ddd930310b51bc2729f2b28419d3af0fb1c34a0af9764b464a47d3b0e",
-      "category": "politics"
-    },
-    {
-      "id": 3552,
-      "market_id": "1087541",
-      "market_source": "polymarket",
-      "market_question": "Will Matteo Berrettini win the 2026 Men's French Open?",
-      "probability": 0.23,
-      "confidence": 0.65,
-      "trace_hash": "0x0d101a966295cdd75b7b1acdd7c95cf3b029ff145ccd4f10238ca45cf8eb1816",
-      "trace_cid": "ar://FChysju2DMzCELfsUBs4ihXXQduBLt1CvHsyq5FRaZxz",
-      "consumer_address": null,
-      "arc_tx_hash": "5b971c760d996d87f0e052c235488f3692efeb7e7e782cf48c696d40e7859fe7",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-15T00:37:17.197103Z",
-      "schema_version": "rr-trace/3",
-      "disagreement_pp": 43.0,
-      "merkle_root": "0x3fc4ff03200d68d12fe8c31d8fea72b54067be9f1cdadbec79821caa9ba402eb",
-      "category": "sports"
     }
   ],
   "per_market": [
@@ -18028,8 +18028,8 @@
     {
       "market_id": "1087541",
       "question": "Will Matteo Berrettini win the 2026 Men's French Open?",
-      "count": 98,
-      "avg_probability": 0.24024897959183678,
+      "count": 97,
+      "avg_probability": 0.24035463917525776,
       "last_at": "2026-05-15T07:05:52.013237Z"
     },
     {
@@ -18056,16 +18056,9 @@
     {
       "market_id": "KXCAVA-26MAYREST-460",
       "question": "Will CAVA Group Inc. report Above 460 cava restaurants in Q1 2026?",
-      "count": 47,
-      "avg_probability": 0.5766914893617021,
+      "count": 45,
+      "avg_probability": 0.5767666666666668,
       "last_at": "2026-05-15T03:53:38.140120Z"
-    },
-    {
-      "market_id": "678937",
-      "question": "Will Chong Won-oh win the 2026 Seoul Mayoral Election",
-      "count": 39,
-      "avg_probability": 0.5283974358974359,
-      "last_at": "2026-05-15T02:27:02.539515Z"
     },
     {
       "market_id": "2227392",
@@ -18075,10 +18068,17 @@
       "last_at": "2026-05-15T06:08:29.611969Z"
     },
     {
+      "market_id": "678937",
+      "question": "Will Chong Won-oh win the 2026 Seoul Mayoral Election",
+      "count": 38,
+      "avg_probability": 0.5262500000000001,
+      "last_at": "2026-05-15T02:27:02.539515Z"
+    },
+    {
       "market_id": "KXCAVA-26MAYREST-457",
       "question": "Will CAVA Group Inc. report above 457 cava restaurants in Q1 2026?",
-      "count": 37,
-      "avg_probability": 0.6154999999999998,
+      "count": 36,
+      "avg_probability": 0.6148194444444443,
       "last_at": "2026-05-15T03:31:27.340235Z"
     },
     {
@@ -18133,8 +18133,8 @@
     {
       "market_id": "2190022",
       "question": "Will the price of XRP be above $1.50 on May 15?",
-      "count": 19,
-      "avg_probability": 0.5763157894736842,
+      "count": 18,
+      "avg_probability": 0.5744444444444444,
       "last_at": "2026-05-15T01:41:48.225760Z"
     },
     {
@@ -18173,18 +18173,18 @@
       "last_at": "2026-05-15T04:36:05.824609Z"
     },
     {
-      "market_id": "KXUCLSPREAD-26MAY30PSGARS-PSG1",
-      "question": "PSG wins by over 1.5 goals?",
-      "count": 9,
-      "avg_probability": 0.5363333333333333,
-      "last_at": "2026-05-15T01:41:41.183251Z"
-    },
-    {
       "market_id": "KXPGATOP5-PGC26-JSPA",
       "question": "PGA Championship: Will J.J. Spaun finish top 5?",
-      "count": 6,
-      "avg_probability": 0.4701666666666666,
-      "last_at": "2026-05-15T14:28:56.455670Z"
+      "count": 9,
+      "avg_probability": 0.4807777777777777,
+      "last_at": "2026-05-17T15:47:07.970511Z"
+    },
+    {
+      "market_id": "KXUCLSPREAD-26MAY30PSGARS-PSG1",
+      "question": "PSG wins by over 1.5 goals?",
+      "count": 8,
+      "avg_probability": 0.537125,
+      "last_at": "2026-05-15T01:41:41.183251Z"
     },
     {
       "market_id": "2189970",
@@ -18194,18 +18194,25 @@
       "last_at": "2026-05-15T06:10:13.498269Z"
     },
     {
-      "market_id": "KXUCLGAME-26MAY30PSGARS-PSG",
-      "question": "PSG vs Arsenal Winner?",
-      "count": 5,
-      "avg_probability": 0.5640000000000001,
-      "last_at": "2026-05-15T01:10:43.540445Z"
-    },
-    {
       "market_id": "2255404",
       "question": "Bordeaux: Juan Manuel Cerundolo vs Roman Andres Burruchaga",
       "count": 4,
       "avg_probability": 0.37525,
       "last_at": "2026-05-15T06:43:01.211578Z"
+    },
+    {
+      "market_id": "KXUCLGAME-26MAY30PSGARS-PSG",
+      "question": "PSG vs Arsenal Winner?",
+      "count": 4,
+      "avg_probability": 0.5775,
+      "last_at": "2026-05-15T01:10:43.540445Z"
+    },
+    {
+      "market_id": "KXWCSQUAD-26ESP-NWIL",
+      "question": "Will Nico Williams be in the Spain World Cup final squad?",
+      "count": 3,
+      "avg_probability": 0.59,
+      "last_at": "2026-05-18T12:02:28.745354Z"
     },
     {
       "market_id": "KXPGATOP5-PGC26-JROS",
@@ -18220,103 +18227,117 @@
       "count": 2,
       "avg_probability": 0.24000000000000002,
       "last_at": "2026-05-15T05:50:12.265775Z"
+    },
+    {
+      "market_id": "KXALBUMSALES-YOUS-PURE-225000",
+      "question": "Will you seem pretty sad for a girl so in love have at least 225,000 Pure Album Sales on the Hits Daily Double Top 50 Chart for the week immediately following the wide release of you seem pretty sad for a girl so in love?",
+      "count": 1,
+      "avg_probability": 0.58,
+      "last_at": "2026-05-20T16:33:58.835332Z"
+    },
+    {
+      "market_id": "KXSOCCERPLAYCRON-26",
+      "question": "Will Cristiano Ronaldo play in the World Cup?",
+      "count": 1,
+      "avg_probability": 0.65,
+      "last_at": "2026-05-18T12:08:44.782195Z"
     }
   ],
   "volume_chart": [
     {
-      "label": "07:37",
-      "count": 109
+      "label": "07:38",
+      "count": 922
     },
     {
-      "label": "08:11",
-      "count": 92
+      "label": "13:18",
+      "count": 65
     },
     {
-      "label": "08:46",
-      "count": 89
+      "label": "18:58",
+      "count": 5
     },
     {
-      "label": "09:21",
-      "count": 102
+      "label": "00:38",
+      "count": 1
     },
     {
-      "label": "09:55",
-      "count": 100
+      "label": "06:17",
+      "count": 0
     },
     {
-      "label": "10:30",
-      "count": 93
+      "label": "11:57",
+      "count": 0
     },
     {
-      "label": "11:05",
-      "count": 79
+      "label": "17:37",
+      "count": 1
     },
     {
-      "label": "11:39",
-      "count": 103
+      "label": "23:17",
+      "count": 0
+    },
+    {
+      "label": "04:57",
+      "count": 0
+    },
+    {
+      "label": "10:36",
+      "count": 0
+    },
+    {
+      "label": "16:16",
+      "count": 0
+    },
+    {
+      "label": "21:56",
+      "count": 3
+    },
+    {
+      "label": "03:36",
+      "count": 0
+    },
+    {
+      "label": "09:16",
+      "count": 0
+    },
+    {
+      "label": "14:55",
+      "count": 2
+    },
+    {
+      "label": "20:35",
+      "count": 0
+    },
+    {
+      "label": "02:15",
+      "count": 0
+    },
+    {
+      "label": "07:55",
+      "count": 0
+    },
+    {
+      "label": "13:35",
+      "count": 0
+    },
+    {
+      "label": "19:14",
+      "count": 0
+    },
+    {
+      "label": "00:54",
+      "count": 0
+    },
+    {
+      "label": "06:34",
+      "count": 0
     },
     {
       "label": "12:14",
-      "count": 97
+      "count": 0
     },
     {
-      "label": "12:49",
-      "count": 70
-    },
-    {
-      "label": "13:23",
-      "count": 25
-    },
-    {
-      "label": "13:58",
-      "count": 23
-    },
-    {
-      "label": "14:33",
-      "count": 3
-    },
-    {
-      "label": "15:07",
-      "count": 1
-    },
-    {
-      "label": "15:42",
-      "count": 1
-    },
-    {
-      "label": "16:17",
-      "count": 3
-    },
-    {
-      "label": "16:51",
-      "count": 1
-    },
-    {
-      "label": "17:26",
-      "count": 2
-    },
-    {
-      "label": "18:01",
-      "count": 2
-    },
-    {
-      "label": "18:35",
-      "count": 1
-    },
-    {
-      "label": "19:10",
-      "count": 1
-    },
-    {
-      "label": "19:44",
-      "count": 1
-    },
-    {
-      "label": "20:19",
-      "count": 1
-    },
-    {
-      "label": "20:54",
+      "label": "17:54",
       "count": 1
     }
   ],
