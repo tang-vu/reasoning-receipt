@@ -20,8 +20,8 @@
 | 📡 **SSE event stream** | https://events.rrtrace.xyz/events/stream |
 | 🌳 **ReceiptRegistryV2** (Merkle root + schemaVersion, source-verified) | https://testnet.arcscan.app/address/0x27d93c52fea923f956345af27f61d7bf47f0c4c1 |
 | 🔍 **ReceiptRegistry V1** (source-verified) | https://testnet.arcscan.app/address/0x59022EFd46a697bbf2fAd36CcfA8F2099f0bd1Bf |
-| 📜 **Receipts emitted on-chain** | **3,000+** and rising (V1: 2,281 legacy · V2: 800+ Merkle-rooted rr-trace/3, byte-verifiable from #2273 forward) |
-| 🎯 **Distinct markets priced** | **190+** across **Polymarket Gamma + Kalshi Trade API** (RFB 03 plural) |
+| 📜 **Receipts emitted on-chain** | **4,558** and rising (V1: 2,281 legacy · V2: 2,277 Merkle-rooted rr-trace/3, byte-verifiable from #2273 forward) |
+| 🎯 **Distinct markets priced** | **217** across **Polymarket Gamma + Kalshi Trade API** (RFB 03 plural) |
 | 💰 **Per-receipt gas cost** | **$0.000683 USDC** (~1/15 of a cent) |
 | 🧪 **Cross-chain demo** | 1 USDC moved Sepolia → Arc via CCTP V2 ([burn tx](https://sepolia.etherscan.io/tx/0x2aebe23128bb7742c6c3babbd32889c29f3b938940176c41d794169a28f4d615) / [mint tx](https://testnet.arcscan.app/tx/0x8a4ae433cfef773298bb766e1ea4c2d5d1f5005f3a5002fbe03439c370baeccf)) |
 | 🏷️ **Latest release** | [v0.4.0 — Kalshi + App Kit + Merkle playground](https://github.com/tang-vu/reasoning-receipt/releases/tag/v0.4.0) |
@@ -56,16 +56,20 @@ The product isn't the number. The product is the auditable trace.
 ```mermaid
 graph LR
   A[Polymarket / Kalshi] -->|events| B(Scanner)
-  B --> R{Researcher<br/>Gemini 3.1 Pro<br/>+ Google Search}
-  R -->|draft trace| K{Critic<br/>Gemini Flash}
-  K -->|review| R
-  K -->|approved trace| S[Trace canonicalisation<br/>sorted keys · 6dp · UTF-8 · SHA-256]
+  B --> BU{Bull}
+  B --> BE{Bear}
+  B --> ED{Edge}
+  BU & BE & ED -->|isolated-context drafts| SV{Supervisor<br/>Gemini 3.1 Pro<br/>weighted-Bayesian merge}
+  SV -->|merged trace| K{Critic<br/>Gemini Flash<br/>6-dim audit}
+  K -->|needs_revision| SV
+  K -->|approved trace| S[Canonicalise<br/>per-node SHA-256 + Merkle root]
   S -->|JSON bytes| F[Irys upload]
-  S -->|hash + CID| G[ReceiptRegistry.sol on Arc]
+  S -->|hashes + root| G[ReceiptRegistryV2 on Arc]
   G -.->|Receipt event| H[Dashboard - GitHub Pages]
   G -.->|resolved outcomes| Q[Resolver → Brier calibration]
-  D[Trader - Kelly sizing] -.->|reads probability| K
-  D -->|positions| E[Circle Wallet portfolio]
+  Q -.->|category prior| SV
+  D[Trader - Kelly sizing] -.->|reads probability| SV
+  D -->|positions| W[Circle Wallet portfolio]
   I[External consumer] -->|GET /price| J(FastAPI)
   J -.->|402 + PAYMENT-REQUIRED| I
   I -->|EIP-3009 signed payload| J
@@ -74,13 +78,13 @@ graph LR
   M[Claude Desktop / Cursor] -.->|MCP tools| J
 ```
 
-The agent loop runs continuously. The **scanner** filters Polymarket Gamma for liquid, near-resolution markets. The **researcher** (Gemini 3.1 Pro Preview via Vertex AI on the `global` endpoint, with Google Search grounding) drafts a probability + sources + counter-arguments + sensitivity. The **critic** (Gemini Flash) audits the draft for fabrication, strawmen, miscalibration, missing sensitivity, internal consistency — if any category fails, the researcher revises once with the critic's notes inlined. The trace is canonicalised, hashed, pinned to Irys, and a `Receipt(...)` event is emitted on Arc. The **trader** Kelly-sizes a position on Polymarket from the agent's portfolio wallet. The **FastAPI server** exposes the same oracle behind an x402-v2 paywall. The **resolver** polls Polymarket for closed markets and back-fills resolved outcomes so the **calibration** module can report a Brier score.
+The agent loop runs continuously. The **scanner** filters Polymarket Gamma and Kalshi's Trade API for liquid, near-resolution, single-question markets. Each market then goes through the **5-agent ensemble**: **Bull**, **Bear** and **Edge** draft competing stances in parallel with isolated context (Google Search grounded); the **Supervisor** (Gemini 3.1 Pro Preview via Vertex AI on the `global` endpoint) merges them weighted-Bayesian, mandates a falsifiable claim, and folds in a per-category Brier prior from past resolutions; the **Critic** (Gemini Flash) audits across six rigor dimensions and gates publication — on `needs_revision` the Supervisor revises once, on `rejected` the receipt never reaches the chain. The approved trace is canonicalised, every node SHA-256'd, a Merkle root computed, the JSON pinned to Irys, and a `Receipt(...)` event emitted on `ReceiptRegistryV2`. The **trader** Kelly-sizes a position from the agent's portfolio wallet. The **FastAPI server** exposes the same oracle behind an x402-v2 paywall. The **resolver** polls for closed markets and back-fills resolved outcomes so the **calibration** module reports a per-category Brier score — which loops back into the Supervisor's prior.
 
 ## Six Circle products in production
 
 | Product | Role |
 |---|---|
-| **Arc Testnet** | Settlement chain. Per-receipt gas $0.000683 measured across 3,000+ emissions. |
+| **Arc Testnet** | Settlement chain. Per-receipt gas $0.000683 measured across 4,500+ emissions. |
 | **USDC** | Native gas + paywall asset. |
 | **Circle Wallets** (developer-controlled) | Portfolio wallet (trader) + consumer wallet (agent pays own oracle), provisioned headlessly via [`scripts/circle-setup.py`](scripts/circle-setup.py) in ~4 seconds — entity secret RSA-OAEP-encrypted client-side, walletSet + 2 wallets via one POST each. |
 | **Gateway / Nanopayments (x402 v2)** | `PAYMENT-REQUIRED` headers, EIP-3009 `TransferWithAuthorization` typed-data, settle via `gateway-api-testnet.circle.com/v1/settle`. |
@@ -190,7 +194,7 @@ docs/         architecture / demo / submission / mcp / canteen-walkthrough /
 
 ## Why this is interesting
 
-Most "AI agents on chain" emit hashes of opaque blobs. ReasoningReceipt commits to the **full chain-of-thought** — including the sources the analyst actually cited (Google Search grounded), the counter-arguments it weighed, the sensitivity factors it considered, and the critic's audit of all of the above. Then we measure ourselves: the resolver scrapes Polymarket for closed markets, and the calibration module reports a Brier score against actual outcomes.
+Most "AI agents on chain" emit hashes of opaque blobs. ReasoningReceipt commits to the **full chain-of-thought** — including the sources the Bull/Bear/Edge stances actually cited (Google Search grounded), the counter-arguments they weighed, the sensitivity factors considered, and the critic's six-dimension audit of all of the above. Then we measure ourselves: the resolver scrapes Polymarket for closed markets, and the calibration module reports a Brier score against actual outcomes.
 
 The wedge is per-call economics: classical L1 gas makes a $0.01 oracle query nonsensical. On Arc, the receipt costs **less than the answer it commits to** — and that flips the entire product shape from "trust me" to "verify me."
 
