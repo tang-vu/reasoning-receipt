@@ -12,7 +12,7 @@ The product-demo video is recorded autonomously by `scripts/record-demo.py`. **T
 
 ### 10–25 · Why it had to be Arc
 
-> "A one-cent oracle call is uneconomical on any classical L1 — gas alone exceeds the price of the answer. Arc inverts that: each receipt costs **less than the information it commits to**. Our measured per-receipt gas is six hundred-eighty microcents. That margin is what lets us sell *reasoning* — not just *predictions* — and it's why this product shape was impossible until Arc."
+> "A one-cent oracle call is uneconomical on any classical L1 — gas alone exceeds the price of the answer. Arc inverts that: each receipt costs **less than the information it commits to**. Our measured per-receipt gas is about one-fifteenth of a cent. That margin is what lets us sell *reasoning* — not just *predictions* — and it's why this product shape was impossible until Arc."
 
 ### 25–45 · How — the 5-agent ensemble
 
@@ -24,7 +24,7 @@ The product-demo video is recorded autonomously by `scripts/record-demo.py`. **T
 
 ### 60–75 · Traction + close
 
-> "Fifteen hundred-plus receipts on Arc today, real consumer-wallet volume — the agent eats its own cooking. Live at rrtrace.xyz. Source on GitHub. Thanks."
+> "Forty-five hundred-plus receipts on Arc today, across nineteen distinct consumer wallets — the agent eats its own cooking. Live at rrtrace.xyz. Source on GitHub. Thanks."
 
 ## Production notes
 
@@ -44,9 +44,7 @@ The product-demo video is recorded autonomously by `scripts/record-demo.py`. **T
 
 ## Upload + paste into submission
 
-```bash
-# Once recorded as pitch.mp4:
-uv run python -m scripts.upload-to-youtube pitch.mp4 --unlisted \
-  --title "ReasoningReceipt — Founder Pitch (Agora hackathon)"
-# Then paste the URL into docs/SUBMISSION.md Links section.
-```
+- Upload `pitch.mp4` to YouTube as **unlisted** (phone or browser, ~2 min) —
+  title: `ReasoningReceipt — Founder Pitch (Agora hackathon)`.
+- Paste the URL into `docs/SUBMISSION.md` → Links section.
+- Confirm it plays in an incognito window before submitting.
