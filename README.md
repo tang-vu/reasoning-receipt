@@ -198,6 +198,19 @@ Most "AI agents on chain" emit hashes of opaque blobs. ReasoningReceipt commits 
 
 The wedge is per-call economics: classical L1 gas makes a $0.01 oracle query nonsensical. On Arc, the receipt costs **less than the answer it commits to** — and that flips the entire product shape from "trust me" to "verify me."
 
+## Arc OSS — composable for other Arc builders
+
+ReasoningReceipt isn't just an app — it's four fork-ready Arc primitives in a
+class the reference repos (`arc-commerce`, `arc-p2p-payments`) don't cover:
+**verifiable-data infrastructure**.
+
+- **Merkle-anchored audit registry** — `ReceiptRegistryV2.sol` + `agent/merkle.py`. Commit a hash + Merkle root, then prove any single leaf on-chain via `verifyInclusion(root, leaf, proof)` with a ~200-byte proof. Zero imports, $0.000683/emit.
+- **x402 v2 paywall middleware** — `server/x402.py`. Per-call USDC monetization for any FastAPI route or MCP tool, with a swappable Circle Gateway facilitator.
+- **Headless Circle wallet provisioning** — `scripts/circle-setup.py`. Dev-controlled wallets, RSA-OAEP entity secret, zero console clicks, ~4s.
+- **Canonical-JSON byte-verifier** — `agent/trace_v3.py`. Deterministic JSON → SHA-256 so any artifact becomes byte-reproducible.
+
+Each is MIT-licensed, self-contained, and documented to fork. See **[docs/ARC-OSS.md](docs/ARC-OSS.md)** for the lift-it-out manual.
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
