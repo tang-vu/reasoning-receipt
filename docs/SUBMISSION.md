@@ -1,7 +1,8 @@
 # Submission — Agora Agents Hackathon
 
-> Copy-paste-ready answers mapped **1:1 to the live Agora submission form**
-> (https://forms.gle/hFPM2t4Jt1zGfqzM7). Each `##` below is one form field.
+> Copy-paste-ready answers mapped **1:1 to the live Agora submission form
+> (v1.2 — Arc OSS fields added 2026-05-23)** at
+> https://forms.gle/hFPM2t4Jt1zGfqzM7. Each `##` below is one form field.
 > The form accepts multiple submissions — submit now, resubmit if numbers move
 > before the 2026-05-25 deadline. `*` = required field.
 
@@ -24,8 +25,70 @@
 | Project Video Demo * | https://youtu.be/LjuwQcyboYc |
 
 *Video note: keep it within the form's 3-minute guideline; the product demo
-is already the right shape. The founder pitch video is separate and optional —
-do not block submission on it.*
+is already the right shape (96 seconds, with TTS narration + on-screen
+captions). The founder pitch video is separate and optional — do not block
+submission on it.*
+
+---
+
+## Arc OSS — apply checkbox *
+
+> **YES** — tick "Yes - I would love to apply for Arc OSS! I can commit to
+> keeping my code open source!"
+>
+> The repo is already MIT-licensed and public. Commitment stated explicitly in
+> `docs/ARC-OSS.md`: "stays open source during and after the Arc Open Source
+> Showcase."
+
+---
+
+## Arc OSS — why us / what primitives? *
+
+> Four fork-ready Arc primitives in a class the existing `circlefin/arc-*`
+> reference repos don't cover — those are payment flows (arc-commerce,
+> arc-p2p-payments, arc-escrow); ours is **verifiable-data infrastructure**.
+> Full lift-it-out manual: `docs/ARC-OSS.md` in the repo.
+>
+> **1. Merkle-anchored audit registry** — `contracts/src/ReceiptRegistryV2.sol`
+> + `agent/merkle.py`. A generic append-only on-chain registry for any
+> auditable artifact: commit `(contentHash, merkleRoot, schemaVersion, cid)`,
+> then prove any single leaf — one evidence URL, one line item, one inference
+> step — on-chain via `verifyInclusion(root, leaf, proof)` with a ~200-byte
+> proof. SHA-256 precompile (~60 gas per proof level). Zero imports
+> (no OpenZeppelin, no third-party deps — pure Solidity 0.8.26 + Python
+> stdlib). Measured at **$0.000683 USDC per emit** across 4,500+ live
+> emissions. Live + source-verified at
+> `0x27d93c52fea923f956345af27f61d7bf47f0c4c1`. Arc had no
+> commit-and-prove-inclusion reference contract before this.
+>
+> **2. x402 v2 paywall middleware for FastAPI + MCP** — `server/x402.py` +
+> `facilitator.py` + `mcp_paywalled.py`. Drop-in per-call USDC monetization for
+> any HTTP route or MCP tool: spec-compliant `402 PAYMENT-REQUIRED`, EIP-3009
+> `TransferWithAuthorization` typed-data, swappable Circle Gateway facilitator.
+> arc-commerce is a cart/checkout (one purchase, one human); this is
+> **per-request micropayment middleware** for machine consumers — priced at
+> the HTTP layer, no cart, no session, settles in the request/response cycle.
+> Built for agents paying agents.
+>
+> **3. Headless Circle wallet provisioning** — `scripts/circle-setup.py`.
+> Provision developer-controlled wallets with zero console clicks: client-side
+> RSA-OAEP-encrypt the entity secret, register the ciphertext, create a
+> walletSet, create N wallets — ~4 seconds end-to-end, writes IDs + addresses
+> straight to `.env`. The missing bootstrap step in the existing Arc/Circle
+> reference samples (which assume wallets are pre-provisioned in the console).
+> CI, fresh clones, and reproducible demos all need this to be a script.
+>
+> **4. Canonical-JSON byte-verifier** — `agent/trace_v3.py` + `agent/merkle.py`.
+> Turn any structured object into a byte-reproducible artifact: deterministic
+> canonical JSON (sorted keys, fixed-precision floats, UTC), then SHA-256 per
+> node, per Merkle leaf, and over the whole blob. A third party who fetches the
+> same object recomputes the identical hash and byte-matches the on-chain
+> commitment — this is what makes Primitive 1's roots *meaningful* rather than
+> opaque. Pure Python stdlib.
+>
+> All four are MIT, self-contained, and depend only on Arc Testnet + Circle
+> public endpoints — no ReasoningReceipt service has to be running for a fork
+> to work. Already submitted via CLI with `ArcOSS:` prefix on 2026-05-22.
 
 ---
 
