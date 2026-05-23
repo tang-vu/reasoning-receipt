@@ -20,6 +20,15 @@ surface, and is documented to fork. They live in one repo today (one coherent
 submission), but none of them is entangled with the prediction-market app:
 copy the listed files and the primitive runs.
 
+> **Headline primitive spun out as a standalone Arc starter kit:**
+> [`tang-vu/arc-merkle-anchor`](https://github.com/tang-vu/arc-merkle-anchor) —
+> the Merkle-anchored audit registry below, generalized (no oracle-specific
+> fields) and packaged so Arc builders can clone-and-deploy in 5 minutes.
+> Live + source-verified on Arc Testnet at
+> [`0x707B2243583CC6A9bda9AF5EAF02720042917769`](https://testnet.arcscan.app/address/0x707B2243583CC6A9bda9AF5EAF02720042917769).
+> Per aadi's 2026-05-23 hint, the starter kit's docs target Arc builders from
+> scratch — separate from this product's submission docs.
+
 ---
 
 ## Primitive 1 — Merkle-anchored audit registry *(headline)*

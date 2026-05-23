@@ -49,17 +49,24 @@ submission on it.*
 > arc-p2p-payments, arc-escrow); ours is **verifiable-data infrastructure**.
 > Full lift-it-out manual: `docs/ARC-OSS.md` in the repo.
 >
-> **1. Merkle-anchored audit registry** — `contracts/src/ReceiptRegistryV2.sol`
-> + `agent/merkle.py`. A generic append-only on-chain registry for any
-> auditable artifact: commit `(contentHash, merkleRoot, schemaVersion, cid)`,
-> then prove any single leaf — one evidence URL, one line item, one inference
-> step — on-chain via `verifyInclusion(root, leaf, proof)` with a ~200-byte
-> proof. SHA-256 precompile (~60 gas per proof level). Zero imports
-> (no OpenZeppelin, no third-party deps — pure Solidity 0.8.26 + Python
-> stdlib). Measured at **$0.000683 USDC per emit** across 4,500+ live
-> emissions. Live + source-verified at
-> `0x27d93c52fea923f956345af27f61d7bf47f0c4c1`. Arc had no
-> commit-and-prove-inclusion reference contract before this.
+> **Headline primitive spun out as a standalone Arc starter kit** (per
+> aadi's 2026-05-23 hint to focus Arc-builder docs in a dedicated repo):
+> **[`tang-vu/arc-merkle-anchor`](https://github.com/tang-vu/arc-merkle-anchor)**
+> — clone-and-deploy in 5 minutes, zero-import contract, zero-dep Python
+> prover, 13 forge tests, live on Arc Testnet at
+> [`0x707B2243583CC6A9bda9AF5EAF02720042917769`](https://testnet.arcscan.app/address/0x707B2243583CC6A9bda9AF5EAF02720042917769).
+>
+> **1. Merkle-anchored audit registry** *(headline — see standalone repo
+> above)* — `contracts/src/ReceiptRegistryV2.sol` + `agent/merkle.py`. A
+> generic append-only on-chain registry for any auditable artifact: commit
+> `(contentHash, merkleRoot, schemaVersion, cid)`, then prove any single
+> leaf — one evidence URL, one line item, one inference step — on-chain via
+> `verifyInclusion(root, leaf, proof)` with a ~200-byte proof. SHA-256
+> precompile (~60 gas per proof level). Zero imports (no OpenZeppelin, no
+> third-party deps — pure Solidity 0.8.26 + Python stdlib). Measured at
+> **$0.000683 USDC per emit** across 4,500+ live emissions in this product;
+> **$0.0010667 USDC** for the generalized starter-kit contract at deploy.
+> Arc had no commit-and-prove-inclusion reference contract before this.
 >
 > **2. x402 v2 paywall middleware for FastAPI + MCP** — `server/x402.py` +
 > `facilitator.py` + `mcp_paywalled.py`. Drop-in per-call USDC monetization for
