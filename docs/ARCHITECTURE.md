@@ -47,6 +47,7 @@ graph LR
 | Paywalled MCP HTTP | `server/mcp_paywalled.py` | Same tools as the stdio variant, paywalled with x402 v2 at `/mcp/v1/{get_price,audit}` — agent-to-agent revenue. |
 | App Kit / Unified Balance | `services/app-kit/demo.ts` | `@circle-fin/app-kit@1.5.1` + `adapter-viem-v2@1.11.0`. Reads agent operator USDC across all 12 testnet chains (incl. Arc) as one pool. Sixth Circle product in production. |
 | Dashboard | `dashboard/` | Next.js 15 static export, deployed to GitHub Pages with the `rrtrace.xyz` custom domain. **Hybrid mode** — server-renders from snapshot at build time, then client-side `useEffect` refreshes the homepage stats grid + receipts table from the live API on mount, so visiting the site never shows hour-old build data. |
+| 3D DAG view | `dashboard/src/lib/trace-to-graph.ts`, `dashboard/src/components/dag-*.tsx` | Per-receipt 3D reasoning DAG (Three.js + React Three Fiber + Drei). Layered radial layout — claim at origin, stances on a ring, evidence/critic-dims/falsifiables as leaves. Replay-debate animation reveals nodes in temporal order. Mobile + `prefers-reduced-motion` fall through to the 2D SVG renderer in `dag-fallback.tsx`. Lazy-loaded via `dynamic({ ssr: false })` so the base trace page stays at 5kB. |
 
 ## Request flow — `GET /price/{market_id}` (and the paywalled MCP)
 

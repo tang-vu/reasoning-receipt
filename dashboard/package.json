@@ -11,20 +11,26 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.6.1",
     "@tanstack/react-query": "^5.100.10",
     "connectkit": "^1.9.2",
+    "framer-motion": "^12.40.0",
     "next": "^15.0.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "recharts": "^2.13.3",
     "swr": "^2.2.5",
+    "three": "^0.184.0",
     "viem": "^2.49.2",
-    "wagmi": "^2.19.5"
+    "wagmi": "^2.19.5",
+    "zustand": "^5.0.14"
   },
   "devDependencies": {
     "@types/node": "^22.9.0",
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.1",
+    "@types/three": "^0.184.1",
     "autoprefixer": "^10.4.20",
     "cross-env": "^7.0.3",
     "eslint": "^9.16.0",
