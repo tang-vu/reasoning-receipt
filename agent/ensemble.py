@@ -101,6 +101,7 @@ def _user_msg_for_supervisor(
     stances: list[Stance],
     calibration_prior: str | None,
     critic_feedback: str | None = None,
+    experience_prior: str | None = None,
 ) -> str:
     slim = [
         {
@@ -113,6 +114,7 @@ def _user_msg_for_supervisor(
         for s in stances
     ]
     prior_block = f"\nCALIBRATION PRIOR: {calibration_prior}\n" if calibration_prior else ""
+    experience_block = f"\n{experience_prior}\n" if experience_prior else ""
     revision_block = (
         f"\nCRITIC FEEDBACK FROM PREVIOUS DRAFT — address this in the revision:\n{critic_feedback}\n"
         if critic_feedback
@@ -123,7 +125,7 @@ def _user_msg_for_supervisor(
         f"Market id: {candidate.market_id}\n"
         f"Question: {candidate.question}\n"
         f"Resolves by: {candidate.end_date.isoformat() if candidate.end_date else 'unknown'}\n"
-        f"{prior_block}{revision_block}\n"
+        f"{prior_block}{experience_block}{revision_block}\n"
         f"Three stance drafts (JSON):\n{json.dumps(slim, separators=(',', ':'))}\n\n"
         "Synthesise per the system instruction. Return ONLY the JSON."
     )
@@ -161,10 +163,19 @@ class Ensemble:
         *,
         consumer_address: str | None = None,
         calibration_prior: str | None = None,
+        experience_prior: str | None = None,
     ) -> ReasoningTraceV3:
-        """Full pipeline: stances → supervisor → critic → maybe revise → final trace."""
+        """Full pipeline: stances → supervisor → critic → maybe revise → final trace.
+
+        `experience_prior` is the retrieval block from `agent.memory` — similar
+        resolved markets the agent already called. Injected into the supervisor
+        prompt alongside the calibration prior; both are reference-only nudges,
+        not hard constraints.
+        """
         stances = self._run_stances_parallel(candidate)
-        synthesis = self._run_supervisor(candidate, stances, calibration_prior, critic_feedback=None)
+        synthesis = self._run_supervisor(
+            candidate, stances, calibration_prior, critic_feedback=None, experience_prior=experience_prior
+        )
         trace = self._build_trace(candidate, stances, synthesis, consumer_address, calibration_prior)
 
         audit, feedback = self._critic.review(candidate, trace, revision_round=0)
@@ -182,7 +193,9 @@ class Ensemble:
                     deltas=["supervisor re-run with critic feedback inlined"],
                 )
             )
-            synthesis = self._run_supervisor(candidate, stances, calibration_prior, critic_feedback=feedback)
+            synthesis = self._run_supervisor(
+                candidate, stances, calibration_prior, critic_feedback=feedback, experience_prior=experience_prior
+            )
             trace = self._build_trace(candidate, stances, synthesis, consumer_address, calibration_prior)
             audit, _ = self._critic.review(candidate, trace, revision_round=1)
 
@@ -249,6 +262,7 @@ class Ensemble:
         stances: list[Stance],
         calibration_prior: str | None,
         critic_feedback: str | None = None,
+        experience_prior: str | None = None,
     ) -> dict:
         if self.mock or self._client is None:
             return mock_supervisor(candidate, stances)
@@ -256,7 +270,9 @@ class Ensemble:
             self._client,
             models=[self.config.supervisor_model, *self.config.fallback_models],
             system_prompt=self._supervisor_prompt,
-            user=_user_msg_for_supervisor(candidate, stances, calibration_prior, critic_feedback),
+            user=_user_msg_for_supervisor(
+                candidate, stances, calibration_prior, critic_feedback, experience_prior
+            ),
             temperature=self.config.supervisor_temperature,
             max_output_tokens=self.config.supervisor_max_tokens,
             thinking_budget=self.config.supervisor_thinking_budget,

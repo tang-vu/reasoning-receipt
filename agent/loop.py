@@ -28,6 +28,7 @@ from .analyst import Analyst, MarketCandidate
 from .calibration_store import CalibrationStore
 from .critic import Critic
 from .ensemble import Ensemble
+from .memory import MarketMemory
 from .resolver import resolve_open_markets
 from .scanner import Scanner
 from .trace import SealedTrace, TraceSealer
@@ -76,6 +77,10 @@ class AgentLoop:
         self._calibration: CalibrationStore | None = (
             CalibrationStore() if self.use_ensemble else None
         )
+        # Market memory — supervisor also reads the most-similar resolved markets
+        # the agent already called (retrieval prior). Self-syncs from resolved
+        # receipts; empty until markets resolve, so it's a no-op on a cold DB.
+        self._memory: MarketMemory | None = MarketMemory() if self.use_ensemble else None
         self._irys = IrysClient()
         self.sealer = TraceSealer(self._irys)
         self.chain = ChainClient()
@@ -211,9 +216,18 @@ class AgentLoop:
         # Pull the calibration prior — empty string when no category has enough
         # resolved markets yet. Empty → supervisor gets no PRIOR block in prompt.
         prior = self._calibration.prior_text() if self._calibration else ""
+        # Experience prior — similar resolved markets. Best-effort: a memory
+        # failure must never block pricing, so swallow + continue without it.
+        experience = ""
+        if self._memory is not None:
+            try:
+                experience = self._memory.prior_text(candidate.question)
+            except Exception as exc:  # noqa: BLE001
+                logger.warning("loop[v3]: memory retrieve failed (%s); no experience prior", exc)
         trace_v3: ReasoningTraceV3 = self._ensemble.analyse(
             candidate,
             calibration_prior=prior or None,
+            experience_prior=experience or None,
         )
 
         # Critic verdict gates publication. "rejected" means the trace failed

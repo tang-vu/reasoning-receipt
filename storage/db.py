@@ -18,6 +18,7 @@ from sqlalchemy import (
     Float,
     Index,
     Integer,
+    LargeBinary,
     String,
     Text,
     create_engine,
@@ -114,6 +115,29 @@ class ScanCandidate(Base):
     last_priced_at = Column(DateTime(timezone=True), nullable=True)
     last_probability = Column(Float, nullable=True)
     discovered_at = Column(DateTime(timezone=True), nullable=False, default=_now)
+
+
+class MemoryItem(Base):
+    """Cached embedding of a resolved market, keyed by its receipt.
+
+    The memory loop (`agent.memory`) embeds the question of each resolved
+    receipt once and caches the raw float32 vector here. Retrieval loads every
+    cached vector and runs cosine similarity in-process — no vector-DB
+    extension needed for the small resolved-market set. One row per receipt;
+    re-embedding is skipped when a row already exists (idempotent backfill).
+    """
+
+    __tablename__ = "memory_items"
+
+    receipt_id = Column(Integer, primary_key=True)  # FK-ish to receipts.id
+    market_id = Column(String(80), nullable=False, index=True)
+    question = Column(Text, nullable=False)
+    category = Column(String(16), nullable=True)
+    probability = Column(Float, nullable=False)
+    resolved_outcome = Column(Float, nullable=False)
+    embedding = Column(LargeBinary, nullable=False)  # float32 bytes, model-native dim
+    embed_model = Column(String(48), nullable=False, default="mock")
+    embedded_at = Column(DateTime(timezone=True), nullable=False, default=_now)
 
 
 _engine = None
