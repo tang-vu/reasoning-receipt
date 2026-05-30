@@ -28,6 +28,16 @@ copy the listed files and the primitive runs.
 > [`0x707B2243583CC6A9bda9AF5EAF02720042917769`](https://testnet.arcscan.app/address/0x707B2243583CC6A9bda9AF5EAF02720042917769).
 > Per aadi's 2026-05-23 hint, the starter kit's docs target Arc builders from
 > scratch — separate from this product's submission docs.
+>
+> **Frontend starter kit (added 2026-05-30, per aadi's 2026-05-24 React/Next
+> hint):** `arc-merkle-anchor/frontend/` ships a Next.js 15 + wagmi v2 +
+> viem v2 + ConnectKit demo on top of the contract. Drag a file in →
+> browser-side SHA-256 + Merkle root → wallet signs → `anchor()` lands on
+> Arc. `/verify` runs `verifyInclusion` via free `eth_call`. `/session-keys`
+> generates an ephemeral secp256k1 in localStorage + signs a delegation
+> envelope. Routes through Canteen-hosted RPC in production for
+> builder-leaderboard attribution. **Live demo:**
+> <https://arc-merkle-anchor.vercel.app>.
 
 ---
 
