@@ -110,7 +110,12 @@ async function fromSnapshot<T>(path: string): Promise<T> {
       brier_high_conf: null,
       brier_low_conf: null,
       buckets: [],
+      brier_over_time: [],
     };
+    // Older snapshots predate the time series — default it so the chart no-ops.
+    if (!(cal as CalibrationResponse).brier_over_time) {
+      (cal as CalibrationResponse).brier_over_time = [];
+    }
     return cal as unknown as T;
   }
   if (path.startsWith("/verify/")) {
@@ -180,6 +185,14 @@ export interface CalibrationBucket {
   mean_actual: number;
 }
 
+export interface BrierPoint {
+  t: string;
+  index: number;
+  n: number;
+  brier_rolling: number;
+  brier_cumulative: number;
+}
+
 export interface CalibrationResponse {
   total_resolved: number;
   distinct_resolved_markets: number;
@@ -187,6 +200,7 @@ export interface CalibrationResponse {
   brier_high_conf: number | null;
   brier_low_conf: number | null;
   buckets: CalibrationBucket[];
+  brier_over_time: BrierPoint[];
 }
 
 export interface VerifyResponse {

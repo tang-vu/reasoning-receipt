@@ -1,14 +1,446 @@
 {
   "version": "rr-snapshot/1",
-  "exported_at": "2026-05-20T23:39:41.780428+07:00",
+  "exported_at": "2026-06-01T23:55:52.305210+07:00",
   "stats": {
-    "total_receipts": 4559,
+    "total_receipts": 4583,
     "total_paid_micro_usdc": 180000,
-    "distinct_markets": 218,
+    "distinct_markets": 226,
     "distinct_consumers": 19,
-    "latest_receipt_at": "2026-05-20T16:33:58.835332"
+    "latest_receipt_at": "2026-05-24T17:08:47.361511"
   },
   "receipts": [
+    {
+      "id": 4583,
+      "market_id": "KXRT-TOY-60",
+      "market_source": "kalshi",
+      "market_question": "Toy Story 5 Rotten Tomatoes score?",
+      "probability": 0.55,
+      "confidence": 0.55,
+      "trace_hash": "0x0e993d0b38e66dba008ee58134175a931a69dcbe641c84359308a16f8e1fa0b6",
+      "trace_cid": "ar://EJ96NTWcQVBVzb18SmhSU46pZHDgrbdEeJdxkJyxXS6X",
+      "consumer_address": null,
+      "arc_tx_hash": "0xdf58c279306e1c53a0a57c2f72bceb1457b3f2c368010a4489b20066f8c55b3d",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-24T17:08:47.361511Z",
+      "schema_version": "rr-trace/3",
+      "disagreement_pp": 44.0,
+      "merkle_root": "0x87958b0ac03456b8eddfb8c29c217929731ea81ae350b3dc9bac2245cd6ab596",
+      "category": "other"
+    },
+    {
+      "id": 4582,
+      "market_id": "KXRT-TOY-60",
+      "market_source": "kalshi",
+      "market_question": "Toy Story 5 Rotten Tomatoes score?",
+      "probability": 0.6,
+      "confidence": 0.55,
+      "trace_hash": "0xc0f449ae6771ce553fe6dd6ee656f4121068c91ed402d00a99fdce656ac95937",
+      "trace_cid": "ar://AZwd7iJvbrsL8F9ZyJTijkAn5r8MduchvCQwUPmmjshS",
+      "consumer_address": null,
+      "arc_tx_hash": "0x939ab88cbf41e3afd68fb274c11f0f3492abc0d3c6aa5856f347773ec92ba2ca",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-24T16:37:27.699498Z",
+      "schema_version": "rr-trace/3",
+      "disagreement_pp": 54.0,
+      "merkle_root": "0x73718cfda06a2adea4507dcfa9fe02a69616f8d9b2230f2a9bde5e2c83b59776",
+      "category": "other"
+    },
+    {
+      "id": 4581,
+      "market_id": "KXSOCCERPLAYCRON-26",
+      "market_source": "kalshi",
+      "market_question": "Will Cristiano Ronaldo play in the World Cup?",
+      "probability": 0.65,
+      "confidence": 0.6,
+      "trace_hash": "0xfb9e4ad924d442d50b111dcbfddca3263593e360ecf3b18c1e020b7188b170f1",
+      "trace_cid": "ar://6qLkcq8nuhr2CPHTT3jBnnjHmp5HfZNzewL6wsV9DBWt",
+      "consumer_address": "0xeb3b6a730680939a86fa7b48d949297db57f77fc",
+      "arc_tx_hash": "0x69f4e24f94d723cbc1cc05d226a1d949a391e9d22ea25a7bda23c71d88cfe6bc",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-24T02:56:20.916171Z",
+      "schema_version": "rr-trace/3",
+      "disagreement_pp": 54.0,
+      "merkle_root": "0x9d2789c19e12e2068794d4f5f4c36bed6f6da7ba4dc385ad39edc962eed1bb96",
+      "category": "sports"
+    },
+    {
+      "id": 4580,
+      "market_id": "KXRT-TOY-60",
+      "market_source": "kalshi",
+      "market_question": "Toy Story 5 Rotten Tomatoes score?",
+      "probability": 0.48,
+      "confidence": 0.55,
+      "trace_hash": "0x3a6716f2ab4cefdbf0c2f2cf56056a4d9a634198fd1132222173ca54e8b36786",
+      "trace_cid": "ar://D1FUGSv9kEZzN58PHgpRx4oAXDma2GzV8fEKYFPk6Tt6",
+      "consumer_address": null,
+      "arc_tx_hash": "0x28377214ab0adc4f95a27e0dca3b4d55eee3add7f171ab4c1c418191b3d6a9bb",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-23T18:28:07.525440Z",
+      "schema_version": "rr-trace/3",
+      "disagreement_pp": 44.0,
+      "merkle_root": "0x12dc28d9571e22f83fd12c3a79406957e94680f3ebe4c4d7be263f6ade20a26a",
+      "category": "other"
+    },
+    {
+      "id": 4579,
+      "market_id": "KXRT-TOY-60",
+      "market_source": "kalshi",
+      "market_question": "Toy Story 5 Rotten Tomatoes score?",
+      "probability": 0.55,
+      "confidence": 0.65,
+      "trace_hash": "0x8cfae4f5c3057c370f1b97b83356bd7bba77e24299fcc38c879c7d82c304c5c3",
+      "trace_cid": "ar://CqkSitJwh5fYaAaSiFSTX35HSKR4YH4k3vR1jFoJM8WY",
+      "consumer_address": null,
+      "arc_tx_hash": "0x47e1ac23427b6f38cee57c571481367213500401b3a5f3c1cf9c63ce3ce36fc4",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-23T17:55:23.115957Z",
+      "schema_version": "rr-trace/3",
+      "disagreement_pp": 50.0,
+      "merkle_root": "0x2f3a745591518bfa86565d12a4c87c8536d483241808dbd769d40e9d3389c319",
+      "category": "other"
+    },
+    {
+      "id": 4578,
+      "market_id": "KXRT-TOY-60",
+      "market_source": "kalshi",
+      "market_question": "Toy Story 5 Rotten Tomatoes score?",
+      "probability": 0.52,
+      "confidence": 0.6,
+      "trace_hash": "0xcb68dd815cc0f345071aa69640538481d5da3e3c3081e08748d9ada6a7a7bb3e",
+      "trace_cid": "ar://A1S6jf8HjJa5osTQHhy3yAgj7bqfmPBkyY5RQ8RTW3K7",
+      "consumer_address": null,
+      "arc_tx_hash": "0x090507fe549c7a3c998c05bce81b595fc849a818e4098d0f3f0513f3d91efcb7",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-23T17:24:49.540804Z",
+      "schema_version": "rr-trace/3",
+      "disagreement_pp": 30.0,
+      "merkle_root": "0x2137336ba110c0af132e5e92596ae00383715760b5e1898f590f9dd0829e4bd3",
+      "category": "other"
+    },
+    {
+      "id": 4577,
+      "market_id": "KXRT-TOY-60",
+      "market_source": "kalshi",
+      "market_question": "Toy Story 5 Rotten Tomatoes score?",
+      "probability": 0.76,
+      "confidence": 0.65,
+      "trace_hash": "0xe1a351e5cfc6584e59a04f7183b89fdf6516568bc239f8373b35b88096366234",
+      "trace_cid": "ar://GLZeWE2fbHSnwmB5LHurwuXAeCSyDZPrEDk3M1WudfqW",
+      "consumer_address": null,
+      "arc_tx_hash": "0xa253132325d409b3bceedec33fff2f2a9f3dcc468726a72d54a323bd1671b445",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-23T16:53:29.110717Z",
+      "schema_version": "rr-trace/3",
+      "disagreement_pp": 49.0,
+      "merkle_root": "0x4198d955f4e556904612bcafb332b18f0523451a698c9369454cf7e626c7807f",
+      "category": "other"
+    },
+    {
+      "id": 4576,
+      "market_id": "KXRT-TOY-60",
+      "market_source": "kalshi",
+      "market_question": "Toy Story 5 Rotten Tomatoes score?",
+      "probability": 0.58,
+      "confidence": 0.55,
+      "trace_hash": "0xa90335ea558999bb1d4f24dcadb69d2dc7bdd881482ec9d00ff218fd5756e7d8",
+      "trace_cid": "ar://CvDxuSafpSKZ2qxwHEZ27DP8QShG9vRkVBK7RbPJZCGj",
+      "consumer_address": null,
+      "arc_tx_hash": "0x33fe51038e1722560619e0bd9a5572e366555d3b1c8a6fd9e4e9b9d9b6d89162",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-23T16:22:07.840618Z",
+      "schema_version": "rr-trace/3",
+      "disagreement_pp": 50.4,
+      "merkle_root": "0x06eaadc7908128ecd57580a3e0212eedde3b13e5b7eeb280d78e9379996465ef",
+      "category": "other"
+    },
+    {
+      "id": 4575,
+      "market_id": "KXRT-TOY-60",
+      "market_source": "kalshi",
+      "market_question": "Toy Story 5 Rotten Tomatoes score?",
+      "probability": 0.48,
+      "confidence": 0.55,
+      "trace_hash": "0x591e5c63736eeca960fa6f79b98400f10fdd90fb2558acf7ca96a64f4e9e1cea",
+      "trace_cid": "ar://M6KQY5eDzs9x56VvdkZGF6x9hPYBnRyAocnC3BumGR5",
+      "consumer_address": null,
+      "arc_tx_hash": "0x5f4e2c85b6f9df87ced871539a6aa58ea81b0b03f9533a575f868d31db7c186d",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-23T14:18:10.035705Z",
+      "schema_version": "rr-trace/3",
+      "disagreement_pp": 27.3,
+      "merkle_root": "0x8368fba94e27174bbdbd3fd292d3b9ce7b9b9a9ebc95d611748960f0139916b4",
+      "category": "other"
+    },
+    {
+      "id": 4574,
+      "market_id": "2329210",
+      "market_source": "polymarket",
+      "market_question": "Set 1 Winner: Wu vs Giron",
+      "probability": 0.51,
+      "confidence": 0.65,
+      "trace_hash": "0xec2b26abdbc823d7fa0d0d3f6b4820cd8403ece8a1191a0c4a68157480e5ab57",
+      "trace_cid": "ar://ErR5ewsoZQQYRyaAamZ9vQmihTMGdZWkBZda3mVPzN5Y",
+      "consumer_address": null,
+      "arc_tx_hash": "0xccf391b3ecc53b236980734bfb5f11c24c61467367ef9577dcf237713fb00ef5",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-23T13:47:12.864459Z",
+      "schema_version": "rr-trace/3",
+      "disagreement_pp": 14.0,
+      "merkle_root": "0x9ce2484c89e9a59fd0ac3b0832e64b010386e6a5c99b8e7ecf44108bb383e1ad",
+      "category": "sports"
+    },
+    {
+      "id": 4573,
+      "market_id": "2308202",
+      "market_source": "polymarket",
+      "market_question": "Will the Iran ceasefire continue through June 15?",
+      "probability": 0.54,
+      "confidence": 0.65,
+      "trace_hash": "0x2e684b35a3533ec53430094b7a30ffc7ddf09b89d1f1a0595d9870179497aa1f",
+      "trace_cid": "ar://4W3Sc6wFKYchYSWsGuxbJ8XrpmamHQd4pXSwWg1eJg2r",
+      "consumer_address": null,
+      "arc_tx_hash": "0xe024c02df54cfbb24351ed5548d52b236ed712460001892e8cb5237ffa009572",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-23T13:16:28.298757Z",
+      "schema_version": "rr-trace/3",
+      "disagreement_pp": 34.0,
+      "merkle_root": "0xb950840e047df7d11809178d1a09e2a4e881ea3003be10f2caef20edaed42afd",
+      "category": "macro"
+    },
+    {
+      "id": 4572,
+      "market_id": "2308202",
+      "market_source": "polymarket",
+      "market_question": "Will the Iran ceasefire continue through June 15?",
+      "probability": 0.6,
+      "confidence": 0.65,
+      "trace_hash": "0x781e4351b4e684a1534df41c73d1d3d4ff93f380aabe00d20b030bf633f2b016",
+      "trace_cid": "ar://EgANk4nM69YFYzH7Q5Jqh9rdBU7mMCmtWGCxFAZaTKPJ",
+      "consumer_address": null,
+      "arc_tx_hash": "0x5891734ca6de53b5864e2085be77502825923ef5083dd5af80fc2a16aebdb236",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-23T12:44:39.944850Z",
+      "schema_version": "rr-trace/3",
+      "disagreement_pp": 44.0,
+      "merkle_root": "0x6ae654943919071ba9a20192fb802bdbb3447b46adce6e6e3e687b4ca454591d",
+      "category": "politics"
+    },
+    {
+      "id": 4571,
+      "market_id": "2308202",
+      "market_source": "polymarket",
+      "market_question": "Will the Iran ceasefire continue through June 15?",
+      "probability": 0.48,
+      "confidence": 0.55,
+      "trace_hash": "0x6c98424aa251f765b523a4b3dc52e7caf452fb0c31e01704688ea0c645209e44",
+      "trace_cid": "ar://Fx3jpNoucY6oAtJGJNp2o2AvVpCnEmo1NS6rBvsijqyG",
+      "consumer_address": null,
+      "arc_tx_hash": "0xdb616bb6b3f8d7f266e33b7d7e8fd662c1c8a84312b78134f9c78705b9afd6b4",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-23T12:14:08.796174Z",
+      "schema_version": "rr-trace/3",
+      "disagreement_pp": 40.0,
+      "merkle_root": "0xb2d9d224639bf7c01526da27170f4e539064c11af5be4f3cb9cd31abbcfb0fa8",
+      "category": "macro"
+    },
+    {
+      "id": 4570,
+      "market_id": "KXALBUMDEBUT-26JUN27-YOU",
+      "market_source": "kalshi",
+      "market_question": "Will Olivia Rodrigo's 'you seem pretty sad for a girl so in love' debut at #1",
+      "probability": 0.65,
+      "confidence": 0.55,
+      "trace_hash": "0xf877e1e073a9791e697439fb9f0fe5b2176d788de235bb742b46d2d8bf71d19b",
+      "trace_cid": "ar://9cqGyCdUsq9HJozdaLtDDcR5S9zgqkbw3bZNduamUf9a",
+      "consumer_address": null,
+      "arc_tx_hash": "0x5d7b2b52b7c60ca711447fcda28d0e18d390438d6cb6e4ac936d49ab2ace9e38",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-23T11:43:09.579271Z",
+      "schema_version": "rr-trace/3",
+      "disagreement_pp": 37.0,
+      "merkle_root": "0xdec65f457b5375e9e9f369bede2c6af9b13de1b39c720c801bcfe08c1df32a2c",
+      "category": "other"
+    },
+    {
+      "id": 4569,
+      "market_id": "2278056",
+      "market_source": "polymarket",
+      "market_question": "Will the price of XRP be above $1.20 on May 23?",
+      "probability": 0.53,
+      "confidence": 0.45,
+      "trace_hash": "0xd8cc96811c9af85ac07af1dc476efbe2a418deaf109128a97f522d4902fc8276",
+      "trace_cid": "ar://D6QW4XFd4bQN6BHZYARe6rRvbDzuvgNGQGYKUtdqpPKJ",
+      "consumer_address": null,
+      "arc_tx_hash": "0x32659c7862dc04d82a72ff07c914d41fe506dda56491791103dac87467ee81ab",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-23T11:12:14.455004Z",
+      "schema_version": "rr-trace/3",
+      "disagreement_pp": 44.0,
+      "merkle_root": "0xbce670fb09c8d4ae547915c1bdbbbae5e7639dc5c0531e56f8a8021715dcecd5",
+      "category": "crypto"
+    },
+    {
+      "id": 4568,
+      "market_id": "2316216",
+      "market_source": "polymarket",
+      "market_question": "Will Paris Saint-Germain FC win on 2026-05-30?",
+      "probability": 0.23,
+      "confidence": 0.75,
+      "trace_hash": "0xc73bfb7d36259706db25c346d43589fd9fe3280682865c1f118d105614716942",
+      "trace_cid": "ar://Gso97FegKbkZ8ji3z9BFBUFYisAJ6NisXvUQPrtH7Ndo",
+      "consumer_address": null,
+      "arc_tx_hash": "0xe6ffd687ba2d373c5aff7f5ba6b361cdceb010099bf25cc4b91b2b2e5565aa45",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-23T10:10:21.630312Z",
+      "schema_version": "rr-trace/3",
+      "disagreement_pp": 64.0,
+      "merkle_root": "0x1102de9afdaf434195c3f3ced5176be24ae585b38adf80108ef82cd1fc3652e2",
+      "category": "sports"
+    },
+    {
+      "id": 4567,
+      "market_id": "2278056",
+      "market_source": "polymarket",
+      "market_question": "Will the price of XRP be above $1.20 on May 23?",
+      "probability": 0.53,
+      "confidence": 0.55,
+      "trace_hash": "0xbfde92724596bc7c52454857718f5cc3ef850770283bcd29bb56efd024a853f4",
+      "trace_cid": "ar://Bsd6TkXRASwHEUpCeyUw8zZMiT4sABY993bJyXxztL7P",
+      "consumer_address": null,
+      "arc_tx_hash": "0x1e4fe58f5b8629052bd263fec315fe47b6b4bbddba3d2fd3ea6783259017d297",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-23T09:39:36.088855Z",
+      "schema_version": "rr-trace/3",
+      "disagreement_pp": 54.0,
+      "merkle_root": "0x0e575f16ae0d96830bfa9770a991e712b0b3882e77322f401f2d558a7629e38c",
+      "category": "crypto"
+    },
+    {
+      "id": 4566,
+      "market_id": "2278056",
+      "market_source": "polymarket",
+      "market_question": "Will the price of XRP be above $1.20 on May 23?",
+      "probability": 0.72,
+      "confidence": 0.8,
+      "trace_hash": "0xea2350b4dbaa476b6e5096d883222e835eda5a13e21058354dce8c8d3a0228d5",
+      "trace_cid": "ar://8qEv5gSgEbTtkMNaSJHQHyyYpF95MWit4YiFHMHbJked",
+      "consumer_address": null,
+      "arc_tx_hash": "0x219b2f11e0fe5ff9dc97eb9186d54d6b770b0d5f4311dc1380f0de3297f4785e",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-23T09:09:02.851872Z",
+      "schema_version": "rr-trace/3",
+      "disagreement_pp": 77.0,
+      "merkle_root": "0xbc4533f997237b045f7c163dcf6737ee90c8b8350b99e9c55ea9b19f4003713c",
+      "category": "crypto"
+    },
+    {
+      "id": 4565,
+      "market_id": "2159726",
+      "market_source": "polymarket",
+      "market_question": "Israel closes its airspace by May 31?",
+      "probability": 0.44,
+      "confidence": 0.55,
+      "trace_hash": "0x32eb9d005ed623ce75c995d446faed57b7539d045e3b0833247f21839fd6495e",
+      "trace_cid": "ar://EMpSTVrRAwYuZMvCaHG5u9JDp7nchCy15BPr1DwMPkda",
+      "consumer_address": null,
+      "arc_tx_hash": "0xe6538124081b04c7f2f3b6c1b7fdeb2265121397f5cfe06f4ecfd9730bb2e0fe",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-23T08:38:23.181223Z",
+      "schema_version": "rr-trace/3",
+      "disagreement_pp": 50.0,
+      "merkle_root": "0x9dec0bde12d394dccae350466d83a70591e3d248dd9fe0b8013c0262e28dbe55",
+      "category": "politics"
+    },
+    {
+      "id": 4564,
+      "market_id": "2308195",
+      "market_source": "polymarket",
+      "market_question": "Will the Iran ceasefire continue through May 21?",
+      "probability": 0.69,
+      "confidence": 0.65,
+      "trace_hash": "0xf916422f14d8139ed1f599da97f6ef7769e8845ececd6bcc959af58d11da3323",
+      "trace_cid": "ar://CV3hajnV6YQrZFQGg3RPinj7Toxj3jxs6QVuzRCTNs5a",
+      "consumer_address": null,
+      "arc_tx_hash": "0xbc1ef86fe8e0f9894c9fc94ec5be7372c478d8e79206dfa2b77fcb83031c75bc",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-22T12:18:47.168106Z",
+      "schema_version": "rr-trace/3",
+      "disagreement_pp": 50.0,
+      "merkle_root": "0xabe7ea1a06c167d628e4ee8d27538fe2a7e97fcaf4f949fca067ff8cdd9fdd24",
+      "category": "politics"
+    },
+    {
+      "id": 4563,
+      "market_id": "KXALBUMSALES-YOUS-PURE-225000",
+      "market_source": "kalshi",
+      "market_question": "Will you seem pretty sad for a girl so in love have at least 225,000 Pure Album Sales on the Hits Daily Double Top 50 Chart for the week immediately following the wide release of you seem pretty sad for a girl so in love?",
+      "probability": 0.53,
+      "confidence": 0.65,
+      "trace_hash": "0xb2fa5c919de37f16fc35c28f705bb14e6fae640ca24aa3905e3122e3459caba0",
+      "trace_cid": "ar://FBnUZApZf3SUefRK8CrH7Ru31kiWdLasRcdjTVCo2ex2",
+      "consumer_address": null,
+      "arc_tx_hash": "0x11c86ccdc8d08a808811a9dc0507a6d5479eaac1dae3f13a4239e8a9b70a9e4f",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-20T18:38:14.179731Z",
+      "schema_version": "rr-trace/3",
+      "disagreement_pp": 30.0,
+      "merkle_root": "0xc491ca723e16354a0b7ef07b1363d9d20ebf61deb2ed70bc4e828fb42315751b",
+      "category": "other"
+    },
+    {
+      "id": 4562,
+      "market_id": "KXALBUMSALES-YOUS-PURE-225000",
+      "market_source": "kalshi",
+      "market_question": "Will you seem pretty sad for a girl so in love have at least 225,000 Pure Album Sales on the Hits Daily Double Top 50 Chart for the week immediately following the wide release of you seem pretty sad for a girl so in love?",
+      "probability": 0.47,
+      "confidence": 0.55,
+      "trace_hash": "0x4840d753912749a6087a93eb9f985b6caa4c433061e55ad35f0ecf0f0cea7c91",
+      "trace_cid": "ar://3nf2yow2nvrYyc8n6cAc9ziy5f5rDQryKbYRazF4M3Hb",
+      "consumer_address": null,
+      "arc_tx_hash": "0xc78cc01645407f122f74aca3dc8772f286d95a3711ad9251cc6a0d7891c6a809",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-20T18:06:38.477949Z",
+      "schema_version": "rr-trace/3",
+      "disagreement_pp": 57.0,
+      "merkle_root": "0x8b9bdd044bfcb3f576201f7da960bbf53130a401267080df498f57b272fc1e4b",
+      "category": "other"
+    },
+    {
+      "id": 4561,
+      "market_id": "KXALBUMSALES-YOUS-PURE-225000",
+      "market_source": "kalshi",
+      "market_question": "Will you seem pretty sad for a girl so in love have at least 225,000 Pure Album Sales on the Hits Daily Double Top 50 Chart for the week immediately following the wide release of you seem pretty sad for a girl so in love?",
+      "probability": 0.53,
+      "confidence": 0.55,
+      "trace_hash": "0xd7d0ebe26561fa0e73e28856a74352014e05f6187cf02da220eadbe86e96737d",
+      "trace_cid": "ar://2RYJXGY2cCBytzR2aPZBxKymFFTXezjyhTiXwrApeiUs",
+      "consumer_address": null,
+      "arc_tx_hash": "0x663fa9adedd2837624f34135a82c1727ee8d5a6ddf014ab8663abc27d615d4cc",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-20T17:35:43.098092Z",
+      "schema_version": "rr-trace/3",
+      "disagreement_pp": 54.0,
+      "merkle_root": "0xde577cd25460038649f0c0a3a6c3d55b8fb6077f058aea8eaf229da8334aeab0",
+      "category": "other"
+    },
+    {
+      "id": 4560,
+      "market_id": "KXALBUMSALES-YOUS-PURE-225000",
+      "market_source": "kalshi",
+      "market_question": "Will you seem pretty sad for a girl so in love have at least 225,000 Pure Album Sales on the Hits Daily Double Top 50 Chart for the week immediately following the wide release of you seem pretty sad for a girl so in love?",
+      "probability": 0.35,
+      "confidence": 0.65,
+      "trace_hash": "0x2e5a488a92af3cdd2508890a6642178fc1fd6ee7a99c47e431bc7182c9529c61",
+      "trace_cid": "ar://Vjevi5s71jjpJn76KgNa9CNn4Eib4A9xbzxxy5n6PrE",
+      "consumer_address": null,
+      "arc_tx_hash": "0xd5c83a6dec3009e1704a5c41ba3cc8160ef015c1ea65d4355ec9ff11e3b738d5",
+      "paid_micro_usdc": 0,
+      "created_at": "2026-05-20T17:04:58.992735Z",
+      "schema_version": "rr-trace/3",
+      "disagreement_pp": 47.0,
+      "merkle_root": "0x653cb3ca2d539b3492f480d9daa3e3ac2901307583e0e7886aa95fe92502238d",
+      "category": "other"
+    },
     {
       "id": 4559,
       "market_id": "KXALBUMSALES-YOUS-PURE-225000",
@@ -17576,438 +18008,6 @@
       "disagreement_pp": 67.0,
       "merkle_root": "0x326a5e1df0a34521dbde8b9efe1f3cb2370006e0f4e637a2a028f46815e3b594",
       "category": "macro"
-    },
-    {
-      "id": 3583,
-      "market_id": "2190022",
-      "market_source": "polymarket",
-      "market_question": "Will the price of XRP be above $1.50 on May 15?",
-      "probability": 0.58,
-      "confidence": 0.68,
-      "trace_hash": "0x541e83f8f7ef89ea1ce8b98c33a26eae62b2fef191586f93160876e9e8c42412",
-      "trace_cid": "ar://5xcFcFiSTSnEZ2hUrh96EDp7aXfwR34GTK45mrR2S8hC",
-      "consumer_address": null,
-      "arc_tx_hash": "e4d78cfe802161971b18d10667738395cf3559c7bf4748160ef725656de621bf",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-15T00:47:19.623817Z",
-      "schema_version": "rr-trace/3",
-      "disagreement_pp": 54.0,
-      "merkle_root": "0xe42beb785e73516a3650ed3f0d7ce4676562f75a9c6cdc6520d72ee51d2cbf56",
-      "category": "crypto"
-    },
-    {
-      "id": 3582,
-      "market_id": "KXUCLGAME-26MAY30PSGARS-PSG",
-      "market_source": "kalshi",
-      "market_question": "PSG vs Arsenal Winner?",
-      "probability": 0.61,
-      "confidence": 0.68,
-      "trace_hash": "0x9524a50348cc35d0bda35671d9210e8a48733950729fdde42e3a6c299dfbbd70",
-      "trace_cid": "ar://3qFDL7Q42MWMc7bbpnDyr6Uurf277LXCmmMuhSEpJFXF",
-      "consumer_address": null,
-      "arc_tx_hash": "0x532ef96ab4652f8d2e30e1a443c71eb11624476ca6063212d700f8f4b6481f64",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-15T00:47:15.143966Z",
-      "schema_version": "rr-trace/3",
-      "disagreement_pp": 30.0,
-      "merkle_root": "0xaf51b69c3c956c9ece860b265bbcccadd7a71ee86773064b3990a907a74e75ad",
-      "category": "sports"
-    },
-    {
-      "id": 3581,
-      "market_id": "1087541",
-      "market_source": "polymarket",
-      "market_question": "Will Matteo Berrettini win the 2026 Men's French Open?",
-      "probability": 0.32,
-      "confidence": 0.65,
-      "trace_hash": "0x7622445bcef79cf5139faa2087058c98c9abd1a7206e1a9bf34a0fc97c9328ef",
-      "trace_cid": "ar://6uimJjRDnYwDbxSmZGz59XVoykf5hmT6xt748ZQeH6aM",
-      "consumer_address": null,
-      "arc_tx_hash": "0xd0b0146c372955626179d58bdfccaecdf82cc03e10ff502ff900854d65ba2211",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-15T00:46:39.166350Z",
-      "schema_version": "rr-trace/3",
-      "disagreement_pp": 50.0,
-      "merkle_root": "0x4d6ccb96a8f7f78ff5aebb8b8e5800a6e71d61c98277fa2fe3eb72c175296d43",
-      "category": "sports"
-    },
-    {
-      "id": 3580,
-      "market_id": "KXUCLSPREAD-26MAY30PSGARS-PSG1",
-      "market_source": "kalshi",
-      "market_question": "PSG wins by over 1.5 goals?",
-      "probability": 0.588,
-      "confidence": 0.72,
-      "trace_hash": "0xd8a2260befc7ceebfbb22feac5783f58fe987b84060771e4d230c61bdd84f3dd",
-      "trace_cid": "ar://J6Eg1ovEG7CDqkd9KmTbGvWcZKwcMLUZTeeFjs2ysoo9",
-      "consumer_address": null,
-      "arc_tx_hash": "0xea2c353da535bb4dd4c93feeabcd49bf1012656ae2261336b88ab5af140dd7ed",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-15T00:46:23.729538Z",
-      "schema_version": "rr-trace/3",
-      "disagreement_pp": 40.0,
-      "merkle_root": "0xd7d72bd618c48e2ee65ab258ef7bfc6e1bc06760bd989e295eda921b9a64adc5",
-      "category": "sports"
-    },
-    {
-      "id": 3579,
-      "market_id": "1087541",
-      "market_source": "polymarket",
-      "market_question": "Will Matteo Berrettini win the 2026 Men's French Open?",
-      "probability": 0.42,
-      "confidence": 0.65,
-      "trace_hash": "0x897c0ee218bf58af9e7c5ef5fe3e4322e890eb9192b0fc024f9df7b893675280",
-      "trace_cid": "ar://6JFVDygFVyGBWsPyyJJGDb6XRcYwJeTbvr777AApDeRo",
-      "consumer_address": null,
-      "arc_tx_hash": "0xad082af0441c378d3ffb9b9863ff925c06501bd55460e62e28fc400c38c4c592",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-15T00:46:11.845753Z",
-      "schema_version": "rr-trace/3",
-      "disagreement_pp": 47.0,
-      "merkle_root": "0x538c2a086314188e9ec84b9bdb15461b2d5a09ba5466c506e97be913662d8d08",
-      "category": "sports"
-    },
-    {
-      "id": 3578,
-      "market_id": "KXCAVA-26MAYREST-455",
-      "market_source": "kalshi",
-      "market_question": "Will CAVA Group Inc. report Above 455 cava restaurants in Q1 2026?",
-      "probability": 0.72,
-      "confidence": 0.65,
-      "trace_hash": "0x1f1f9d062a7a4d45f19a9fa107706aff2d6a7bf2fa32d1576802dc2217f8ed6f",
-      "trace_cid": "ar://C5gksvQotMHHrFrD7puYp4hDYL6sHK1VADwzyHK64oRQ",
-      "consumer_address": null,
-      "arc_tx_hash": "0x2fc7d0f0b9f3f777a151a77448c05fb9fa7e8a8a47d8e714640607096606fb97",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-15T00:46:04.652957Z",
-      "schema_version": "rr-trace/3",
-      "disagreement_pp": 83.0,
-      "merkle_root": "0x960923d435098ed363eeadb0381b522325d22c225507fb1c73797121c8be03de",
-      "category": "macro"
-    },
-    {
-      "id": 3577,
-      "market_id": "KXCAVA-26MAYREST-460",
-      "market_source": "kalshi",
-      "market_question": "Will CAVA Group Inc. report Above 460 cava restaurants in Q1 2026?",
-      "probability": 0.58,
-      "confidence": 0.7,
-      "trace_hash": "0x845d31abde2ede8a62c6b920fc338e400514d9ac498ab07645b9381192e0ac4c",
-      "trace_cid": "ar://2V7SMsQrRyHtB5eFTwRQSnU5Fehzy8m4jGAJMD3wMr82",
-      "consumer_address": null,
-      "arc_tx_hash": "0x06396a2211dac2bdca2e4201c2dd0f741a4aec1b58eb189ce2fc69c20cea26ef",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-15T00:46:00.167019Z",
-      "schema_version": "rr-trace/3",
-      "disagreement_pp": 44.0,
-      "merkle_root": "0xea96926a24c58031f92ddd76af6bd1e5b4672be8dbe5728b8f82c7e0c532696f",
-      "category": "macro"
-    },
-    {
-      "id": 3576,
-      "market_id": "2190022",
-      "market_source": "polymarket",
-      "market_question": "Will the price of XRP be above $1.50 on May 15?",
-      "probability": 0.58,
-      "confidence": 0.72,
-      "trace_hash": "0xb7b51c142ce57f7e8752145df40635db409c0369795769b9173c7d7c31cc9f56",
-      "trace_cid": "ar://5xyVA8NmYRj6RW15DVSNAxpfMASjkHzdyyi6KDUaXDhg",
-      "consumer_address": null,
-      "arc_tx_hash": "0x27c78597d35aafbe2262739640ba4cfa1e31a1ae60a180189a7e9a175b50d357",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-15T00:45:57.518857Z",
-      "schema_version": "rr-trace/3",
-      "disagreement_pp": 34.0,
-      "merkle_root": "0xaaf9064be5e1b89194f83c7b05e3c8cb14128ee21e3df690a22755b351f9791e",
-      "category": "crypto"
-    },
-    {
-      "id": 3575,
-      "market_id": "678937",
-      "market_source": "polymarket",
-      "market_question": "Will Chong Won-oh win the 2026 Seoul Mayoral Election",
-      "probability": 0.479,
-      "confidence": 0.65,
-      "trace_hash": "0x51c583a78886928564a59372d746f29337966bc9da67a269f19cdd5b3432f32e",
-      "trace_cid": "ar://HLM2qngU1bHTjcQMDpvDpc7tfvhH45bCJY25vm39ciuX",
-      "consumer_address": null,
-      "arc_tx_hash": "1078319cd7c3b795fc69b2cc1888c784a690b28054ccdbb095c0f44d95456085",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-15T00:45:55.469543Z",
-      "schema_version": "rr-trace/3",
-      "disagreement_pp": 24.0,
-      "merkle_root": "0xd96d664981004f90ae8921aa84216db9b1012822bc9f85113dad02491cb0aff8",
-      "category": "politics"
-    },
-    {
-      "id": 3574,
-      "market_id": "KXCAVA-26MAYREST-457",
-      "market_source": "kalshi",
-      "market_question": "Will CAVA Group Inc. report above 457 cava restaurants in Q1 2026?",
-      "probability": 0.63,
-      "confidence": 0.75,
-      "trace_hash": "0xd8fd5a6a289bdb7eb2394555dc28c42f31191a2cbe6fdd02b90e7b80889d5841",
-      "trace_cid": "ar://4zc5L53dmfSZqwyHji6udhVkUwEnBa6DDebDSKAgsVjh",
-      "consumer_address": null,
-      "arc_tx_hash": "0x0a8d04944d8fee15e674b351d78feee55d168df3caaf5407e77486ba099397d3",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-15T00:45:23.049555Z",
-      "schema_version": "rr-trace/3",
-      "disagreement_pp": 47.0,
-      "merkle_root": "0xdd029ef4e95f18d7c601a6727344c84af036055b7167a224c5b0daa69ad84393",
-      "category": "macro"
-    },
-    {
-      "id": 3573,
-      "market_id": "KXCAVA-26MAYREST-445",
-      "market_source": "kalshi",
-      "market_question": "Will CAVA Group Inc. report Above 445 cava restaurants in Q1 2026?",
-      "probability": 0.616,
-      "confidence": 0.72,
-      "trace_hash": "0x1d693e079ccf7b92dae2e0d5468a4eaeec7c8d44d702186c23a19c9b3696d55a",
-      "trace_cid": "ar://FPU68mBLVcswYmVdFmKQ1CKwPB2TZfcN3tMkfrPxt9Hj",
-      "consumer_address": null,
-      "arc_tx_hash": "0xa48de32d4b2f9175b9efd9bf8ec60b64dba32751a14865f42dccd147b61215b0",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-15T00:44:14.932621Z",
-      "schema_version": "rr-trace/3",
-      "disagreement_pp": 64.5,
-      "merkle_root": "0x3a050d9ed08c6ced5ade2ba813b5bcadeea836266036643fbe213b6c0c902eb2",
-      "category": "macro"
-    },
-    {
-      "id": 3572,
-      "market_id": "678937",
-      "market_source": "polymarket",
-      "market_question": "Will Chong Won-oh win the 2026 Seoul Mayoral Election",
-      "probability": 0.56,
-      "confidence": 0.68,
-      "trace_hash": "0x2d5d29172036ceaa04c88c4f181d280757d6f5b0da4ec8d5d0030b5f2fdfee61",
-      "trace_cid": "ar://BMkRWsfPttqLo7kWRtvb8daeFBPYYfjcpxaSz38QC6wN",
-      "consumer_address": null,
-      "arc_tx_hash": "0x3ea319da4fbb3ba3fd1a0442aa75f97903da3e4315d6eb549002c715b8fe1c11",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-15T00:43:58.711671Z",
-      "schema_version": "rr-trace/3",
-      "disagreement_pp": 25.0,
-      "merkle_root": "0x55fdeb7e923371204d41d82c4e66a281b3a6c0e9c58dfbf5aff9dd8a8c3d6e2e",
-      "category": "politics"
-    },
-    {
-      "id": 3571,
-      "market_id": "KXCAVA-26MAYREST-455",
-      "market_source": "kalshi",
-      "market_question": "Will CAVA Group Inc. report Above 455 cava restaurants in Q1 2026?",
-      "probability": 0.64,
-      "confidence": 0.68,
-      "trace_hash": "0xd9d9372b3488dbfd58cb600fd2c77a9a9caca697babe34678df5da83324fafe4",
-      "trace_cid": "ar://FwLnHxkNuQukao6PCsmmP2sCrWtqfiE2vsumSrHwUqgD",
-      "consumer_address": null,
-      "arc_tx_hash": "0x033707f2135ccc4d256ab049f6e7da6499206d5b9021cd944dd0e3fdd79132dd",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-15T00:43:28.944996Z",
-      "schema_version": "rr-trace/3",
-      "disagreement_pp": 40.0,
-      "merkle_root": "0x477c2252f4f2d4f927261d43b3ff028ac802b3f71ecbe8d0df9d2704e9c29d1f",
-      "category": "macro"
-    },
-    {
-      "id": 3570,
-      "market_id": "678937",
-      "market_source": "polymarket",
-      "market_question": "Will Chong Won-oh win the 2026 Seoul Mayoral Election",
-      "probability": 0.538,
-      "confidence": 0.72,
-      "trace_hash": "0xc972e5cd245525fe75da3890da2dd9490c345c3505ec7cf6156c63eae7324c1b",
-      "trace_cid": "ar://5PpQnuYuV948yefuNL9JhakD8nzoC3u6k3Sw8FpbH3o2",
-      "consumer_address": null,
-      "arc_tx_hash": "0xf6de208c415aea97a6ca55aa781e6c9875110ed720272ef6708f12bc30d37ad2",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-15T00:43:26.570299Z",
-      "schema_version": "rr-trace/3",
-      "disagreement_pp": 26.0,
-      "merkle_root": "0x03c3ab74f9998cc31996ad0f65023f5f3a34261d7d5b281669c4ba217b9f5ca5",
-      "category": "politics"
-    },
-    {
-      "id": 3569,
-      "market_id": "1087541",
-      "market_source": "polymarket",
-      "market_question": "Will Matteo Berrettini win the 2026 Men's French Open?",
-      "probability": 0.259,
-      "confidence": 0.72,
-      "trace_hash": "0xfe013d5a760e186500e1e3bbcdb9f87db1e196aca1a2bfa2dffa599b5ef336b9",
-      "trace_cid": "ar://BmjzAysAWUVzYSZZvUGrcvgYwn6HefKrSKQqudADchW3",
-      "consumer_address": null,
-      "arc_tx_hash": "e90758c145279b691c5a065b087eaa101783fe1c7bf435ed33169c716dbd75f2",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-15T00:43:16.916883Z",
-      "schema_version": "rr-trace/3",
-      "disagreement_pp": 53.0,
-      "merkle_root": "0xa387058f530e1f21738ef3d3a9968ca01aaed18d0d2ed0671d44ce032e4c3314",
-      "category": "sports"
-    },
-    {
-      "id": 3568,
-      "market_id": "KXCAVA-26MAYREST-465",
-      "market_source": "kalshi",
-      "market_question": "Will CAVA Group Inc. report Above 465 cava restaurants in Q1 2026?",
-      "probability": 0.88,
-      "confidence": 0.82,
-      "trace_hash": "0x11c3bc597babb31d2cd4b153d0f519b9b9576b2aeb494244251732990a69e1ed",
-      "trace_cid": "ar://5T9EGuyWsJdspbALMgv44QsmrqzRq1CcFjnRV1riqJYQ",
-      "consumer_address": null,
-      "arc_tx_hash": "0xde78dd0bd006d7224ff3ab16efdf9914588032e661b43fbba57d51fce62aaa53",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-15T00:42:41.637181Z",
-      "schema_version": "rr-trace/3",
-      "disagreement_pp": 57.0,
-      "merkle_root": "0xa851d9b42e15c87186173bdf3231be3d6fbd2e1ad1b6175f5192c22dda32f4d3",
-      "category": "macro"
-    },
-    {
-      "id": 3567,
-      "market_id": "2161607",
-      "market_source": "polymarket",
-      "market_question": "Will Elon Musk post 100-119 tweets from May 8 to May 15, 2026?",
-      "probability": 0.479,
-      "confidence": 0.68,
-      "trace_hash": "0x94d5190e5aaad4edb5eb938b96e1bf8838f5c8f32aef5ddd18104ee05383a806",
-      "trace_cid": "ar://3uUvB3yydzV6cTCpR5EK1GKZjoyTxmmLoJz78URKEPH9",
-      "consumer_address": null,
-      "arc_tx_hash": "0ee0f586de8ca29c8b2ae917f952422e42a4bdd95ed2bb712b1d134fed8d97a8",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-15T00:41:41.283663Z",
-      "schema_version": "rr-trace/3",
-      "disagreement_pp": 36.67,
-      "merkle_root": "0xe4d1fb495b0559ce02ab320ac94cf124ecc3c69d8d0e5c6cf19d3a6cfb30e64e",
-      "category": "other"
-    },
-    {
-      "id": 3566,
-      "market_id": "KXCAVA-26MAYREST-465",
-      "market_source": "kalshi",
-      "market_question": "Will CAVA Group Inc. report Above 465 cava restaurants in Q1 2026?",
-      "probability": 0.622,
-      "confidence": 0.72,
-      "trace_hash": "0xcd60ac53faa13e063f3946aa6f04ac9adf9f7bf5e93cf525a432d7bf0d3908ae",
-      "trace_cid": "ar://EHsTWAUdMjRbjBbywo7TVYd91jzxNTz6g4qGL5nwG775",
-      "consumer_address": null,
-      "arc_tx_hash": "0xddfae1f99be230f92774de084ce0d02f39d55a395903ed2cd3ff184b807d1936",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-15T00:41:40.017902Z",
-      "schema_version": "rr-trace/3",
-      "disagreement_pp": 57.0,
-      "merkle_root": "0x7ee35257c977b7cfa46c33f94c8e4803b35a3a6b1b1a58133ca6b5cdf9615b38",
-      "category": "macro"
-    },
-    {
-      "id": 3565,
-      "market_id": "2190022",
-      "market_source": "polymarket",
-      "market_question": "Will the price of XRP be above $1.50 on May 15?",
-      "probability": 0.46,
-      "confidence": 0.6,
-      "trace_hash": "0x99e258fb21ef96e1fbf71826f613195b4cd15f83edac78f54716076142cca0e6",
-      "trace_cid": "ar://H8h2k42AQWHCDYaNmYyPB7VTBhDbMCTbUU21oGabTeJY",
-      "consumer_address": null,
-      "arc_tx_hash": "4deff80e9d659d45890330e02c483b75ce0951dbe7050b765508056bd4bba7a8",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-15T00:41:18.430717Z",
-      "schema_version": "rr-trace/3",
-      "disagreement_pp": 57.0,
-      "merkle_root": "0xe2d8d61f01643f44386c1b4d4871e084d076515648011ff0c3200183544597b7",
-      "category": "crypto"
-    },
-    {
-      "id": 3564,
-      "market_id": "2161607",
-      "market_source": "polymarket",
-      "market_question": "Will Elon Musk post 100-119 tweets from May 8 to May 15, 2026?",
-      "probability": 0.55,
-      "confidence": 0.68,
-      "trace_hash": "0xe01cf3d3f8b7ac5b1bd459fcdd6f6af6892c46f67c33ef4b3cfa1130341d83e3",
-      "trace_cid": "ar://4L8ZmMjpSUaa8ReCPoa6R96cyZYkoi67EHpT8Ax6ydEE",
-      "consumer_address": null,
-      "arc_tx_hash": "0x59aaf46ea34ae69b8e9ed88cff7532404ab3e3fa9b5852a12c5f74e7e70bb2d1",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-15T00:40:58.463492Z",
-      "schema_version": "rr-trace/3",
-      "disagreement_pp": 37.0,
-      "merkle_root": "0x76d7ea7f57deeeb30fe86938fc54a50b2f50b35ea4848f7afe63256ea3430c9f",
-      "category": "tech"
-    },
-    {
-      "id": 3563,
-      "market_id": "KXCAVA-26MAYREST-457",
-      "market_source": "kalshi",
-      "market_question": "Will CAVA Group Inc. report above 457 cava restaurants in Q1 2026?",
-      "probability": 0.81,
-      "confidence": 0.8,
-      "trace_hash": "0xce4c7891d06123e15239493af72daae058941eb7b4e7a262940e1ffd3c047efa",
-      "trace_cid": "ar://2qLqBkeDEd9BNe2NVfPaSVgq6LUuYn3KrHSdQCtzsrxW",
-      "consumer_address": null,
-      "arc_tx_hash": "0x7e0e579d7e47f9a4e6ef00a8c177974b5fc6e8ee02072c6fdb3213978f09978d",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-15T00:40:50.107796Z",
-      "schema_version": "rr-trace/3",
-      "disagreement_pp": 53.0,
-      "merkle_root": "0x231017405075cd80470a86b1548914c7cc4de37a064189b4f64ba6ffaec94906",
-      "category": "macro"
-    },
-    {
-      "id": 3562,
-      "market_id": "KXCAVA-26MAYREST-450",
-      "market_source": "kalshi",
-      "market_question": "Will CAVA Group Inc. report Above 450 cava restaurants in Q1 2026?",
-      "probability": 0.68,
-      "confidence": 0.72,
-      "trace_hash": "0x77ffd7376f450a230dbc7fe07c0d32a629d0580affdc2457016174b72a200442",
-      "trace_cid": "ar://9Q5nUqrd2RecCgpWUBCNStCDyE8QSG5Bv7SZnisApRt4",
-      "consumer_address": null,
-      "arc_tx_hash": "0x577a9b0a04576e0ac2cda9afe7468f370a9a634019425368a2a96ae1b3843ae9",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-15T00:40:19.475009Z",
-      "schema_version": "rr-trace/3",
-      "disagreement_pp": 40.0,
-      "merkle_root": "0x74f691214b3c9eb144b2fe9e2bd2c17cd45162a5b4ce7b2a8ebbd33dd904a776",
-      "category": "macro"
-    },
-    {
-      "id": 3561,
-      "market_id": "1087541",
-      "market_source": "polymarket",
-      "market_question": "Will Matteo Berrettini win the 2026 Men's French Open?",
-      "probability": 0.22,
-      "confidence": 0.78,
-      "trace_hash": "0xb92c8fdffe7c0e1a15fcfd7e5861651a271e720d596e289d20a697f6a8c900bc",
-      "trace_cid": "ar://FH8md7QK9vBfFPVoxTAyngEXtoWRWjupYoPUb2tVkoDV",
-      "consumer_address": null,
-      "arc_tx_hash": "0xe24fcbed9b4b78671a1d25ba22e9d07e50d0dc03530d757f03a6e3a14840f1ab",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-15T00:40:13.770711Z",
-      "schema_version": "rr-trace/3",
-      "disagreement_pp": 54.0,
-      "merkle_root": "0xfec0e3c0bf5dc0fa180c6436fca619fa7f3dac37f04851ec9ba0ef0c71628700",
-      "category": "sports"
-    },
-    {
-      "id": 3560,
-      "market_id": "KXCAVA-26MAYREST-455",
-      "market_source": "kalshi",
-      "market_question": "Will CAVA Group Inc. report Above 455 cava restaurants in Q1 2026?",
-      "probability": 0.7,
-      "confidence": 0.72,
-      "trace_hash": "0x22bfe419ab64d25d0ba7b4e70182c23696450963996c55fb0a2e3b0323a151f8",
-      "trace_cid": "ar://HZ9bDyYPmNPfQA18sWTZS7FGUvoizgju9woXZJ9Rpnd",
-      "consumer_address": null,
-      "arc_tx_hash": "0x471ecd6f608514c3a76febec45e569bb55dafcc6f2f2b023c940b228ad4860ad",
-      "paid_micro_usdc": 0,
-      "created_at": "2026-05-15T00:38:36.665086Z",
-      "schema_version": "rr-trace/3",
-      "disagreement_pp": 54.0,
-      "merkle_root": "0xdfb0086ec5c014d344165a6c4b730af8d40a26085ce22a7eec51b3396c68d0b3",
-      "category": "macro"
     }
   ],
   "per_market": [
@@ -18021,15 +18021,15 @@
     {
       "market_id": "2161607",
       "question": "Will Elon Musk post 100-119 tweets from May 8 to May 15, 2026?",
-      "count": 101,
-      "avg_probability": 0.4662702970297029,
+      "count": 99,
+      "avg_probability": 0.46529595959595954,
       "last_at": "2026-05-15T06:18:07.621384Z"
     },
     {
       "market_id": "1087541",
       "question": "Will Matteo Berrettini win the 2026 Men's French Open?",
-      "count": 97,
-      "avg_probability": 0.24035463917525776,
+      "count": 93,
+      "avg_probability": 0.23758494623655915,
       "last_at": "2026-05-15T07:05:52.013237Z"
     },
     {
@@ -18049,15 +18049,15 @@
     {
       "market_id": "KXCAVA-26MAYREST-465",
       "question": "Will CAVA Group Inc. report Above 465 cava restaurants in Q1 2026?",
-      "count": 57,
-      "avg_probability": 0.5969473684210529,
+      "count": 55,
+      "avg_probability": 0.5913454545454548,
       "last_at": "2026-05-15T04:00:18.137611Z"
     },
     {
       "market_id": "KXCAVA-26MAYREST-460",
       "question": "Will CAVA Group Inc. report Above 460 cava restaurants in Q1 2026?",
-      "count": 45,
-      "avg_probability": 0.5767666666666668,
+      "count": 44,
+      "avg_probability": 0.576693181818182,
       "last_at": "2026-05-15T03:53:38.140120Z"
     },
     {
@@ -18070,16 +18070,9 @@
     {
       "market_id": "678937",
       "question": "Will Chong Won-oh win the 2026 Seoul Mayoral Election",
-      "count": 38,
-      "avg_probability": 0.5262500000000001,
+      "count": 35,
+      "avg_probability": 0.5263000000000001,
       "last_at": "2026-05-15T02:27:02.539515Z"
-    },
-    {
-      "market_id": "KXCAVA-26MAYREST-457",
-      "question": "Will CAVA Group Inc. report above 457 cava restaurants in Q1 2026?",
-      "count": 36,
-      "avg_probability": 0.6148194444444443,
-      "last_at": "2026-05-15T03:31:27.340235Z"
     },
     {
       "market_id": "KXPGATOP5-PGC26-SSCH",
@@ -18087,6 +18080,13 @@
       "count": 34,
       "avg_probability": 0.5981852941176469,
       "last_at": "2026-05-15T07:07:13.189284Z"
+    },
+    {
+      "market_id": "KXCAVA-26MAYREST-457",
+      "question": "Will CAVA Group Inc. report above 457 cava restaurants in Q1 2026?",
+      "count": 34,
+      "avg_probability": 0.6086323529411763,
+      "last_at": "2026-05-15T03:31:27.340235Z"
     },
     {
       "market_id": "KXPGATOP5-PGC26-SBUR",
@@ -18098,15 +18098,15 @@
     {
       "market_id": "KXCAVA-26MAYREST-455",
       "question": "Will CAVA Group Inc. report Above 455 cava restaurants in Q1 2026?",
-      "count": 30,
-      "avg_probability": 0.6271,
+      "count": 27,
+      "avg_probability": 0.6204814814814815,
       "last_at": "2026-05-15T03:17:04.655665Z"
     },
     {
       "market_id": "KXCAVA-26MAYREST-450",
       "question": "Will CAVA Group Inc. report Above 450 cava restaurants in Q1 2026?",
-      "count": 26,
-      "avg_probability": 0.6427961538461537,
+      "count": 25,
+      "avg_probability": 0.641308,
       "last_at": "2026-05-15T03:22:58.231643Z"
     },
     {
@@ -18131,13 +18131,6 @@
       "last_at": "2026-05-15T07:07:00.678539Z"
     },
     {
-      "market_id": "2190022",
-      "question": "Will the price of XRP be above $1.50 on May 15?",
-      "count": 18,
-      "avg_probability": 0.5744444444444444,
-      "last_at": "2026-05-15T01:41:48.225760Z"
-    },
-    {
       "market_id": "2080209",
       "question": "UFC Fight Night: Arnold Allen vs. Melquizael Costa (Featherweight, Main Card)",
       "count": 16,
@@ -18145,11 +18138,11 @@
       "last_at": "2026-05-15T07:06:17.214483Z"
     },
     {
-      "market_id": "KXCAVA-26MAYREST-445",
-      "question": "Will CAVA Group Inc. report Above 445 cava restaurants in Q1 2026?",
-      "count": 14,
-      "avg_probability": 0.6662499999999999,
-      "last_at": "2026-05-15T02:44:22.312809Z"
+      "market_id": "2190022",
+      "question": "Will the price of XRP be above $1.50 on May 15?",
+      "count": 15,
+      "avg_probability": 0.5813333333333333,
+      "last_at": "2026-05-15T01:41:48.225760Z"
     },
     {
       "market_id": "KXPGATOP5-PGC26-KKIT",
@@ -18157,6 +18150,13 @@
       "count": 13,
       "avg_probability": 0.40299999999999997,
       "last_at": "2026-05-15T06:19:57.853843Z"
+    },
+    {
+      "market_id": "KXCAVA-26MAYREST-445",
+      "question": "Will CAVA Group Inc. report Above 445 cava restaurants in Q1 2026?",
+      "count": 13,
+      "avg_probability": 0.6701153846153846,
+      "last_at": "2026-05-15T02:44:22.312809Z"
     },
     {
       "market_id": "2063135",
@@ -18180,11 +18180,25 @@
       "last_at": "2026-05-17T15:47:07.970511Z"
     },
     {
+      "market_id": "KXRT-TOY-60",
+      "question": "Toy Story 5 Rotten Tomatoes score?",
+      "count": 8,
+      "avg_probability": 0.565,
+      "last_at": "2026-05-24T17:08:47.361511Z"
+    },
+    {
       "market_id": "KXUCLSPREAD-26MAY30PSGARS-PSG1",
       "question": "PSG wins by over 1.5 goals?",
-      "count": 8,
-      "avg_probability": 0.537125,
+      "count": 7,
+      "avg_probability": 0.5298571428571428,
       "last_at": "2026-05-15T01:41:41.183251Z"
+    },
+    {
+      "market_id": "KXALBUMSALES-YOUS-PURE-225000",
+      "question": "Will you seem pretty sad for a girl so in love have at least 225,000 Pure Album Sales on the Hits Daily Double Top 50 Chart for the week immediately following the wide release of you seem pretty sad for a girl so in love?",
+      "count": 5,
+      "avg_probability": 0.492,
+      "last_at": "2026-05-20T18:38:14.179731Z"
     },
     {
       "market_id": "2189970",
@@ -18201,11 +18215,18 @@
       "last_at": "2026-05-15T06:43:01.211578Z"
     },
     {
-      "market_id": "KXUCLGAME-26MAY30PSGARS-PSG",
-      "question": "PSG vs Arsenal Winner?",
-      "count": 4,
-      "avg_probability": 0.5775,
-      "last_at": "2026-05-15T01:10:43.540445Z"
+      "market_id": "2308202",
+      "question": "Will the Iran ceasefire continue through June 15?",
+      "count": 3,
+      "avg_probability": 0.54,
+      "last_at": "2026-05-23T13:16:28.298757Z"
+    },
+    {
+      "market_id": "2278056",
+      "question": "Will the price of XRP be above $1.20 on May 23?",
+      "count": 3,
+      "avg_probability": 0.5933333333333334,
+      "last_at": "2026-05-23T11:12:14.455004Z"
     },
     {
       "market_id": "KXWCSQUAD-26ESP-NWIL",
@@ -18213,6 +18234,20 @@
       "count": 3,
       "avg_probability": 0.59,
       "last_at": "2026-05-18T12:02:28.745354Z"
+    },
+    {
+      "market_id": "KXUCLGAME-26MAY30PSGARS-PSG",
+      "question": "PSG vs Arsenal Winner?",
+      "count": 3,
+      "avg_probability": 0.5666666666666668,
+      "last_at": "2026-05-15T01:10:43.540445Z"
+    },
+    {
+      "market_id": "KXSOCCERPLAYCRON-26",
+      "question": "Will Cristiano Ronaldo play in the World Cup?",
+      "count": 2,
+      "avg_probability": 0.65,
+      "last_at": "2026-05-24T02:56:20.916171Z"
     },
     {
       "market_id": "KXPGATOP5-PGC26-JROS",
@@ -18229,124 +18264,2320 @@
       "last_at": "2026-05-15T05:50:12.265775Z"
     },
     {
-      "market_id": "KXALBUMSALES-YOUS-PURE-225000",
-      "question": "Will you seem pretty sad for a girl so in love have at least 225,000 Pure Album Sales on the Hits Daily Double Top 50 Chart for the week immediately following the wide release of you seem pretty sad for a girl so in love?",
+      "market_id": "2329210",
+      "question": "Set 1 Winner: Wu vs Giron",
       "count": 1,
-      "avg_probability": 0.58,
-      "last_at": "2026-05-20T16:33:58.835332Z"
+      "avg_probability": 0.51,
+      "last_at": "2026-05-23T13:47:12.864459Z"
     },
     {
-      "market_id": "KXSOCCERPLAYCRON-26",
-      "question": "Will Cristiano Ronaldo play in the World Cup?",
+      "market_id": "KXALBUMDEBUT-26JUN27-YOU",
+      "question": "Will Olivia Rodrigo's 'you seem pretty sad for a girl so in love' debut at #1",
       "count": 1,
       "avg_probability": 0.65,
-      "last_at": "2026-05-18T12:08:44.782195Z"
+      "last_at": "2026-05-23T11:43:09.579271Z"
+    },
+    {
+      "market_id": "2316216",
+      "question": "Will Paris Saint-Germain FC win on 2026-05-30?",
+      "count": 1,
+      "avg_probability": 0.23,
+      "last_at": "2026-05-23T10:10:21.630312Z"
+    },
+    {
+      "market_id": "2159726",
+      "question": "Israel closes its airspace by May 31?",
+      "count": 1,
+      "avg_probability": 0.44,
+      "last_at": "2026-05-23T08:38:23.181223Z"
+    },
+    {
+      "market_id": "2308195",
+      "question": "Will the Iran ceasefire continue through May 21?",
+      "count": 1,
+      "avg_probability": 0.69,
+      "last_at": "2026-05-22T12:18:47.168106Z"
     }
   ],
   "volume_chart": [
     {
-      "label": "07:38",
-      "count": 922
+      "label": "07:47",
+      "count": 959
     },
     {
-      "label": "13:18",
-      "count": 65
+      "label": "17:28",
+      "count": 10
     },
     {
-      "label": "18:58",
-      "count": 5
+      "label": "03:09",
+      "count": 0
     },
     {
-      "label": "00:38",
+      "label": "12:50",
       "count": 1
     },
     {
-      "label": "06:17",
+      "label": "22:31",
       "count": 0
     },
     {
-      "label": "11:57",
+      "label": "08:11",
       "count": 0
     },
     {
-      "label": "17:37",
-      "count": 1
-    },
-    {
-      "label": "23:17",
-      "count": 0
-    },
-    {
-      "label": "04:57",
-      "count": 0
-    },
-    {
-      "label": "10:36",
-      "count": 0
-    },
-    {
-      "label": "16:16",
-      "count": 0
-    },
-    {
-      "label": "21:56",
+      "label": "17:52",
       "count": 3
     },
     {
-      "label": "03:36",
+      "label": "03:33",
       "count": 0
     },
     {
-      "label": "09:16",
-      "count": 0
-    },
-    {
-      "label": "14:55",
+      "label": "13:14",
       "count": 2
     },
     {
-      "label": "20:35",
+      "label": "22:55",
       "count": 0
     },
     {
-      "label": "02:15",
+      "label": "08:36",
       "count": 0
     },
     {
-      "label": "07:55",
+      "label": "18:17",
       "count": 0
     },
     {
-      "label": "13:35",
+      "label": "03:58",
       "count": 0
     },
     {
-      "label": "19:14",
+      "label": "13:39",
       "count": 0
     },
     {
-      "label": "00:54",
+      "label": "23:19",
+      "count": 5
+    },
+    {
+      "label": "09:00",
       "count": 0
     },
     {
-      "label": "06:34",
+      "label": "18:41",
       "count": 0
     },
     {
-      "label": "12:14",
+      "label": "04:22",
       "count": 0
     },
     {
-      "label": "17:54",
+      "label": "14:03",
       "count": 1
+    },
+    {
+      "label": "23:44",
+      "count": 0
+    },
+    {
+      "label": "09:25",
+      "count": 6
+    },
+    {
+      "label": "19:06",
+      "count": 10
+    },
+    {
+      "label": "04:47",
+      "count": 1
+    },
+    {
+      "label": "14:27",
+      "count": 2
     }
   ],
   "calibration": {
-    "total_resolved": 0,
-    "distinct_resolved_markets": 0,
-    "brier_score": 0.0,
-    "brier_high_conf": null,
-    "brier_low_conf": null,
-    "buckets": []
+    "total_resolved": 847,
+    "distinct_resolved_markets": 15,
+    "brier_score": 0.24522666365997642,
+    "brier_high_conf": 0.24614296592657345,
+    "brier_low_conf": 0.24332075494545455,
+    "buckets": [
+      {
+        "label": "0.10-0.20",
+        "bucket_min": 0.1,
+        "bucket_max": 0.2,
+        "n": 1,
+        "mean_predicted": 0.18,
+        "mean_actual": 0.0
+      },
+      {
+        "label": "0.20-0.30",
+        "bucket_min": 0.2,
+        "bucket_max": 0.30000000000000004,
+        "n": 11,
+        "mean_predicted": 0.2660909090909091,
+        "mean_actual": 0.0
+      },
+      {
+        "label": "0.30-0.40",
+        "bucket_min": 0.30000000000000004,
+        "bucket_max": 0.4,
+        "n": 44,
+        "mean_predicted": 0.3539181818181818,
+        "mean_actual": 0.045454545454545456
+      },
+      {
+        "label": "0.40-0.50",
+        "bucket_min": 0.4,
+        "bucket_max": 0.5,
+        "n": 125,
+        "mean_predicted": 0.46174160000000003,
+        "mean_actual": 0.216
+      },
+      {
+        "label": "0.50-0.60",
+        "bucket_min": 0.5,
+        "bucket_max": 0.6,
+        "n": 273,
+        "mean_predicted": 0.5528040293040294,
+        "mean_actual": 0.326007326007326
+      },
+      {
+        "label": "0.60-0.70",
+        "bucket_min": 0.6000000000000001,
+        "bucket_max": 0.7000000000000001,
+        "n": 253,
+        "mean_predicted": 0.6400577075098813,
+        "mean_actual": 0.6007905138339921
+      },
+      {
+        "label": "0.70-0.80",
+        "bucket_min": 0.7000000000000001,
+        "bucket_max": 0.8,
+        "n": 65,
+        "mean_predicted": 0.7367076923076923,
+        "mean_actual": 0.7076923076923077
+      },
+      {
+        "label": "0.80-0.90",
+        "bucket_min": 0.8,
+        "bucket_max": 0.9,
+        "n": 43,
+        "mean_predicted": 0.8356744186046511,
+        "mean_actual": 0.6046511627906976
+      },
+      {
+        "label": "0.90-1.00",
+        "bucket_min": 0.9,
+        "bucket_max": 1.0,
+        "n": 27,
+        "mean_predicted": 0.9424074074074075,
+        "mean_actual": 0.5555555555555556
+      }
+    ],
+    "brier_over_time": [
+      {
+        "t": "2026-05-23T13:15:40.445651Z",
+        "index": 1,
+        "n": 1,
+        "brier_rolling": 0.10239999999999996,
+        "brier_cumulative": 0.10239999999999996
+      },
+      {
+        "t": "2026-05-23T13:15:40.445651Z",
+        "index": 3,
+        "n": 3,
+        "brier_rolling": 0.144755,
+        "brier_cumulative": 0.144755
+      },
+      {
+        "t": "2026-05-23T13:15:40.445651Z",
+        "index": 6,
+        "n": 6,
+        "brier_rolling": 0.17923633333333333,
+        "brier_cumulative": 0.17923633333333333
+      },
+      {
+        "t": "2026-05-23T13:15:40.445651Z",
+        "index": 9,
+        "n": 9,
+        "brier_rolling": 0.1424686666666667,
+        "brier_cumulative": 0.1424686666666667
+      },
+      {
+        "t": "2026-05-23T13:15:40.445651Z",
+        "index": 12,
+        "n": 12,
+        "brier_rolling": 0.14684183333333334,
+        "brier_cumulative": 0.14684183333333334
+      },
+      {
+        "t": "2026-05-23T13:15:40.445651Z",
+        "index": 15,
+        "n": 15,
+        "brier_rolling": 0.14651540000000002,
+        "brier_cumulative": 0.14651540000000002
+      },
+      {
+        "t": "2026-05-23T13:15:40.445651Z",
+        "index": 17,
+        "n": 17,
+        "brier_rolling": 0.1455974117647059,
+        "brier_cumulative": 0.1455974117647059
+      },
+      {
+        "t": "2026-05-23T13:15:40.445651Z",
+        "index": 20,
+        "n": 20,
+        "brier_rolling": 0.148682,
+        "brier_cumulative": 0.148682
+      },
+      {
+        "t": "2026-05-23T13:15:40.445651Z",
+        "index": 23,
+        "n": 23,
+        "brier_rolling": 0.14795144565217394,
+        "brier_cumulative": 0.1479514456521739
+      },
+      {
+        "t": "2026-05-23T13:15:40.445651Z",
+        "index": 26,
+        "n": 26,
+        "brier_rolling": 0.1497618557692308,
+        "brier_cumulative": 0.1497618557692308
+      },
+      {
+        "t": "2026-05-23T13:15:40.445651Z",
+        "index": 29,
+        "n": 29,
+        "brier_rolling": 0.15210028448275864,
+        "brier_cumulative": 0.15210028448275864
+      },
+      {
+        "t": "2026-05-23T13:15:40.445651Z",
+        "index": 32,
+        "n": 32,
+        "brier_rolling": 0.14874416906250001,
+        "brier_cumulative": 0.1487441690625
+      },
+      {
+        "t": "2026-05-23T13:15:40.445651Z",
+        "index": 34,
+        "n": 34,
+        "brier_rolling": 0.14724451205882355,
+        "brier_cumulative": 0.14724451205882352
+      },
+      {
+        "t": "2026-05-23T13:15:40.445651Z",
+        "index": 37,
+        "n": 37,
+        "brier_rolling": 0.14241387594594596,
+        "brier_cumulative": 0.14241387594594593
+      },
+      {
+        "t": "2026-05-23T13:15:40.445651Z",
+        "index": 40,
+        "n": 40,
+        "brier_rolling": 0.14207536025,
+        "brier_cumulative": 0.14207536025
+      },
+      {
+        "t": "2026-05-23T13:15:40.445651Z",
+        "index": 43,
+        "n": 43,
+        "brier_rolling": 0.13882359093023258,
+        "brier_cumulative": 0.13882359093023258
+      },
+      {
+        "t": "2026-05-23T13:15:40.445651Z",
+        "index": 46,
+        "n": 46,
+        "brier_rolling": 0.13718468282608698,
+        "brier_cumulative": 0.13718468282608698
+      },
+      {
+        "t": "2026-05-23T13:15:40.445651Z",
+        "index": 48,
+        "n": 48,
+        "brier_rolling": 0.13294717520833335,
+        "brier_cumulative": 0.13294717520833335
+      },
+      {
+        "t": "2026-05-23T13:15:40.445651Z",
+        "index": 51,
+        "n": 50,
+        "brier_rolling": 0.1357894682,
+        "brier_cumulative": 0.13513477274509805
+      },
+      {
+        "t": "2026-05-23T13:15:40.445651Z",
+        "index": 54,
+        "n": 50,
+        "brier_rolling": 0.1304912188,
+        "brier_cumulative": 0.13334981370370372
+      },
+      {
+        "t": "2026-05-23T13:15:40.445651Z",
+        "index": 57,
+        "n": 50,
+        "brier_rolling": 0.1268154388,
+        "brier_cumulative": 0.13190508666666667
+      },
+      {
+        "t": "2026-05-23T13:15:40.445651Z",
+        "index": 60,
+        "n": 50,
+        "brier_rolling": 0.1275562388,
+        "brier_cumulative": 0.13004856566666667
+      },
+      {
+        "t": "2026-05-23T13:15:40.725280Z",
+        "index": 63,
+        "n": 50,
+        "brier_rolling": 0.1251849588,
+        "brier_cumulative": 0.12973730063492064
+      },
+      {
+        "t": "2026-05-23T13:15:40.725280Z",
+        "index": 65,
+        "n": 50,
+        "brier_rolling": 0.1291516788,
+        "brier_cumulative": 0.13315869138461542
+      },
+      {
+        "t": "2026-05-23T13:15:40.725280Z",
+        "index": 68,
+        "n": 50,
+        "brier_rolling": 0.1276771788,
+        "brier_cumulative": 0.13127374911764705
+      },
+      {
+        "t": "2026-05-23T13:15:40.725280Z",
+        "index": 71,
+        "n": 50,
+        "brier_rolling": 0.1230514988,
+        "brier_cumulative": 0.13068049211267604
+      },
+      {
+        "t": "2026-05-23T13:15:40.725280Z",
+        "index": 74,
+        "n": 50,
+        "brier_rolling": 0.1241214538,
+        "brier_cumulative": 0.13028859378378377
+      },
+      {
+        "t": "2026-05-23T13:15:40.725280Z",
+        "index": 77,
+        "n": 50,
+        "brier_rolling": 0.11951295379999999,
+        "brier_cumulative": 0.13129293428571429
+      },
+      {
+        "t": "2026-05-23T13:15:40.725280Z",
+        "index": 80,
+        "n": 50,
+        "brier_rolling": 0.1224969538,
+        "brier_cumulative": 0.13170194925
+      },
+      {
+        "t": "2026-05-23T13:15:40.725280Z",
+        "index": 82,
+        "n": 50,
+        "brier_rolling": 0.12093041060000001,
+        "brier_cumulative": 0.13178456024390245
+      },
+      {
+        "t": "2026-05-23T13:15:40.725280Z",
+        "index": 85,
+        "n": 50,
+        "brier_rolling": 0.12219041060000001,
+        "brier_cumulative": 0.13134392870588235
+      },
+      {
+        "t": "2026-05-23T13:15:40.725280Z",
+        "index": 88,
+        "n": 50,
+        "brier_rolling": 0.12051001060000001,
+        "brier_cumulative": 0.1301592606818182
+      },
+      {
+        "t": "2026-05-23T13:15:40.725280Z",
+        "index": 91,
+        "n": 50,
+        "brier_rolling": 0.1214100106,
+        "brier_cumulative": 0.1305836806593407
+      },
+      {
+        "t": "2026-05-23T13:15:40.725280Z",
+        "index": 94,
+        "n": 50,
+        "brier_rolling": 0.1313440106,
+        "brier_cumulative": 0.13371292489361708
+      },
+      {
+        "t": "2026-05-23T13:15:40.725280Z",
+        "index": 96,
+        "n": 50,
+        "brier_rolling": 0.1321803906,
+        "brier_cumulative": 0.13457828062500007
+      },
+      {
+        "t": "2026-05-23T13:15:40.725280Z",
+        "index": 99,
+        "n": 50,
+        "brier_rolling": 0.1315658906,
+        "brier_cumulative": 0.13239611050505057
+      },
+      {
+        "t": "2026-05-23T13:15:40.725280Z",
+        "index": 102,
+        "n": 50,
+        "brier_rolling": 0.1335335978,
+        "brier_cumulative": 0.13470700921568635
+      },
+      {
+        "t": "2026-05-23T13:15:40.725280Z",
+        "index": 105,
+        "n": 50,
+        "brier_rolling": 0.1372805,
+        "brier_cumulative": 0.13525538038095244
+      },
+      {
+        "t": "2026-05-23T13:15:40.725280Z",
+        "index": 108,
+        "n": 50,
+        "brier_rolling": 0.13902258,
+        "brier_cumulative": 0.13442702722222227
+      },
+      {
+        "t": "2026-05-23T13:15:40.725280Z",
+        "index": 111,
+        "n": 50,
+        "brier_rolling": 0.1409401,
+        "brier_cumulative": 0.13448935981981988
+      },
+      {
+        "t": "2026-05-23T13:15:40.725280Z",
+        "index": 113,
+        "n": 50,
+        "brier_rolling": 0.14125988,
+        "brier_cumulative": 0.13483578707964608
+      },
+      {
+        "t": "2026-05-23T13:15:40.725280Z",
+        "index": 116,
+        "n": 50,
+        "brier_rolling": 0.13839579999999999,
+        "brier_cumulative": 0.13578883568965525
+      },
+      {
+        "t": "2026-05-23T13:15:40.725280Z",
+        "index": 119,
+        "n": 50,
+        "brier_rolling": 0.1417958,
+        "brier_cumulative": 0.13607399109243704
+      },
+      {
+        "t": "2026-05-23T13:15:40.725280Z",
+        "index": 122,
+        "n": 50,
+        "brier_rolling": 0.14325348,
+        "brier_cumulative": 0.13564942573770494
+      },
+      {
+        "t": "2026-05-23T13:15:40.725280Z",
+        "index": 125,
+        "n": 50,
+        "brier_rolling": 0.1479319,
+        "brier_cumulative": 0.13752040752000003
+      },
+      {
+        "t": "2026-05-23T13:15:40.725280Z",
+        "index": 128,
+        "n": 50,
+        "brier_rolling": 0.1437339,
+        "brier_cumulative": 0.13557696046875
+      },
+      {
+        "t": "2026-05-23T13:15:40.725280Z",
+        "index": 130,
+        "n": 50,
+        "brier_rolling": 0.1386610298,
+        "brier_cumulative": 0.13437851869230769
+      },
+      {
+        "t": "2026-05-23T13:15:40.725280Z",
+        "index": 133,
+        "n": 50,
+        "brier_rolling": 0.1420655148,
+        "brier_cumulative": 0.1349301479699248
+      },
+      {
+        "t": "2026-05-23T13:15:40.725280Z",
+        "index": 136,
+        "n": 50,
+        "brier_rolling": 0.13907189479999998,
+        "brier_cumulative": 0.13434345352941177
+      },
+      {
+        "t": "2026-05-23T13:15:40.725280Z",
+        "index": 139,
+        "n": 50,
+        "brier_rolling": 0.1454034086,
+        "brier_cumulative": 0.1354898228057554
+      },
+      {
+        "t": "2026-05-23T13:15:40.725280Z",
+        "index": 142,
+        "n": 50,
+        "brier_rolling": 0.1372694086,
+        "brier_cumulative": 0.13537102373239437
+      },
+      {
+        "t": "2026-05-23T13:15:40.725280Z",
+        "index": 144,
+        "n": 50,
+        "brier_rolling": 0.14149740859999999,
+        "brier_cumulative": 0.136415870625
+      },
+      {
+        "t": "2026-05-23T13:15:40.725280Z",
+        "index": 147,
+        "n": 50,
+        "brier_rolling": 0.1431318254,
+        "brier_cumulative": 0.13657487217687075
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 150,
+        "n": 50,
+        "brier_rolling": 0.1427278254,
+        "brier_cumulative": 0.13592004140000002
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 153,
+        "n": 50,
+        "brier_rolling": 0.1389778254,
+        "brier_cumulative": 0.13589154385620916
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 156,
+        "n": 50,
+        "brier_rolling": 0.1361477454,
+        "brier_cumulative": 0.13546862955128205
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 159,
+        "n": 50,
+        "brier_rolling": 0.1338837454,
+        "brier_cumulative": 0.13436733465408804
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 161,
+        "n": 50,
+        "brier_rolling": 0.1361871662,
+        "brier_cumulative": 0.13501662888198757
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 164,
+        "n": 50,
+        "brier_rolling": 0.1356007062,
+        "brier_cumulative": 0.13548158079268294
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 167,
+        "n": 50,
+        "brier_rolling": 0.1363814862,
+        "brier_cumulative": 0.1358867020958084
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 170,
+        "n": 50,
+        "brier_rolling": 0.1343294862,
+        "brier_cumulative": 0.13528987794117647
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 173,
+        "n": 50,
+        "brier_rolling": 0.1276985662,
+        "brier_cumulative": 0.1340767586705202
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 176,
+        "n": 50,
+        "brier_rolling": 0.12790914620000002,
+        "brier_cumulative": 0.13462731960227273
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 178,
+        "n": 50,
+        "brier_rolling": 0.1331811462,
+        "brier_cumulative": 0.13490397893258427
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 181,
+        "n": 50,
+        "brier_rolling": 0.1316725164,
+        "brier_cumulative": 0.1337289129834254
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 184,
+        "n": 50,
+        "brier_rolling": 0.1324644714,
+        "brier_cumulative": 0.13392300679347827
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 187,
+        "n": 50,
+        "brier_rolling": 0.1295124714,
+        "brier_cumulative": 0.13372424197860966
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 190,
+        "n": 50,
+        "brier_rolling": 0.1284309576,
+        "brier_cumulative": 0.13317385921052635
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 192,
+        "n": 50,
+        "brier_rolling": 0.1271829576,
+        "brier_cumulative": 0.13323871484375002
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 195,
+        "n": 50,
+        "brier_rolling": 0.1250585776,
+        "brier_cumulative": 0.13370879102564104
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 198,
+        "n": 50,
+        "brier_rolling": 0.12723944080000002,
+        "brier_cumulative": 0.1342190820707071
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 201,
+        "n": 50,
+        "brier_rolling": 0.12882672080000002,
+        "brier_cumulative": 0.13408876741293532
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 204,
+        "n": 50,
+        "brier_rolling": 0.1305662408,
+        "brier_cumulative": 0.13459126593137255
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 207,
+        "n": 50,
+        "brier_rolling": 0.1335842408,
+        "brier_cumulative": 0.13442859057971016
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 209,
+        "n": 50,
+        "brier_rolling": 0.13212192080000001,
+        "brier_cumulative": 0.1338301543062201
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 212,
+        "n": 50,
+        "brier_rolling": 0.12759568,
+        "brier_cumulative": 0.13349765212264153
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 215,
+        "n": 50,
+        "brier_rolling": 0.12291646,
+        "brier_cumulative": 0.1325321034883721
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 218,
+        "n": 50,
+        "brier_rolling": 0.12156246000000001,
+        "brier_cumulative": 0.13236377178899084
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 221,
+        "n": 50,
+        "brier_rolling": 0.12379670499999999,
+        "brier_cumulative": 0.1324846809954751
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 224,
+        "n": 50,
+        "brier_rolling": 0.12782078500000002,
+        "brier_cumulative": 0.132760796875
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 226,
+        "n": 50,
+        "brier_rolling": 0.125272205,
+        "brier_cumulative": 0.1325576039823009
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 229,
+        "n": 50,
+        "brier_rolling": 0.126302205,
+        "brier_cumulative": 0.1324996441048035
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 232,
+        "n": 50,
+        "brier_rolling": 0.129293625,
+        "brier_cumulative": 0.13295695905172414
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 235,
+        "n": 50,
+        "brier_rolling": 0.133863905,
+        "brier_cumulative": 0.13349416382978724
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 238,
+        "n": 50,
+        "brier_rolling": 0.13419038500000002,
+        "brier_cumulative": 0.13346366596638654
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 240,
+        "n": 50,
+        "brier_rolling": 0.134492385,
+        "brier_cumulative": 0.1334485520833333
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 243,
+        "n": 50,
+        "brier_rolling": 0.132934565,
+        "brier_cumulative": 0.13359184156378598
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 246,
+        "n": 50,
+        "brier_rolling": 0.135206145,
+        "brier_cumulative": 0.13402610365853657
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 249,
+        "n": 50,
+        "brier_rolling": 0.13385486500000002,
+        "brier_cumulative": 0.1339217730923695
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 252,
+        "n": 50,
+        "brier_rolling": 0.131253585,
+        "brier_cumulative": 0.13387072023809524
+      },
+      {
+        "t": "2026-05-23T13:15:41.001208Z",
+        "index": 255,
+        "n": 50,
+        "brier_rolling": 0.135396065,
+        "brier_cumulative": 0.13462282941176473
+      },
+      {
+        "t": "2026-05-23T13:15:41.276241Z",
+        "index": 257,
+        "n": 50,
+        "brier_rolling": 0.13162806500000002,
+        "brier_cumulative": 0.1338837412451362
+      },
+      {
+        "t": "2026-05-23T13:15:41.276241Z",
+        "index": 260,
+        "n": 50,
+        "brier_rolling": 0.135774885,
+        "brier_cumulative": 0.13427440961538462
+      },
+      {
+        "t": "2026-05-23T13:15:41.276241Z",
+        "index": 263,
+        "n": 50,
+        "brier_rolling": 0.140520905,
+        "brier_cumulative": 0.13462337452471485
+      },
+      {
+        "t": "2026-05-23T13:15:41.276241Z",
+        "index": 266,
+        "n": 50,
+        "brier_rolling": 0.136914905,
+        "brier_cumulative": 0.1335208552631579
+      },
+      {
+        "t": "2026-05-23T13:15:41.276241Z",
+        "index": 269,
+        "n": 50,
+        "brier_rolling": 0.13524778,
+        "brier_cumulative": 0.13301302416356878
+      },
+      {
+        "t": "2026-05-23T13:15:41.276241Z",
+        "index": 272,
+        "n": 50,
+        "brier_rolling": 0.13269178,
+        "brier_cumulative": 0.13265368933823532
+      },
+      {
+        "t": "2026-05-23T13:15:41.276241Z",
+        "index": 274,
+        "n": 50,
+        "brier_rolling": 0.1348988712,
+        "brier_cumulative": 0.1331509564233577
+      },
+      {
+        "t": "2026-05-23T13:15:41.276241Z",
+        "index": 277,
+        "n": 50,
+        "brier_rolling": 0.13740323140000002,
+        "brier_cumulative": 0.13342158870036108
+      },
+      {
+        "t": "2026-05-23T13:15:41.276241Z",
+        "index": 280,
+        "n": 50,
+        "brier_rolling": 0.13956291140000002,
+        "brier_cumulative": 0.13401094310714293
+      },
+      {
+        "t": "2026-05-23T13:15:41.276241Z",
+        "index": 283,
+        "n": 50,
+        "brier_rolling": 0.1453608164,
+        "brier_cumulative": 0.13504047816254422
+      },
+      {
+        "t": "2026-05-23T13:15:41.276241Z",
+        "index": 286,
+        "n": 50,
+        "brier_rolling": 0.1470610364,
+        "brier_cumulative": 0.1358275535664336
+      },
+      {
+        "t": "2026-05-23T13:15:41.276241Z",
+        "index": 288,
+        "n": 50,
+        "brier_rolling": 0.14538968140000003,
+        "brier_cumulative": 0.1355341547569445
+      },
+      {
+        "t": "2026-05-23T13:15:41.276241Z",
+        "index": 291,
+        "n": 50,
+        "brier_rolling": 0.1488496814,
+        "brier_cumulative": 0.1359664486941581
+      },
+      {
+        "t": "2026-05-23T13:15:41.276241Z",
+        "index": 294,
+        "n": 50,
+        "brier_rolling": 0.1482508814,
+        "brier_cumulative": 0.13574068561224495
+      },
+      {
+        "t": "2026-05-23T13:15:41.276241Z",
+        "index": 297,
+        "n": 50,
+        "brier_rolling": 0.1450688014,
+        "brier_cumulative": 0.13599987060606064
+      },
+      {
+        "t": "2026-05-23T13:15:41.276241Z",
+        "index": 300,
+        "n": 50,
+        "brier_rolling": 0.1479808214,
+        "brier_cumulative": 0.13583987523333338
+      },
+      {
+        "t": "2026-05-23T13:15:41.276241Z",
+        "index": 303,
+        "n": 50,
+        "brier_rolling": 0.14342882140000002,
+        "brier_cumulative": 0.13548271475247528
+      },
+      {
+        "t": "2026-05-23T13:15:41.276241Z",
+        "index": 305,
+        "n": 50,
+        "brier_rolling": 0.14020514139999998,
+        "brier_cumulative": 0.13553796252459022
+      },
+      {
+        "t": "2026-05-23T13:15:41.276241Z",
+        "index": 308,
+        "n": 50,
+        "brier_rolling": 0.1393396414,
+        "brier_cumulative": 0.13535293366883122
+      },
+      {
+        "t": "2026-05-23T13:15:41.276241Z",
+        "index": 311,
+        "n": 50,
+        "brier_rolling": 0.1493577016,
+        "brier_cumulative": 0.13665926874598075
+      },
+      {
+        "t": "2026-05-23T13:15:41.276241Z",
+        "index": 314,
+        "n": 50,
+        "brier_rolling": 0.1505362016,
+        "brier_cumulative": 0.13684349547770708
+      },
+      {
+        "t": "2026-05-23T13:15:41.276241Z",
+        "index": 317,
+        "n": 50,
+        "brier_rolling": 0.1540750816,
+        "brier_cumulative": 0.13680680624605684
+      },
+      {
+        "t": "2026-05-23T13:15:41.276241Z",
+        "index": 320,
+        "n": 50,
+        "brier_rolling": 0.1574038016,
+        "brier_cumulative": 0.13641966743750006
+      },
+      {
+        "t": "2026-05-23T13:15:41.276241Z",
+        "index": 322,
+        "n": 50,
+        "brier_rolling": 0.1547638016,
+        "brier_cumulative": 0.13608693658385101
+      },
+      {
+        "t": "2026-05-23T13:15:41.276241Z",
+        "index": 325,
+        "n": 50,
+        "brier_rolling": 0.14981663039999998,
+        "brier_cumulative": 0.13558213409230777
+      },
+      {
+        "t": "2026-05-23T13:15:41.276241Z",
+        "index": 328,
+        "n": 50,
+        "brier_rolling": 0.1468345902,
+        "brier_cumulative": 0.13573869993902446
+      },
+      {
+        "t": "2026-05-23T13:15:41.276241Z",
+        "index": 331,
+        "n": 50,
+        "brier_rolling": 0.1486097352,
+        "brier_cumulative": 0.13663454631419947
+      },
+      {
+        "t": "2026-05-23T13:15:41.276241Z",
+        "index": 334,
+        "n": 50,
+        "brier_rolling": 0.14895781019999998,
+        "brier_cumulative": 0.1372352420059881
+      },
+      {
+        "t": "2026-05-23T13:15:41.276241Z",
+        "index": 336,
+        "n": 50,
+        "brier_rolling": 0.1447338102,
+        "brier_cumulative": 0.1371528893750001
+      },
+      {
+        "t": "2026-05-23T13:15:41.276241Z",
+        "index": 339,
+        "n": 50,
+        "brier_rolling": 0.15233484519999999,
+        "brier_cumulative": 0.13803828563421836
+      },
+      {
+        "t": "2026-05-23T13:15:41.276241Z",
+        "index": 342,
+        "n": 50,
+        "brier_rolling": 0.1520563452,
+        "brier_cumulative": 0.13833239423976618
+      },
+      {
+        "t": "2026-05-23T13:15:41.276241Z",
+        "index": 345,
+        "n": 50,
+        "brier_rolling": 0.1498643452,
+        "brier_cumulative": 0.1379810980579711
+      },
+      {
+        "t": "2026-05-23T13:15:41.276241Z",
+        "index": 348,
+        "n": 50,
+        "brier_rolling": 0.1500223252,
+        "brier_cumulative": 0.1383450541091955
+      },
+      {
+        "t": "2026-05-23T13:15:41.276241Z",
+        "index": 351,
+        "n": 50,
+        "brier_rolling": 0.1537818652,
+        "brier_cumulative": 0.13842010207977215
+      },
+      {
+        "t": "2026-05-23T13:15:41.276241Z",
+        "index": 353,
+        "n": 50,
+        "brier_rolling": 0.15784076519999998,
+        "brier_cumulative": 0.13864957742209638
+      },
+      {
+        "t": "2026-05-23T13:15:41.276241Z",
+        "index": 356,
+        "n": 50,
+        "brier_rolling": 0.1589880252,
+        "brier_cumulative": 0.1387474854775282
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 359,
+        "n": 50,
+        "brier_rolling": 0.1701802202,
+        "brier_cumulative": 0.14022345635097502
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 362,
+        "n": 50,
+        "brier_rolling": 0.174090265,
+        "brier_cumulative": 0.14219874538674043
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 365,
+        "n": 50,
+        "brier_rolling": 0.199261765,
+        "brier_cumulative": 0.14541464610958915
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 368,
+        "n": 50,
+        "brier_rolling": 0.213853765,
+        "brier_cumulative": 0.1470471354076088
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 370,
+        "n": 50,
+        "brier_rolling": 0.22617917,
+        "brier_cumulative": 0.14854932994594608
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 373,
+        "n": 50,
+        "brier_rolling": 0.247044295,
+        "brier_cumulative": 0.1509627569168902
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 376,
+        "n": 50,
+        "brier_rolling": 0.261580295,
+        "brier_cumulative": 0.15253938385638308
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 379,
+        "n": 50,
+        "brier_rolling": 0.276892295,
+        "brier_cumulative": 0.15453669744063336
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 382,
+        "n": 50,
+        "brier_rolling": 0.28242147,
+        "brier_cumulative": 0.15606677573298441
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 384,
+        "n": 50,
+        "brier_rolling": 0.29357475,
+        "brier_cumulative": 0.1575919487760418
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 387,
+        "n": 50,
+        "brier_rolling": 0.31620645,
+        "brier_cumulative": 0.16077746080103372
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 390,
+        "n": 50,
+        "brier_rolling": 0.32818005,
+        "brier_cumulative": 0.16283713161538474
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 393,
+        "n": 50,
+        "brier_rolling": 0.33886605000000003,
+        "brier_cumulative": 0.16388061407124696
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 396,
+        "n": 50,
+        "brier_rolling": 0.35707205000000003,
+        "brier_cumulative": 0.16572015487373748
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 399,
+        "n": 50,
+        "brier_rolling": 0.38522689499999996,
+        "brier_cumulative": 0.16917675082706776
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 401,
+        "n": 50,
+        "brier_rolling": 0.391099355,
+        "brier_cumulative": 0.16992624334164597
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 404,
+        "n": 50,
+        "brier_rolling": 0.417616455,
+        "brier_cumulative": 0.17302604846534658
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 407,
+        "n": 50,
+        "brier_rolling": 0.429582375,
+        "brier_cumulative": 0.17445411199017205
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 410,
+        "n": 50,
+        "brier_rolling": 0.424847735,
+        "brier_cumulative": 0.17559075019512202
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 413,
+        "n": 50,
+        "brier_rolling": 0.431231235,
+        "brier_cumulative": 0.177838032881356
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 416,
+        "n": 50,
+        "brier_rolling": 0.418960035,
+        "brier_cumulative": 0.17905468168269237
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 418,
+        "n": 50,
+        "brier_rolling": 0.421638035,
+        "brier_cumulative": 0.17989293679425844
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 421,
+        "n": 50,
+        "brier_rolling": 0.42925878500000003,
+        "brier_cumulative": 0.18219583748218532
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 424,
+        "n": 50,
+        "brier_rolling": 0.421895665,
+        "brier_cumulative": 0.18332262165094346
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 427,
+        "n": 50,
+        "brier_rolling": 0.434609665,
+        "brier_cumulative": 0.18602667817330215
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 430,
+        "n": 50,
+        "brier_rolling": 0.436577665,
+        "brier_cumulative": 0.18765091065116282
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 432,
+        "n": 50,
+        "brier_rolling": 0.433583665,
+        "brier_cumulative": 0.18818678606481481
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 435,
+        "n": 50,
+        "brier_rolling": 0.431369665,
+        "brier_cumulative": 0.19060204960919538
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 438,
+        "n": 50,
+        "brier_rolling": 0.42447150499999997,
+        "brier_cumulative": 0.19144760863013696
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 441,
+        "n": 50,
+        "brier_rolling": 0.424313425,
+        "brier_cumulative": 0.19240760222222217
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 444,
+        "n": 50,
+        "brier_rolling": 0.414787905,
+        "brier_cumulative": 0.19247314545045044
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 447,
+        "n": 50,
+        "brier_rolling": 0.40367998499999996,
+        "brier_cumulative": 0.19347109749440713
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 449,
+        "n": 50,
+        "brier_rolling": 0.38853713999999995,
+        "brier_cumulative": 0.193604411091314
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 452,
+        "n": 50,
+        "brier_rolling": 0.37919364,
+        "brier_cumulative": 0.19381461411504422
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 455,
+        "n": 50,
+        "brier_rolling": 0.3676475378,
+        "brier_cumulative": 0.19496131971428568
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 458,
+        "n": 50,
+        "brier_rolling": 0.3652752178,
+        "brier_cumulative": 0.19571765168122268
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 461,
+        "n": 50,
+        "brier_rolling": 0.36579753779999996,
+        "brier_cumulative": 0.19684269950108457
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 464,
+        "n": 50,
+        "brier_rolling": 0.3582177578,
+        "brier_cumulative": 0.1976941712715517
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 466,
+        "n": 50,
+        "brier_rolling": 0.36756295780000003,
+        "brier_cumulative": 0.1992808915665236
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 469,
+        "n": 50,
+        "brier_rolling": 0.3656526378,
+        "brier_cumulative": 0.20089014812366734
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 472,
+        "n": 50,
+        "brier_rolling": 0.3638458378,
+        "brier_cumulative": 0.20172157514830505
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 475,
+        "n": 50,
+        "brier_rolling": 0.36078431780000003,
+        "brier_cumulative": 0.20240022625263154
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 478,
+        "n": 50,
+        "brier_rolling": 0.3531717586,
+        "brier_cumulative": 0.2037541412343096
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 480,
+        "n": 50,
+        "brier_rolling": 0.3500677586,
+        "brier_cumulative": 0.20456933231249996
+      },
+      {
+        "t": "2026-05-23T13:15:41.547118Z",
+        "index": 483,
+        "n": 50,
+        "brier_rolling": 0.3564377586,
+        "brier_cumulative": 0.2066065828364389
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 486,
+        "n": 50,
+        "brier_rolling": 0.3472880586,
+        "brier_cumulative": 0.20688406483539093
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 489,
+        "n": 50,
+        "brier_rolling": 0.3608999986,
+        "brier_cumulative": 0.2090469376482617
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 492,
+        "n": 50,
+        "brier_rolling": 0.3624366834,
+        "brier_cumulative": 0.20968940396341457
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 495,
+        "n": 50,
+        "brier_rolling": 0.3617001234,
+        "brier_cumulative": 0.20978461969696963
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 497,
+        "n": 50,
+        "brier_rolling": 0.3593721234,
+        "brier_cumulative": 0.2101613415492957
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 500,
+        "n": 50,
+        "brier_rolling": 0.3664302284,
+        "brier_cumulative": 0.21070458399999992
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 503,
+        "n": 50,
+        "brier_rolling": 0.3819096756,
+        "brier_cumulative": 0.21288664860834983
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 506,
+        "n": 50,
+        "brier_rolling": 0.38960367560000003,
+        "brier_cumulative": 0.21454483053359677
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 509,
+        "n": 50,
+        "brier_rolling": 0.3895359956,
+        "brier_cumulative": 0.21517698280943018
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 512,
+        "n": 50,
+        "brier_rolling": 0.3954734156,
+        "brier_cumulative": 0.2166138364257812
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 514,
+        "n": 50,
+        "brier_rolling": 0.3966019556,
+        "brier_cumulative": 0.2170431775291828
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 517,
+        "n": 50,
+        "brier_rolling": 0.39279395559999997,
+        "brier_cumulative": 0.21800211460348157
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 520,
+        "n": 50,
+        "brier_rolling": 0.3797322756,
+        "brier_cumulative": 0.2186971024038461
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 523,
+        "n": 50,
+        "brier_rolling": 0.3934331606,
+        "brier_cumulative": 0.22008272562141487
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 526,
+        "n": 50,
+        "brier_rolling": 0.40300540560000003,
+        "brier_cumulative": 0.22183893108365013
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 528,
+        "n": 50,
+        "brier_rolling": 0.3959386848,
+        "brier_cumulative": 0.22195343513257568
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 531,
+        "n": 50,
+        "brier_rolling": 0.3918466848,
+        "brier_cumulative": 0.22268929143126168
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 534,
+        "n": 50,
+        "brier_rolling": 0.3840364448,
+        "brier_cumulative": 0.22356213061797744
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 537,
+        "n": 50,
+        "brier_rolling": 0.3925472248,
+        "brier_cumulative": 0.22461932541899432
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 540,
+        "n": 50,
+        "brier_rolling": 0.3823745048,
+        "brier_cumulative": 0.2249103291666666
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 543,
+        "n": 50,
+        "brier_rolling": 0.38090974000000005,
+        "brier_cumulative": 0.22556735497237562
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 545,
+        "n": 50,
+        "brier_rolling": 0.39020816,
+        "brier_cumulative": 0.22633723807339443
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 548,
+        "n": 50,
+        "brier_rolling": 0.39173495119999996,
+        "brier_cumulative": 0.22697998961678825
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 551,
+        "n": 50,
+        "brier_rolling": 0.39092507120000003,
+        "brier_cumulative": 0.22778030047186926
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 554,
+        "n": 50,
+        "brier_rolling": 0.3813879462,
+        "brier_cumulative": 0.22880826996389883
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 557,
+        "n": 50,
+        "brier_rolling": 0.38518444620000003,
+        "brier_cumulative": 0.2301023457091561
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 560,
+        "n": 50,
+        "brier_rolling": 0.3809284462,
+        "brier_cumulative": 0.23097483314285705
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 562,
+        "n": 50,
+        "brier_rolling": 0.3917204462,
+        "brier_cumulative": 0.2321927162989323
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 565,
+        "n": 50,
+        "brier_rolling": 0.4000470712,
+        "brier_cumulative": 0.23347017134513265
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 568,
+        "n": 50,
+        "brier_rolling": 0.40377507120000006,
+        "brier_cumulative": 0.23454356832746465
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 571,
+        "n": 50,
+        "brier_rolling": 0.40381109119999997,
+        "brier_cumulative": 0.23491059161120825
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 574,
+        "n": 50,
+        "brier_rolling": 0.4038770812,
+        "brier_cumulative": 0.23639744217770017
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 576,
+        "n": 50,
+        "brier_rolling": 0.40371470119999997,
+        "brier_cumulative": 0.23762675835069424
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 579,
+        "n": 50,
+        "brier_rolling": 0.4139519012,
+        "brier_cumulative": 0.2387312760103625
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 582,
+        "n": 50,
+        "brier_rolling": 0.4192779012,
+        "brier_cumulative": 0.23973455121993112
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 585,
+        "n": 50,
+        "brier_rolling": 0.40907862120000005,
+        "brier_cumulative": 0.23982651078632466
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 588,
+        "n": 50,
+        "brier_rolling": 0.40402662120000005,
+        "brier_cumulative": 0.24012586532312913
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 591,
+        "n": 50,
+        "brier_rolling": 0.4073907012,
+        "brier_cumulative": 0.24045416042301174
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 593,
+        "n": 50,
+        "brier_rolling": 0.4177647012,
+        "brier_cumulative": 0.2417728647723439
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 596,
+        "n": 50,
+        "brier_rolling": 0.4117862812,
+        "brier_cumulative": 0.24229112216442947
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 599,
+        "n": 50,
+        "brier_rolling": 0.41253909,
+        "brier_cumulative": 0.24270929851419026
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 602,
+        "n": 50,
+        "brier_rolling": 0.409132725,
+        "brier_cumulative": 0.24302322559800657
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 605,
+        "n": 50,
+        "brier_rolling": 0.404110005,
+        "brier_cumulative": 0.24343616828099165
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 608,
+        "n": 50,
+        "brier_rolling": 0.390015925,
+        "brier_cumulative": 0.2436352019901315
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 610,
+        "n": 50,
+        "brier_rolling": 0.389375925,
+        "brier_cumulative": 0.24395852919672123
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 613,
+        "n": 50,
+        "brier_rolling": 0.397007925,
+        "brier_cumulative": 0.2457507386786296
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 616,
+        "n": 50,
+        "brier_rolling": 0.38658112,
+        "brier_cumulative": 0.24614302404220767
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 619,
+        "n": 50,
+        "brier_rolling": 0.37938634,
+        "brier_cumulative": 0.24633548273020991
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 622,
+        "n": 50,
+        "brier_rolling": 0.37702863999999997,
+        "brier_cumulative": 0.24657920226688093
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 624,
+        "n": 50,
+        "brier_rolling": 0.36666906,
+        "brier_cumulative": 0.24683587309294863
+      },
+      {
+        "t": "2026-05-23T13:15:41.827087Z",
+        "index": 627,
+        "n": 50,
+        "brier_rolling": 0.35857172,
+        "brier_cumulative": 0.24731386732057406
+      },
+      {
+        "t": "2026-05-23T13:15:42.107569Z",
+        "index": 630,
+        "n": 50,
+        "brier_rolling": 0.34444808000000005,
+        "brier_cumulative": 0.2473927187460316
+      },
+      {
+        "t": "2026-05-23T13:15:42.381335Z",
+        "index": 633,
+        "n": 50,
+        "brier_rolling": 0.33397666000000004,
+        "brier_cumulative": 0.24716388911532372
+      },
+      {
+        "t": "2026-05-23T13:15:42.381335Z",
+        "index": 636,
+        "n": 50,
+        "brier_rolling": 0.33320481999999996,
+        "brier_cumulative": 0.247266116053459
+      },
+      {
+        "t": "2026-05-23T13:15:42.381335Z",
+        "index": 639,
+        "n": 50,
+        "brier_rolling": 0.32973706,
+        "brier_cumulative": 0.2472883596400625
+      },
+      {
+        "t": "2026-05-23T13:15:42.646029Z",
+        "index": 641,
+        "n": 50,
+        "brier_rolling": 0.32668348,
+        "brier_cumulative": 0.24718031639625573
+      },
+      {
+        "t": "2026-05-23T13:15:42.646029Z",
+        "index": 644,
+        "n": 50,
+        "brier_rolling": 0.30841148,
+        "brier_cumulative": 0.2470757497049688
+      },
+      {
+        "t": "2026-05-23T13:15:42.646029Z",
+        "index": 647,
+        "n": 50,
+        "brier_rolling": 0.29770626,
+        "brier_cumulative": 0.24655669676970618
+      },
+      {
+        "t": "2026-05-23T13:15:42.646029Z",
+        "index": 650,
+        "n": 50,
+        "brier_rolling": 0.28233954,
+        "brier_cumulative": 0.24577828124615364
+      },
+      {
+        "t": "2026-05-23T13:15:42.915825Z",
+        "index": 653,
+        "n": 50,
+        "brier_rolling": 0.27660851999999997,
+        "brier_cumulative": 0.24579250813169967
+      },
+      {
+        "t": "2026-05-23T13:15:42.915825Z",
+        "index": 656,
+        "n": 50,
+        "brier_rolling": 0.27021301999999997,
+        "brier_cumulative": 0.24569197074695104
+      },
+      {
+        "t": "2026-05-23T13:15:42.915825Z",
+        "index": 658,
+        "n": 50,
+        "brier_rolling": 0.2750035992,
+        "brier_cumulative": 0.24601881879939194
+      },
+      {
+        "t": "2026-05-23T13:15:42.915825Z",
+        "index": 661,
+        "n": 50,
+        "brier_rolling": 0.2628455992,
+        "brier_cumulative": 0.24603537484114965
+      },
+      {
+        "t": "2026-05-23T13:15:42.915825Z",
+        "index": 664,
+        "n": 50,
+        "brier_rolling": 0.2468795192,
+        "brier_cumulative": 0.24587285959337335
+      },
+      {
+        "t": "2026-05-23T13:15:42.915825Z",
+        "index": 667,
+        "n": 50,
+        "brier_rolling": 0.23865029920000003,
+        "brier_cumulative": 0.24561616007496237
+      },
+      {
+        "t": "2026-05-23T13:15:42.915825Z",
+        "index": 670,
+        "n": 50,
+        "brier_rolling": 0.2381595792,
+        "brier_cumulative": 0.2457458847313431
+      },
+      {
+        "t": "2026-05-23T13:15:43.184948Z",
+        "index": 672,
+        "n": 50,
+        "brier_rolling": 0.2317255792,
+        "brier_cumulative": 0.24547402197916646
+      },
+      {
+        "t": "2026-05-23T13:15:43.184948Z",
+        "index": 675,
+        "n": 50,
+        "brier_rolling": 0.2202461392,
+        "brier_cumulative": 0.24499895077037015
+      },
+      {
+        "t": "2026-05-23T13:15:43.184948Z",
+        "index": 678,
+        "n": 50,
+        "brier_rolling": 0.2093666392,
+        "brier_cumulative": 0.24452379907079624
+      },
+      {
+        "t": "2026-05-23T13:15:43.184948Z",
+        "index": 681,
+        "n": 50,
+        "brier_rolling": 0.2069711792,
+        "brier_cumulative": 0.24438600847283384
+      },
+      {
+        "t": "2026-05-23T13:15:43.184948Z",
+        "index": 684,
+        "n": 50,
+        "brier_rolling": 0.20718187920000003,
+        "brier_cumulative": 0.24432212831871322
+      },
+      {
+        "t": "2026-05-23T13:15:43.184948Z",
+        "index": 687,
+        "n": 50,
+        "brier_rolling": 0.19721563920000001,
+        "brier_cumulative": 0.24363032863173192
+      },
+      {
+        "t": "2026-05-23T13:15:43.184948Z",
+        "index": 689,
+        "n": 50,
+        "brier_rolling": 0.1945914792,
+        "brier_cumulative": 0.243464202859216
+      },
+      {
+        "t": "2026-05-23T13:15:43.184948Z",
+        "index": 692,
+        "n": 50,
+        "brier_rolling": 0.1918850592,
+        "brier_cumulative": 0.2431204274132945
+      },
+      {
+        "t": "2026-05-23T13:15:43.466889Z",
+        "index": 695,
+        "n": 50,
+        "brier_rolling": 0.19414755920000001,
+        "brier_cumulative": 0.24313131046043135
+      },
+      {
+        "t": "2026-05-23T13:15:43.466889Z",
+        "index": 698,
+        "n": 50,
+        "brier_rolling": 0.1973815592,
+        "brier_cumulative": 0.24279321027220602
+      },
+      {
+        "t": "2026-05-23T13:15:43.466889Z",
+        "index": 701,
+        "n": 50,
+        "brier_rolling": 0.20483947919999998,
+        "brier_cumulative": 0.24290835487874438
+      },
+      {
+        "t": "2026-05-23T13:15:43.466889Z",
+        "index": 704,
+        "n": 50,
+        "brier_rolling": 0.2051791992,
+        "brier_cumulative": 0.24290694995738607
+      },
+      {
+        "t": "2026-05-23T13:15:43.466889Z",
+        "index": 706,
+        "n": 50,
+        "brier_rolling": 0.2047411992,
+        "brier_cumulative": 0.24279177446175607
+      },
+      {
+        "t": "2026-05-23T13:15:43.466889Z",
+        "index": 709,
+        "n": 50,
+        "brier_rolling": 0.19330508000000002,
+        "brier_cumulative": 0.24255026342736216
+      },
+      {
+        "t": "2026-05-23T13:15:43.466889Z",
+        "index": 712,
+        "n": 50,
+        "brier_rolling": 0.20143508000000002,
+        "brier_cumulative": 0.24270159658707835
+      },
+      {
+        "t": "2026-05-23T13:15:43.466889Z",
+        "index": 715,
+        "n": 50,
+        "brier_rolling": 0.20470916,
+        "brier_cumulative": 0.24302858289510462
+      },
+      {
+        "t": "2026-05-23T13:15:43.740043Z",
+        "index": 718,
+        "n": 50,
+        "brier_rolling": 0.2054118,
+        "brier_cumulative": 0.24283375037604432
+      },
+      {
+        "t": "2026-05-23T13:15:43.740043Z",
+        "index": 720,
+        "n": 50,
+        "brier_rolling": 0.1997238,
+        "brier_cumulative": 0.24254990662499973
+      },
+      {
+        "t": "2026-05-23T13:15:43.740043Z",
+        "index": 723,
+        "n": 50,
+        "brier_rolling": 0.20058882,
+        "brier_cumulative": 0.24231927077455023
+      },
+      {
+        "t": "2026-05-23T13:15:43.740043Z",
+        "index": 726,
+        "n": 50,
+        "brier_rolling": 0.20462594,
+        "brier_cumulative": 0.24203833714876008
+      },
+      {
+        "t": "2026-05-23T13:15:43.740043Z",
+        "index": 729,
+        "n": 50,
+        "brier_rolling": 0.20415489999999997,
+        "brier_cumulative": 0.24169000928669385
+      },
+      {
+        "t": "2026-05-23T13:15:43.740043Z",
+        "index": 732,
+        "n": 50,
+        "brier_rolling": 0.1987689,
+        "brier_cumulative": 0.24121286443989046
+      },
+      {
+        "t": "2026-05-23T13:15:43.740043Z",
+        "index": 735,
+        "n": 50,
+        "brier_rolling": 0.19613412,
+        "brier_cumulative": 0.2408035942448977
+      },
+      {
+        "t": "2026-05-23T13:15:43.740043Z",
+        "index": 737,
+        "n": 50,
+        "brier_rolling": 0.20008012,
+        "brier_cumulative": 0.2406757690230662
+      },
+      {
+        "t": "2026-05-23T13:15:43.740043Z",
+        "index": 740,
+        "n": 50,
+        "brier_rolling": 0.19558612,
+        "brier_cumulative": 0.2401861375270267
+      },
+      {
+        "t": "2026-05-23T13:15:43.740043Z",
+        "index": 743,
+        "n": 50,
+        "brier_rolling": 0.1948561,
+        "brier_cumulative": 0.23990224195154747
+      },
+      {
+        "t": "2026-05-23T13:15:43.740043Z",
+        "index": 746,
+        "n": 50,
+        "brier_rolling": 0.20018172,
+        "brier_cumulative": 0.23997016993297557
+      },
+      {
+        "t": "2026-05-23T13:15:43.740043Z",
+        "index": 749,
+        "n": 50,
+        "brier_rolling": 0.19326571999999997,
+        "brier_cumulative": 0.23964345363150835
+      },
+      {
+        "t": "2026-05-23T13:15:44.014139Z",
+        "index": 752,
+        "n": 50,
+        "brier_rolling": 0.2028123,
+        "brier_cumulative": 0.2402007603324465
+      },
+      {
+        "t": "2026-05-23T13:15:44.014139Z",
+        "index": 754,
+        "n": 50,
+        "brier_rolling": 0.20459358000000002,
+        "brier_cumulative": 0.24036627555702889
+      },
+      {
+        "t": "2026-05-23T13:15:44.014139Z",
+        "index": 757,
+        "n": 50,
+        "brier_rolling": 0.214274705,
+        "brier_cumulative": 0.24083174110964306
+      },
+      {
+        "t": "2026-05-23T13:15:44.014139Z",
+        "index": 760,
+        "n": 50,
+        "brier_rolling": 0.2227013938,
+        "brier_cumulative": 0.24128106113157868
+      },
+      {
+        "t": "2026-05-23T13:15:44.014139Z",
+        "index": 763,
+        "n": 50,
+        "brier_rolling": 0.2286153938,
+        "brier_cumulative": 0.24188624699868913
+      },
+      {
+        "t": "2026-05-23T13:15:44.014139Z",
+        "index": 766,
+        "n": 50,
+        "brier_rolling": 0.23467539380000002,
+        "brier_cumulative": 0.24240744968668382
+      },
+      {
+        "t": "2026-05-23T13:15:44.014139Z",
+        "index": 768,
+        "n": 50,
+        "brier_rolling": 0.2407594738,
+        "brier_cumulative": 0.24269870632812474
+      },
+      {
+        "t": "2026-05-23T13:15:44.014139Z",
+        "index": 771,
+        "n": 50,
+        "brier_rolling": 0.2522614738,
+        "brier_cumulative": 0.24317653237354062
+      },
+      {
+        "t": "2026-05-23T13:15:44.014139Z",
+        "index": 774,
+        "n": 50,
+        "brier_rolling": 0.26266339380000003,
+        "brier_cumulative": 0.24346111428940548
+      },
+      {
+        "t": "2026-05-23T13:15:44.014139Z",
+        "index": 777,
+        "n": 50,
+        "brier_rolling": 0.2733454938,
+        "brier_cumulative": 0.24392534293436277
+      },
+      {
+        "t": "2026-05-23T13:15:44.014139Z",
+        "index": 780,
+        "n": 50,
+        "brier_rolling": 0.28646749380000003,
+        "brier_cumulative": 0.2444356300769229
+      },
+      {
+        "t": "2026-05-23T13:15:44.014139Z",
+        "index": 783,
+        "n": 50,
+        "brier_rolling": 0.2998520738,
+        "brier_cumulative": 0.24484357657726674
+      },
+      {
+        "t": "2026-05-23T13:15:44.291799Z",
+        "index": 785,
+        "n": 50,
+        "brier_rolling": 0.307383677,
+        "brier_cumulative": 0.2450443638471336
+      },
+      {
+        "t": "2026-05-23T13:15:44.291799Z",
+        "index": 788,
+        "n": 50,
+        "brier_rolling": 0.312933677,
+        "brier_cumulative": 0.24505472794416228
+      },
+      {
+        "t": "2026-05-23T13:15:44.291799Z",
+        "index": 791,
+        "n": 50,
+        "brier_rolling": 0.319880982,
+        "brier_cumulative": 0.24507495685208577
+      },
+      {
+        "t": "2026-05-23T13:15:44.291799Z",
+        "index": 794,
+        "n": 50,
+        "brier_rolling": 0.321677202,
+        "brier_cumulative": 0.24507595323677564
+      },
+      {
+        "t": "2026-05-23T13:15:44.291799Z",
+        "index": 797,
+        "n": 50,
+        "brier_rolling": 0.32187232200000004,
+        "brier_cumulative": 0.24514650297365104
+      },
+      {
+        "t": "2026-05-23T13:15:44.291799Z",
+        "index": 800,
+        "n": 50,
+        "brier_rolling": 0.32496874200000003,
+        "brier_cumulative": 0.24520485483749987
+      },
+      {
+        "t": "2026-05-23T13:15:44.291799Z",
+        "index": 802,
+        "n": 50,
+        "brier_rolling": 0.32168424200000006,
+        "brier_cumulative": 0.24528077789276795
+      },
+      {
+        "t": "2026-05-23T13:15:44.291799Z",
+        "index": 805,
+        "n": 50,
+        "brier_rolling": 0.314870242,
+        "brier_cumulative": 0.24525289921739118
+      },
+      {
+        "t": "2026-05-23T13:15:44.291799Z",
+        "index": 808,
+        "n": 50,
+        "brier_rolling": 0.311509737,
+        "brier_cumulative": 0.24533376716584146
+      },
+      {
+        "t": "2026-05-23T13:15:44.291799Z",
+        "index": 811,
+        "n": 50,
+        "brier_rolling": 0.3055180482,
+        "brier_cumulative": 0.24551406765721318
+      },
+      {
+        "t": "2026-05-23T13:15:44.291799Z",
+        "index": 814,
+        "n": 50,
+        "brier_rolling": 0.2977005482,
+        "brier_cumulative": 0.24548972219901707
+      },
+      {
+        "t": "2026-05-23T13:15:44.291799Z",
+        "index": 816,
+        "n": 50,
+        "brier_rolling": 0.29370654820000003,
+        "brier_cumulative": 0.24555077680147044
+      },
+      {
+        "t": "2026-05-23T13:15:44.291799Z",
+        "index": 819,
+        "n": 50,
+        "brier_rolling": 0.2895125482,
+        "brier_cumulative": 0.24562971168498154
+      },
+      {
+        "t": "2026-05-23T13:15:44.291799Z",
+        "index": 822,
+        "n": 50,
+        "brier_rolling": 0.2849526282,
+        "brier_cumulative": 0.24578982709245728
+      },
+      {
+        "t": "2026-05-23T13:15:44.291799Z",
+        "index": 825,
+        "n": 50,
+        "brier_rolling": 0.2832989482,
+        "brier_cumulative": 0.24597010772121197
+      },
+      {
+        "t": "2026-05-23T13:15:44.291799Z",
+        "index": 828,
+        "n": 50,
+        "brier_rolling": 0.2767073932,
+        "brier_cumulative": 0.2460597356521738
+      },
+      {
+        "t": "2026-05-23T13:15:44.291799Z",
+        "index": 831,
+        "n": 50,
+        "brier_rolling": 0.2660414732,
+        "brier_cumulative": 0.2458603671720817
+      },
+      {
+        "t": "2026-05-23T13:15:44.291799Z",
+        "index": 833,
+        "n": 50,
+        "brier_rolling": 0.26078889320000004,
+        "brier_cumulative": 0.24580067841536604
+      },
+      {
+        "t": "2026-05-23T13:15:44.291799Z",
+        "index": 836,
+        "n": 50,
+        "brier_rolling": 0.25353679,
+        "brier_cumulative": 0.24560797263157888
+      },
+      {
+        "t": "2026-05-23T13:15:44.291799Z",
+        "index": 839,
+        "n": 50,
+        "brier_rolling": 0.25191479,
+        "brier_cumulative": 0.24544608476758037
+      },
+      {
+        "t": "2026-05-23T13:15:44.291799Z",
+        "index": 842,
+        "n": 50,
+        "brier_rolling": 0.250911365,
+        "brier_cumulative": 0.24538178042755335
+      },
+      {
+        "t": "2026-05-23T13:15:44.291799Z",
+        "index": 847,
+        "n": 50,
+        "brier_rolling": 0.246504425,
+        "brier_cumulative": 0.2452266636599763
+      }
+    ]
   }
 }

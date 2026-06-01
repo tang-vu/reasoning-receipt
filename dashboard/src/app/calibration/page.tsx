@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { api } from "@/lib/api";
 import { ReliabilityChart } from "@/components/reliability-chart";
+import { BrierOverTimeChart } from "@/components/brier-over-time-chart";
 import { StatCard } from "@/components/stat-card";
 
 export const metadata: Metadata = {
@@ -91,6 +92,8 @@ export default async function CalibrationPage() {
           </section>
 
           <ReliabilityChart buckets={cal.buckets} />
+
+          <BrierOverTimeChart points={cal.brier_over_time} />
 
           <section className="rounded-xl border border-border bg-panel p-5">
             <div className="mb-3 text-sm font-semibold text-ink">Bucket breakdown</div>
