@@ -238,3 +238,59 @@ def test_ensemble_accepts_experience_prior() -> None:
     # Mock supervisor still produces a valid trace; the prior just rode along.
     assert trace.claim.probability >= 0.0
     assert trace.supervisor_synthesis is not None
+
+
+# ---------------------------------------------------------------------------
+# bulk backfill script (scripts/backfill-memory.py)
+# ---------------------------------------------------------------------------
+
+
+def _load_backfill_module():
+    """Import the hyphenated backfill script by path (not a dotted module)."""
+    import importlib.util
+    from pathlib import Path
+
+    path = Path(__file__).resolve().parent.parent / "scripts" / "backfill-memory.py"
+    spec = importlib.util.spec_from_file_location("backfill_memory", path)
+    assert spec and spec.loader
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_backfill_drains_entire_resolved_backlog() -> None:
+    init_db()
+    # More receipts than one batch — backfill must loop until all are embedded,
+    # unlike a single self-syncing retrieve which stops at the budget cap.
+    for i in range(1, 13):
+        _seed_resolved_receipt(rid=i, question=f"backfill market {i}", probability=0.5, outcome=1.0)
+    backfill = _load_backfill_module()
+    added = backfill.backfill(mock=True, batch=5, sleep_s=0.0)
+    assert added == 12
+    with Session() as session:
+        n = session.scalar(select(func.count()).select_from(MemoryItem))
+    assert n == 12
+
+
+def test_backfill_is_idempotent_and_resumes() -> None:
+    init_db()
+    for i in range(1, 6):
+        _seed_resolved_receipt(rid=i, question=f"resume market {i}", probability=0.4, outcome=0.0)
+    backfill = _load_backfill_module()
+    first = backfill.backfill(mock=True, batch=3, sleep_s=0.0)
+    assert first == 5
+    # Re-run over the same DB: nothing new, no duplicates.
+    second = backfill.backfill(mock=True, batch=3, sleep_s=0.0)
+    assert second == 0
+    with Session() as session:
+        n = session.scalar(select(func.count()).select_from(MemoryItem))
+    assert n == 5
+
+
+def test_backfill_skips_unresolved_receipts() -> None:
+    init_db()
+    _seed_resolved_receipt(rid=1, question="resolved one", probability=0.5, outcome=1.0)
+    _seed_open_receipt(rid=2, question="still open")
+    backfill = _load_backfill_module()
+    added = backfill.backfill(mock=True, batch=10, sleep_s=0.0)
+    assert added == 1

@@ -145,6 +145,16 @@ def build_snapshot(limit: int = 1000) -> dict:
                 }
                 for b in cal.buckets
             ],
+            "brier_over_time": [
+                {
+                    "t": p.t,
+                    "index": p.index,
+                    "n": p.n,
+                    "brier_rolling": p.brier_rolling,
+                    "brier_cumulative": p.brier_cumulative,
+                }
+                for p in cal.brier_over_time
+            ],
         }
     except Exception as exc:
         logger.warning("snapshot: calibration compute failed (%s)", exc)
@@ -155,6 +165,7 @@ def build_snapshot(limit: int = 1000) -> dict:
             "brier_high_conf": None,
             "brier_low_conf": None,
             "buckets": [],
+            "brier_over_time": [],
         }
 
     return {

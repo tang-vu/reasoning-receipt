@@ -83,6 +83,14 @@ class CalibrationBucketOut(BaseModel):
     mean_actual: float
 
 
+class BrierPointOut(BaseModel):
+    t: str
+    index: int
+    n: int
+    brier_rolling: float
+    brier_cumulative: float
+
+
 class CalibrationResponse(BaseModel):
     total_resolved: int
     distinct_resolved_markets: int
@@ -90,6 +98,7 @@ class CalibrationResponse(BaseModel):
     brier_high_conf: float | None
     brier_low_conf: float | None
     buckets: list[CalibrationBucketOut]
+    brier_over_time: list[BrierPointOut] = []
 
 
 @router.get("/price/{market_id}")
@@ -242,6 +251,16 @@ async def calibration() -> CalibrationResponse:
                 mean_actual=b.mean_actual,
             )
             for b in report.buckets
+        ],
+        brier_over_time=[
+            BrierPointOut(
+                t=p.t,
+                index=p.index,
+                n=p.n,
+                brier_rolling=p.brier_rolling,
+                brier_cumulative=p.brier_cumulative,
+            )
+            for p in report.brier_over_time
         ],
     )
 

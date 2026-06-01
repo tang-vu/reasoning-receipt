@@ -34,6 +34,23 @@ class CalibrationBucket:
 
 
 @dataclass(slots=True)
+class BrierPoint:
+    """One point on the Brier-over-time curve, in resolution order.
+
+    `brier_rolling` is the mean squared error over the trailing `window`
+    resolved receipts ending at this one — it shows whether recent calls are
+    getting sharper. `brier_cumulative` is the all-history Brier up to and
+    including this point — a smoother line that tracks the lifetime score.
+    """
+
+    t: str             # resolved_at, ISO-8601 with explicit UTC suffix
+    index: int         # 1-based count of resolved receipts up to this point
+    n: int             # how many receipts the rolling window actually covered
+    brier_rolling: float
+    brier_cumulative: float
+
+
+@dataclass(slots=True)
 class CalibrationReport:
     total_resolved: int
     brier_score: float
@@ -41,9 +58,65 @@ class CalibrationReport:
     brier_low_conf: float | None   # Brier on receipts with confidence < 0.7
     buckets: list[CalibrationBucket]
     distinct_resolved_markets: int
+    brier_over_time: list[BrierPoint]
 
 
 _DEFAULT_BUCKETS = 10
+_DEFAULT_BRIER_WINDOW = 50
+_MAX_BRIER_POINTS = 300
+
+
+def _iso_utc(dt) -> str:
+    """ISO-8601 with explicit UTC suffix — JS Date parses naive ISO as local."""
+    if dt is None:
+        return ""
+    s = dt.isoformat()
+    if not s.endswith("Z") and "+" not in s[10:]:
+        s += "Z"
+    return s
+
+
+def _brier_over_time(
+    rows: list,
+    *,
+    window: int = _DEFAULT_BRIER_WINDOW,
+    max_points: int = _MAX_BRIER_POINTS,
+) -> list[BrierPoint]:
+    """Rolling + cumulative Brier in resolution order.
+
+    Rows must carry `resolved_at`; rows missing it are ordered last by a far-
+    future key so they don't corrupt the timeline. Emits one point per resolved
+    receipt, then evenly downsamples to `max_points` so the snapshot/chart stay
+    light when the resolved set grows into the thousands (the final point is
+    always kept so the latest score is exact).
+    """
+    ordered = sorted(rows, key=lambda r: (r.resolved_at is None, r.resolved_at))
+    sq_errors = [(float(r.probability) - float(r.resolved_outcome)) ** 2 for r in ordered]
+
+    points: list[BrierPoint] = []
+    running_sum = 0.0
+    for i, r in enumerate(ordered):
+        running_sum += sq_errors[i]
+        lo = max(0, i + 1 - window)
+        win = sq_errors[lo : i + 1]
+        points.append(
+            BrierPoint(
+                t=_iso_utc(r.resolved_at),
+                index=i + 1,
+                n=len(win),
+                brier_rolling=sum(win) / len(win),
+                brier_cumulative=running_sum / (i + 1),
+            )
+        )
+
+    if len(points) <= max_points:
+        return points
+    # Even stride downsample, always keeping the last point.
+    step = len(points) / max_points
+    sampled = [points[int(k * step)] for k in range(max_points)]
+    if sampled[-1].index != points[-1].index:
+        sampled[-1] = points[-1]
+    return sampled
 
 
 def compute(num_buckets: int = _DEFAULT_BUCKETS) -> CalibrationReport:
@@ -55,6 +128,7 @@ def compute(num_buckets: int = _DEFAULT_BUCKETS) -> CalibrationReport:
                     ReceiptRow.confidence,
                     ReceiptRow.resolved_outcome,
                     ReceiptRow.market_id,
+                    ReceiptRow.resolved_at,
                 ).where(ReceiptRow.resolved_outcome.is_not(None))
             )
         )
@@ -68,6 +142,7 @@ def compute(num_buckets: int = _DEFAULT_BUCKETS) -> CalibrationReport:
             brier_low_conf=None,
             buckets=[],
             distinct_resolved_markets=0,
+            brier_over_time=[],
         )
 
     # Overall Brier.
@@ -122,4 +197,5 @@ def compute(num_buckets: int = _DEFAULT_BUCKETS) -> CalibrationReport:
         brier_low_conf=brier_low,
         buckets=buckets,
         distinct_resolved_markets=distinct_markets,
+        brier_over_time=_brier_over_time(rows),
     )
