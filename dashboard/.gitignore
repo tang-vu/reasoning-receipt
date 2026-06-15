@@ -6,3 +6,5 @@ out/
 .turbo/
 *.tsbuildinfo
 next-env.d.ts
+
+.vercel
