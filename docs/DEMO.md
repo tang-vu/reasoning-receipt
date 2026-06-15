@@ -110,3 +110,18 @@ cd dashboard
 npm run build:snapshot   # produces ./out
 npx serve out            # or any static server
 ```
+
+## Codebase walkthrough video
+
+A second, narrated video pairs a codebase walkthrough with the live dashboard tour — it shows *where in the source* each Circle product is wired, not just the running product.
+
+* `scripts/codewalk/codewalk.html` — one full-viewport panel per Circle product (developer-controlled Wallets, x402 v2, Merkle-on-Arc, CCTP V2, App Kit unified balance), styled as an annotated code reader.
+* `scripts/codewalk/record-codewalk.py` — Playwright dwells ~9 s on each panel and records a 1080p clip → `recordings/codewalk.mp4`.
+* `scripts/codewalk/narrate-mimo.py` — MiMo TTS (`mimo-v2.5-tts`) renders a single 24kHz narration WAV aligned to the stitched timeline, plus a matching SRT subtitle track.
+
+```bash
+uv run python -m scripts.codewalk.record-codewalk      # codebase walkthrough clip
+uv run python -m scripts.codewalk.narrate-mimo          # recordings/narration.wav + .srt
+```
+
+ffmpeg then muxes the narration onto the stitched (codewalk + dashboard tour) video. `MIMO_API_KEY` / `MIMO_API_BASE` come from `.env` — never hardcoded.

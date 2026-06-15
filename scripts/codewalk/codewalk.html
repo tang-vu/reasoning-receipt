@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ReasoningReceipt — Circle Codebase Walkthrough</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --ink:#e6edf3; --muted:#8b949e;
+    --accent:#58a6ff; --green:#3fb950; --line:#30363d; --kw:#ff7b72;
+    --str:#a5d6ff; --com:#8b949e; --fn:#d2a8ff; --num:#79c0ff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+  .panel{min-height:100vh;width:100%;padding:5vh 6vw;display:flex;flex-direction:column;justify-content:center;border-bottom:1px solid var(--line)}
+  .step{color:var(--accent);font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:.8rem;margin-bottom:.6rem}
+  h1{font-size:clamp(1.7rem,3.5vw,2.6rem);letter-spacing:-.01em;line-height:1.1;margin-bottom:.5rem}
+  .sub{color:var(--muted);font-size:clamp(1rem,1.6vw,1.25rem);max-width:70ch;margin-bottom:.5rem}
+  .file{font-family:ui-monospace,Menlo,Consolas,monospace;color:var(--green);font-size:.95rem;margin-bottom:1.2rem}
+  pre{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:1.5rem 1.8rem;overflow:auto;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:clamp(.72rem,1.05vw,.98rem);line-height:1.75;max-width:120ch}
+  .note{margin-top:1.1rem;color:var(--ink);font-size:clamp(.95rem,1.4vw,1.12rem);max-width:74ch;border-left:3px solid var(--accent);padding-left:1rem}
+  .note b{color:var(--green)}
+  .kw{color:var(--kw)} .str{color:var(--str)} .com{color:var(--com)} .fn{color:var(--fn)} .num{color:var(--num)} .cm{color:var(--accent)}
+  .hero{justify-content:center;text-align:left}
+  .pills{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1.4rem}
+  .pill{background:var(--panel);border:1px solid var(--green);color:var(--green);border-radius:999px;padding:.45rem 1rem;font-size:.95rem;font-weight:600;font-family:ui-monospace,monospace}
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<section class="panel hero">
+  <div class="step">Codebase walkthrough</div>
+  <h1>ReasoningReceipt — six Circle products in production paths</h1>
+  <p class="sub">Where Circle technology lives in the codebase, and how each integration works. Every snippet below is real, shipped code.</p>
+  <div class="pills">
+    <span class="pill">Arc Testnet</span><span class="pill">USDC</span><span class="pill">Wallets</span>
+    <span class="pill">Gateway / x402 v2</span><span class="pill">CCTP V2</span><span class="pill">App Kit</span>
+  </div>
+</section>
+
+<!-- 1. CIRCLE WALLETS -->
+<section class="panel">
+  <div class="step">1 — Circle developer-controlled Wallets</div>
+  <h1>Provisioning + USDC transfers</h1>
+  <div class="file">wallets/circle.py</div>
+  <pre><span class="cm">CIRCLE_BASE = <span class="str">"https://api.circle.com/v1/w3s"</span></span>
+
+<span class="kw">def</span> <span class="fn">transfer_usdc</span>(self, *, from_wallet_id, to_address, amount_usdc) -> <span class="kw">str</span>:
+    payload = {
+        <span class="str">"idempotencyKey"</span>: <span class="fn">str</span>(uuid.uuid4()),
+        <span class="str">"entitySecretCiphertext"</span>: self.entity_secret,   <span class="com"># RSA-OAEP encrypted</span>
+        <span class="str">"amounts"</span>: [<span class="fn">str</span>(<span class="fn">round</span>(amount_usdc, <span class="num">6</span>))],  <span class="com"># USDC = 6 decimals</span>
+        <span class="str">"destinationAddress"</span>: to_address,
+        <span class="str">"tokenId"</span>: os.getenv(<span class="str">"CIRCLE_USDC_TOKEN_ID"</span>),
+        <span class="str">"walletId"</span>: from_wallet_id,
+    }
+    resp = client.<span class="fn">post</span>(<span class="str">f"{CIRCLE_BASE}/developer/transactions/transfer"</span>,
+                       headers=self.<span class="fn">_headers</span>(), json=payload)</pre>
+  <div class="note">Two developer-controlled wallets — a <b>portfolio</b> wallet (holds USDC, places trades, receives paywall fees) and a <b>consumer</b> wallet (pays the oracle for its own queries). Provisioned headlessly in ~4s via <code>scripts/circle-setup.py</code>: RSA-OAEP-encrypt the entity secret, register it, create a walletSet, create the two wallets — zero console clicks.</div>
+</section>
+
+<!-- 2. x402 / GATEWAY -->
+<section class="panel">
+  <div class="step">2 — Gateway / x402 v2 paywall</div>
+  <h1>Per-call USDC monetization, EIP-3009 signed</h1>
+  <div class="file">server/x402.py</div>
+  <pre><span class="kw">def</span> <span class="fn">challenge_body</span>(self, challenge) -> <span class="kw">dict</span>:
+    <span class="com"># The Circle x402-v2 body returned in the 402 PAYMENT-REQUIRED header</span>
+    <span class="kw">return</span> {
+        <span class="str">"x402Version"</span>: <span class="num">2</span>,
+        <span class="str">"accepts"</span>: [{
+            <span class="str">"scheme"</span>: <span class="str">"exact"</span>,
+            <span class="str">"network"</span>: <span class="str">"eip155:5042002"</span>,        <span class="com"># CAIP-2 — Arc Testnet</span>
+            <span class="str">"asset"</span>:   <span class="str">"0x3600...0000"</span>,            <span class="com"># USDC on Arc</span>
+            <span class="str">"amount"</span>:  <span class="str">"10000"</span>,                   <span class="com"># 0.01 USDC (6dp)</span>
+            <span class="str">"payTo"</span>:   challenge.receiver,        <span class="com"># portfolio wallet</span>
+            <span class="str">"extra"</span>: {
+                <span class="str">"name"</span>: <span class="str">"GatewayWalletBatched"</span>,    <span class="com"># EIP-712 domain</span>
+                <span class="str">"verifyingContract"</span>: <span class="str">"0x0077777d7EBA46...19B9"</span>,
+            },
+        }],
+    }
+    <span class="com"># client signs EIP-3009 TransferWithAuthorization -> X-PAYMENT header</span>
+    <span class="com"># server forwards to gateway-api-testnet.circle.com/v1/settle</span></pre>
+  <div class="note">Drop-in per-request paywall for any FastAPI route or MCP tool. The server issues a spec-compliant <b>402</b> challenge, the consumer signs an <b>EIP-3009</b> authorization, and settlement runs through <b>Circle's Gateway facilitator</b> — gasless USDC transfer on Arc. Built for agents paying agents.</div>
+</section>
+
+<!-- 3. ARC SETTLEMENT -->
+<section class="panel">
+  <div class="step">3 — Arc Testnet settlement</div>
+  <h1>Emitting the on-chain receipt</h1>
+  <div class="file">server/chain.py · contracts/src/ReceiptRegistryV2.sol</div>
+  <pre><span class="com"># server/chain.py — publish the Merkle-rooted reasoning DAG to Arc</span>
+fn = self._contract_v2.functions.<span class="fn">publishV2</span>(
+    market_id, trace_hash, merkle_root,   <span class="com"># bytes32 root over all DAG nodes</span>
+    schema_version, cid,
+)
+tx = fn.<span class="fn">build_transaction</span>({<span class="str">"from"</span>: acct.address, <span class="str">"nonce"</span>: nonce})
+signed = w3.eth.account.<span class="fn">sign_transaction</span>(tx, private_key)
+tx_hash = w3.eth.<span class="fn">send_raw_transaction</span>(signed.raw_transaction)
+<span class="com"># gas paid in USDC on Arc — measured $0.000683 / receipt across 4,500+ emits</span></pre>
+  <div class="note">Each approved trace is canonicalised, every DAG node SHA-256'd, a <b>Merkle root</b> committed on Arc inside <code>ReceiptRegistryV2</code>. The contract's <code>verifyInclusion(root, leaf, proof)</code> view lets anyone challenge a single evidence node with a ~200-byte proof. Source-verified on testnet.arcscan.app.</div>
+</section>
+
+<!-- 4. CCTP V2 -->
+<section class="panel">
+  <div class="step">4 — CCTP V2 cross-chain</div>
+  <h1>USDC: Sepolia → Arc, burn + attest + mint</h1>
+  <div class="file">scripts/cctp-demo.py</div>
+  <pre><span class="com"># 1. depositForBurn — lock USDC on Sepolia, emit Burn message</span>
+fn = contract.functions.<span class="fn">depositForBurn</span>(
+    amount, ARC_DOMAIN, <span class="fn">_addr_to_bytes32</span>(recipient), burn_token, ...)
+
+<span class="com"># 2. poll Circle's Iris attestation service for the signed burn</span>
+url = <span class="str">f"{IRIS_API}/v2/messages/{SEPOLIA_DOMAIN}?transactionHash={burn_tx}"</span>
+<span class="com"># pending_confirmations -> complete in ~12s</span>
+
+<span class="com"># 3. receiveMessage on Arc — mints the same USDC</span>
+fn = transmitter.functions.<span class="fn">receiveMessage</span>(message, attestation)</pre>
+  <div class="note">Ran live for this submission: <b>1.0 USDC moved Sepolia → Arc end-to-end in ~60s</b> (approve + burn on Sepolia, Iris attestation, mint on Arc). All three tx hashes verifiable on both explorers.</div>
+</section>
+
+<!-- 5. APP KIT -->
+<section class="panel">
+  <div class="step">5 — App Kit · Unified Balance</div>
+  <h1>One USDC view across 12 testnet chains</h1>
+  <div class="file">services/app-kit/demo.ts</div>
+  <pre><span class="kw">import</span> { AppKit } <span class="kw">from</span> <span class="str">"@circle-fin/app-kit"</span>;
+<span class="kw">import</span> { createViemAdapterFromPrivateKey } <span class="kw">from</span> <span class="str">"@circle-fin/adapter-viem-v2"</span>;
+
+<span class="kw">async function</span> <span class="fn">readBalances</span>(kit: AppKit, account) {
+  <span class="kw">return</span> kit.unifiedBalance.<span class="fn">getBalances</span>({
+    token: <span class="str">"USDC"</span>,
+    sources: { address: account },
+    networkType: <span class="str">"testnet"</span>,        <span class="com"># Arc + 11 other testnets, one pool</span>
+    includePending: <span class="kw">true</span>,
+  });
+}</pre>
+  <div class="note">Circle's newest 2026 SDK wired into the real codebase: <b>@circle-fin/app-kit 1.5.1</b> returns the agent operator's USDC across <b>all 12 testnet chains including Arc</b> as a single balance. <code>unifiedBalance.spend()</code> is ready for a Gateway-deposited spend.</div>
+</section>
+
+<!-- CLOSE -->
+<section class="panel hero">
+  <div class="step">Recap</div>
+  <h1>Six Circle products, one shipped product.</h1>
+  <p class="sub">Wallets provision + pay · Gateway/x402 monetizes every call · Arc settles the receipt for $0.000683 · CCTP moves USDC cross-chain · App Kit unifies the balance. 4,583 receipts on-chain prove the whole path runs.</p>
+  <div class="pills">
+    <span class="pill">github.com/tang-vu/reasoning-receipt</span>
+    <span class="pill">rrtrace.xyz</span>
+  </div>
+</section>
+
+</body>
+</html>
