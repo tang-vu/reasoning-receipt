@@ -73,23 +73,68 @@ question, produce a calibrated probability. Cite sources by URL. Return ONLY a
 JSON object with the keys described in the task."""
 
 
-def _extract_first_json(text: str) -> dict:
-    """Grab the first {...} block in `text`. Tolerant of code fences and prose."""
-    fence = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", text, re.DOTALL)
-    if fence:
-        return json.loads(fence.group(1))
-    brace = text.find("{")
-    if brace == -1:
-        raise ValueError("no JSON object in model output")
+def _balanced_object(text: str, start: int) -> str:
+    """Return the first balanced {...} starting at `start`, string-aware.
+
+    A naive brace counter miscounts when a `{` or `}` appears inside a string
+    value, truncating the object early. This skips braces inside string
+    literals (respecting backslash escapes), so values containing braces don't
+    corrupt the extraction.
+    """
     depth = 0
-    for i, ch in enumerate(text[brace:], start=brace):
-        if ch == "{":
+    in_str = False
+    escaped = False
+    for i in range(start, len(text)):
+        ch = text[i]
+        if in_str:
+            if escaped:
+                escaped = False
+            elif ch == "\\":
+                escaped = True
+            elif ch == '"':
+                in_str = False
+            continue
+        if ch == '"':
+            in_str = True
+        elif ch == "{":
             depth += 1
         elif ch == "}":
             depth -= 1
             if depth == 0:
-                return json.loads(text[brace : i + 1])
+                return text[start : i + 1]
     raise ValueError("unterminated JSON object")
+
+
+def _repair_json(blob: str) -> str:
+    """Best-effort cleanup of common LLM JSON slips: trailing commas + comments."""
+    # Strip // line comments and /* */ block comments (outside strings is the
+    # common case; LLMs rarely put these inside string values).
+    blob = re.sub(r"/\*.*?\*/", "", blob, flags=re.DOTALL)
+    blob = re.sub(r"(?m)//[^\n]*$", "", blob)
+    # Drop trailing commas before a closing } or ].
+    blob = re.sub(r",(\s*[}\]])", r"\1", blob)
+    return blob
+
+
+def _extract_first_json(text: str) -> dict:
+    """Grab the first {...} block in `text`. Tolerant of code fences and prose.
+
+    Falls back to a lenient repair (trailing commas, comments) when a model
+    emits not-quite-valid JSON, so a single formatting slip doesn't force a
+    whole re-generation downstream.
+    """
+    fence = re.search(r"```(?:json)?\s*(\{.*\})\s*```", text, re.DOTALL)
+    if fence:
+        candidate = fence.group(1)
+    else:
+        brace = text.find("{")
+        if brace == -1:
+            raise ValueError("no JSON object in model output")
+        candidate = _balanced_object(text, brace)
+    try:
+        return json.loads(candidate)
+    except json.JSONDecodeError:
+        return json.loads(_repair_json(candidate))
 
 
 def _mock_answer(candidate: MarketCandidate) -> dict:
@@ -137,7 +182,21 @@ def _mock_answer(candidate: MarketCandidate) -> dict:
 
 
 def _build_client():
-    """Return a (client, backend_name) pair or (None, None) for mock mode."""
+    """Return a (client, backend_name) pair or (None, None) for mock mode.
+
+    Provider precedence: MiMo (when RR_LLM_PROVIDER=mimo, or it's the only
+    credential present) → Vertex (GOOGLE_CLOUD_PROJECT) → public Gemini API
+    (GOOGLE_API_KEY) → mock. MiMo speaks an OpenAI-compatible API behind a
+    google-genai-shaped facade (see agent.mimo_call).
+    """
+    provider = os.getenv("RR_LLM_PROVIDER", "").strip().lower()
+    if provider == "mimo" or (provider == "" and os.getenv("MIMO_API_KEY") and not os.getenv("GOOGLE_CLOUD_PROJECT")):
+        from .mimo_call import build_mimo_client
+
+        client, backend = build_mimo_client()
+        if client is not None:
+            return client, backend
+
     try:
         from google import genai  # type: ignore
     except ImportError:

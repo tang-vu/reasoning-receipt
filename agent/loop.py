@@ -80,7 +80,14 @@ class AgentLoop:
         # Market memory — supervisor also reads the most-similar resolved markets
         # the agent already called (retrieval prior). Self-syncs from resolved
         # receipts; empty until markets resolve, so it's a no-op on a cold DB.
-        self._memory: MarketMemory | None = MarketMemory() if self.use_ensemble else None
+        # Disabled when the LLM provider has no embedding model (e.g. MiMo):
+        # without real embeddings the retrieval is meaningless and would write
+        # mock vectors into the live memory store, so we skip the experience
+        # prior entirely rather than pollute it.
+        embeddings_available = os.getenv("RR_LLM_PROVIDER", "").strip().lower() != "mimo"
+        self._memory: MarketMemory | None = (
+            MarketMemory() if (self.use_ensemble and embeddings_available) else None
+        )
         self._irys = IrysClient()
         self.sealer = TraceSealer(self._irys)
         self.chain = ChainClient()

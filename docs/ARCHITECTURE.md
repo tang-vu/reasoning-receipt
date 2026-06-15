@@ -50,6 +50,21 @@ graph LR
 | Dashboard | `dashboard/` | Next.js 15 static export, deployed to GitHub Pages with the `rrtrace.xyz` custom domain. **Hybrid mode** — server-renders from snapshot at build time, then client-side `useEffect` refreshes the homepage stats grid + receipts table from the live API on mount, so visiting the site never shows hour-old build data. |
 | 3D DAG view | `dashboard/src/lib/trace-to-graph.ts`, `dashboard/src/components/dag-*.tsx` | Per-receipt 3D reasoning DAG (Three.js + React Three Fiber + Drei). Layered radial layout — claim at origin, stances on a ring, evidence/critic-dims/falsifiables as leaves. Replay-debate animation reveals nodes in temporal order. Mobile + `prefers-reduced-motion` fall through to the 2D SVG renderer in `dag-fallback.tsx`. Lazy-loaded via `dynamic({ ssr: false })` so the base trace page stays at 5kB. |
 
+## LLM backend — provider abstraction
+
+Every model call site funnels through the same `client.models.generate_content(model=, contents=, config=)` surface and reads `.text` off the result, so the reasoning provider is a one-line swap in `agent/analyst.py::_build_client`. Precedence:
+
+1. **MiMo** (`RR_LLM_PROVIDER=mimo`, or the only credential present) — Xiaomi MiMo over its OpenAI-compatible `/chat/completions`, wrapped in a google-genai-shaped facade (`agent/mimo_call.py`) so no call site changes. Flagship `mimo-v2.5-pro` for synthesis, `mimo-v2.5` for the cheaper advocacy stances; model ids are tier-mapped so a stray Gemini name (flash/haiku/lite → fast, else → pro) still resolves to a valid MiMo model. Grounding uses MiMo's native `web_search` tool in place of Google Search.
+2. **Vertex AI** (`GOOGLE_CLOUD_PROJECT`) — Gemini on GCP credits, the default for the hackathon.
+3. **Public Gemini API** (`GOOGLE_API_KEY`).
+4. **Mock** — deterministic hash-keyed answers when no credential is present, so the full loop runs offline.
+
+MiMo trade-offs vs Vertex Gemini (documented, not bugs):
+
+- **No Google-Search grounding** — stances run on MiMo `web_search`, floored to 8k tokens (`MIMO_WEB_SEARCH_MIN_TOKENS`) so the model's long `reasoning_content` preamble doesn't consume the budget and leave the visible answer empty. Kill switch: `MIMO_WEB_SEARCH=0`.
+- **No embedding model** — the market-memory retrieval prior is disabled under MiMo (`agent/loop.py`) rather than polluting the live store with mock vectors.
+- **Stricter JSON tolerance needed** — extraction was hardened for the swap: a string-aware brace balancer (braces inside string values no longer truncate the object early) plus a lenient repair pass (trailing commas, `//` and `/* */` comments) so a non-Gemini model's formatting slip doesn't force a downstream re-generation (`agent/analyst.py`).
+
 ## Request flow — `GET /price/{market_id}` (and the paywalled MCP)
 
 1. Consumer hits the endpoint with no `X-Payment` header.
@@ -87,7 +102,7 @@ Per-receipt economics: posting a $0.01 receipt over a classical L1 ($0.50+ gas) 
 
 | Failure | Behaviour |
 |---|---|
-| Gemini / Vertex outage | Per-call fallback chain (Pro Preview → Flash Preview → 2.5 Flash); has fired hundreds of times today. If all models 429, the stance falls back to a deterministic mock; trace records `model: mock:...`. |
+| LLM provider outage | Gemini path: per-call fallback chain (Pro Preview → Flash Preview → 2.5 Flash), has fired hundreds of times. MiMo path surfaces the HTTP status code in the error string so the same retry-trigger logic routes a fallback. If everything 429s, the stance falls back to a deterministic mock; trace records `model: mock:...`. |
 | Critic rejects after revision | Receipt skipped entirely. Logged as `loop[v3]: REJECTED ...`, no DB row, no Arc emit, no calibration noise. |
 | Arc RPC outage | Chain client returns a synthetic mock tx hash; receipt skipped on real-mode paths. |
 | Irys outage | `IrysClient` enters mock mode; CID is a synthetic shortened hash. `/verify/{id}` will say "trace fetch unavailable". |
