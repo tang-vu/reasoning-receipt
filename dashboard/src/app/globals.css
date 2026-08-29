@@ -33,6 +33,16 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
+html { scroll-behavior: smooth; overflow-x: clip; }
+
+body {
+  min-height: 100vh;
+  overflow-x: clip;
+  background-image:
+    radial-gradient(circle at 12% 8%, color-mix(in oklab, var(--lime) 5%, transparent), transparent 25rem),
+    radial-gradient(circle at 84% 24%, color-mix(in oklab, var(--terra) 5%, transparent), transparent 30rem);
+}
+
 * { box-sizing: border-box; }
 
 ::selection { background: var(--lime); color: var(--ink); }
@@ -53,6 +63,59 @@ body::before {
   z-index: 100;
   mix-blend-mode: overlay;
 }
+
+.instrument-grid {
+  background-image:
+    linear-gradient(color-mix(in oklab, var(--bone) 4%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklab, var(--bone) 4%, transparent) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.instrument-grid-fade { mask-image: linear-gradient(to bottom, black 10%, transparent 100%); }
+
+.corner-cut {
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+}
+
+.proof-card { position: relative; isolation: isolate; }
+.proof-card::before,
+.proof-card::after {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  pointer-events: none;
+}
+.proof-card::before {
+  inset: -1px auto auto -1px;
+  border-left: 1px solid var(--lime);
+  border-top: 1px solid var(--lime);
+}
+.proof-card::after {
+  inset: auto -1px -1px auto;
+  border-right: 1px solid var(--lime);
+  border-bottom: 1px solid var(--lime);
+}
+
+.hash-noise {
+  overflow: hidden;
+  white-space: nowrap;
+  mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+}
+.hash-noise > span {
+  display: inline-block;
+  min-width: 200%;
+  animation: hash-drift 24s linear infinite;
+}
+
+.receipt-shadow {
+  box-shadow:
+    0 50px 90px -34px rgba(0, 0, 0, 0.9),
+    0 0 0 1px rgba(255, 255, 255, 0.05),
+    -30px 24px 80px -50px color-mix(in oklab, var(--lime) 35%, transparent);
+}
+
+.scan-beam { animation: scan-beam 5s cubic-bezier(0.65, 0, 0.35, 1) infinite; }
 
 /* === Typography utilities ============================================== */
 .font-display { font-family: var(--f-display); font-weight: 400; }
@@ -102,4 +165,19 @@ body::before {
   0%   { box-shadow: 0 0 0 0 color-mix(in oklab, var(--lime) 50%, transparent); }
   70%  { box-shadow: 0 0 0 12px transparent; }
   100% { box-shadow: 0 0 0 0 transparent; }
+}
+
+@keyframes hash-drift { to { transform: translateX(-50%); } }
+
+@keyframes scan-beam {
+  0%, 12% { transform: translateY(-12px); opacity: 0; }
+  22% { opacity: 0.8; }
+  78% { opacity: 0.45; }
+  88%, 100% { transform: translateY(420px); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .hash-noise > span,
+  .scan-beam { animation: none !important; }
 }

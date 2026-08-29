@@ -6,161 +6,73 @@ import { useEffect, useState } from "react";
 import { api, type StatsResponse, type TraceRow } from "@/lib/api";
 import { LandingReceiptPanel } from "@/components/landing-receipt-panel";
 
-/**
- * Hero ported from design-landing/index.html:
- *   eyebrow chip → MASSIVE Instrument-Serif h1 with italic+lime "is" →
- *   lede paragraph → two CTAs → 4-col meta strip (italic serif numbers) →
- *   receipt panel on the right.
- */
-export function LandingHero({
-  initialStats,
-  initialReceipt,
-}: {
-  initialStats: StatsResponse | null;
-  initialReceipt: TraceRow | null;
-}) {
-  const [stats, setStats] = useState<StatsResponse | null>(initialStats);
+export function LandingHero({ initialStats, initialReceipt }: { initialStats: StatsResponse | null; initialReceipt: TraceRow | null }) {
+  const [stats, setStats] = useState(initialStats);
 
   useEffect(() => {
     let cancelled = false;
-    api
-      .stats()
-      .then((s) => {
-        if (!cancelled) setStats(s);
-      })
-      .catch(() => {});
-    return () => {
-      cancelled = true;
-    };
+    api.stats().then((fresh) => !cancelled && setStats(fresh)).catch(() => {});
+    return () => { cancelled = true; };
   }, []);
 
   return (
-    <section className="relative grid items-start gap-12 py-8 sm:py-12 lg:grid-cols-[1.15fr_1fr] lg:gap-20">
-      {/* LEFT column */}
-      <div className="min-w-0">
-        {/* Eyebrow */}
-        <div
-          className="mb-7 flex max-w-full flex-wrap items-center gap-2 border border-ink-3 px-2.5 py-1.5 text-[10px] uppercase tracking-[0.12em] sm:mb-9 sm:gap-2.5 sm:px-3 sm:text-[11px] sm:tracking-[0.14em]"
-          style={{ fontFamily: "var(--f-mono)", color: "var(--bone-dim)" }}
-        >
-          <span
-            className="inline-block h-1.5 w-1.5 flex-none rounded-full"
-            style={{ background: "var(--lime)" }}
-            aria-hidden
-          />
-          open protocol · any AI workflow · verify offline
+    <section className="relative isolate min-h-[calc(100vh-64px)] overflow-hidden border-x border-ink-3">
+      <div className="instrument-grid instrument-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60" />
+      <div className="grid min-h-[calc(100vh-64px)] min-w-0 grid-cols-[minmax(0,1fr)] lg:grid-cols-[minmax(0,1.06fr)_minmax(0,0.94fr)]">
+        <div className="flex min-w-0 flex-col border-b border-ink-3 p-5 sm:p-8 lg:border-b-0 lg:border-r lg:p-12 xl:p-16">
+          <div className="mb-12 flex flex-wrap items-center justify-between gap-4 sm:mb-16">
+            <div className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.18em] text-lime">
+              <span className="h-1.5 w-1.5 bg-lime" /> Proof layer / reasoning-receipt 1
+            </div>
+            <div className="font-mono text-[9px] uppercase tracking-[0.14em] text-bone-faint">Model agnostic · Verify offline</div>
+          </div>
+
+          <h1 className="max-w-[820px] text-balance font-display text-[clamp(58px,8.3vw,126px)] leading-[0.84] tracking-[-0.035em]">
+            The evidence<br />outlives the <span className="italic text-lime">answer.</span>
+          </h1>
+
+          <div className="mt-10 grid gap-8 xl:mt-14 xl:grid-cols-[1fr_auto] xl:items-end">
+            <p className="max-w-[610px] text-[15px] leading-7 text-bone-dim sm:text-[17px]">
+              Give every AI decision a portable record of <strong className="font-medium text-bone">what it saw, which rules applied, what it did, and who approved it.</strong> Every node is hashed. Every claim can be checked. No vendor trust required.
+            </p>
+            <div className="flex gap-3 xl:flex-col">
+              <Link href="/build#lab" className="group inline-flex items-center justify-between gap-5 bg-lime px-5 py-3.5 font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-ink-1 transition-transform hover:-translate-y-0.5">
+                Create proof <span className="transition-transform group-hover:translate-x-1">→</span>
+              </Link>
+              <Link href="/inclusion" className="group inline-flex items-center justify-between gap-5 border border-bone/70 px-5 py-3.5 font-mono text-[10px] uppercase tracking-[0.12em] text-bone transition-colors hover:border-lime hover:text-lime">
+                Verify one <span>↗</span>
+              </Link>
+            </div>
+          </div>
+
+          <div className="mt-14 grid grid-cols-2 border-t border-ink-3 pt-7 sm:grid-cols-4 lg:mt-auto">
+            <Meta label="receipts indexed" value={stats?.total_receipts.toLocaleString() ?? "—"} />
+            <Meta label="typed nodes" value="128" suffix="max" />
+            <Meta label="hash" value="SHA-256" />
+            <Meta label="verify" value="$0" suffix="offline" />
+          </div>
         </div>
 
-        {/* Headline */}
-        <h1
-          className="mb-9 text-balance leading-[1] tracking-[-0.02em] sm:mb-12 sm:leading-[0.96]"
-          style={{
-            fontFamily: "var(--f-display)",
-            fontWeight: 400,
-            fontSize: "clamp(38px, 11vw, 134px)",
-          }}
-        >
-          The trace{" "}
-          <span
-            className="italic"
-            style={{ color: "var(--lime)" }}
-          >
-            is
-          </span>{" "}
-          the product.
-        </h1>
-
-        {/* Lede */}
-        <p className="mb-8 max-w-[560px] text-[16px] leading-relaxed text-bone-dim sm:mb-10 sm:text-[18px]">
-          ReasoningReceipt gives every AI decision or action a{" "}
-          <b className="font-medium text-bone">portable, byte-verifiable evidence trail</b>.
-          Capture intent, sources, policy checks, tool calls, human approvals, and outcomes
-          as independently provable nodes. Model-neutral, storage-neutral, and chain-optional.
-        </p>
-
-        {/* CTAs */}
-        <div className="flex flex-wrap items-center gap-3.5">
-          <Link
-            href="/build"
-            className="group inline-flex items-center gap-2.5 border px-5 py-3.5 text-[13px] tracking-[0.04em] transition-all hover:-translate-y-0.5"
-            style={{
-              fontFamily: "var(--f-mono)",
-              background: "var(--lime)",
-              borderColor: "var(--lime)",
-              color: "var(--ink)",
-              fontWeight: 600,
-            }}
-          >
-            Build a receipt
-            <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
-          </Link>
-          <Link
-            href="https://github.com/tang-vu/reasoning-receipt"
-            className="group inline-flex items-center gap-2.5 border border-bone px-5 py-3.5 text-[13px] tracking-[0.04em] text-bone transition-all hover:border-lime hover:text-lime"
-            style={{ fontFamily: "var(--f-mono)" }}
-          >
-            View the protocol
-            <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
-          </Link>
-        </div>
-
-        {/* Meta strip — 4 cols italic serif numbers */}
-        <div
-          className="mt-14 grid grid-cols-2 md:grid-cols-4"
-          style={{
-            borderTop: "1px solid var(--ink-3)",
-            borderBottom: "1px solid var(--ink-3)",
-          }}
-        >
-          <MetaCell label="reference receipts" value={stats?.total_receipts.toLocaleString() ?? "—"} />
-          <MetaCell label="typed nodes" value="128" suffix=" max" />
-          <MetaCell label="hash primitive" value="SHA" suffix="-256" />
-          <MetaCell label="core cost" value="$0" suffix=" offline" last />
+        <div className="relative grid min-h-[660px] min-w-0 place-items-center overflow-hidden bg-ink-2/30 p-5 sm:p-10 lg:min-h-0 xl:p-14">
+          <div className="pointer-events-none absolute inset-x-8 top-7 flex justify-between font-mono text-[8px] uppercase tracking-[0.16em] text-bone-faint">
+            <span>capture surface / 01</span><span>x: 847.21 y: 392.04</span>
+          </div>
+          <LandingReceiptPanel initial={initialReceipt} />
+          <div className="pointer-events-none absolute inset-x-8 bottom-7 hash-noise font-mono text-[8px] uppercase tracking-[0.2em] text-bone-faint">
+            <span>canonical-json · 9b36f04b7e9ef1379d · merkle-root · 91c03e882a · canonical-json · 9b36f04b7e9ef1379d · merkle-root · 91c03e882a · </span>
+          </div>
         </div>
       </div>
-
-      {/* RIGHT column — receipt */}
-      <LandingReceiptPanel initial={initialReceipt} />
     </section>
   );
 }
 
-function MetaCell({
-  label,
-  value,
-  suffix,
-  last = false,
-}: {
-  label: string;
-  value: string;
-  suffix?: string;
-  last?: boolean;
-}) {
+function Meta({ label, value, suffix }: { label: string; value: string; suffix?: string }) {
   return (
-    <div
-      className="min-w-0 py-3.5 pr-3 sm:py-5 sm:pr-4"
-      style={{ borderRight: last ? "0" : "1px solid var(--ink-3)" }}
-    >
-      <div
-        className="mb-1.5 truncate text-[10px] uppercase tracking-[0.12em] sm:mb-2 sm:text-[10.5px] sm:tracking-[0.14em]"
-        style={{ fontFamily: "var(--f-mono)", color: "var(--bone-faint)" }}
-      >
-        {label}
-      </div>
-      <div
-        className="italic leading-none text-bone"
-        style={{ fontFamily: "var(--f-display)", fontSize: "clamp(24px, 5vw, 38px)" }}
-      >
-        {value}
-        {suffix && (
-          <small
-            className="ml-1 align-top text-[10px] text-bone-dim sm:text-[12px]"
-            style={{ fontFamily: "var(--f-mono)", fontStyle: "normal", position: "relative", top: 3 }}
-          >
-            {suffix}
-          </small>
-        )}
-      </div>
+    <div className="border-l border-ink-3 px-3 first:border-l-0 first:pl-0 sm:px-5">
+      <div className="font-mono text-[8px] uppercase tracking-[0.16em] text-bone-faint">{label}</div>
+      <div className="mt-2 font-display text-3xl italic leading-none text-bone sm:text-4xl">{value}</div>
+      {suffix && <div className="mt-1 font-mono text-[8px] uppercase tracking-[0.14em] text-lime">{suffix}</div>}
     </div>
   );
 }

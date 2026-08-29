@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import Link from "next/link";
 import Script from "next/script";
 import { Instrument_Serif, Inter, JetBrains_Mono } from "next/font/google";
 
 import { Web3Provider } from "@/components/web3-provider";
+import { SiteHeader } from "@/components/site-header";
 
 import "./globals.css";
 
@@ -130,14 +130,6 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-const nav = [
-  { href: "/build", label: "build" },
-  { href: "/agents", label: "agents" },
-  { href: "/inclusion", label: "verify" },
-  { href: "/traces", label: "traces" },
-  { href: "/stats", label: "stats" },
-];
-
 const structuredData = {
   "@context": "https://schema.org",
   "@graph": [
@@ -185,48 +177,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
         <Web3Provider>
-          <header
-            className="sticky top-0 z-40 border-b border-ink-3 backdrop-blur-md"
-            style={{ background: "color-mix(in oklab, var(--ink) 88%, transparent)" }}
-          >
-            <div className="mx-auto flex h-[60px] max-w-[1480px] items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
-              <Link href="/" className="flex items-center gap-3 font-mono text-[12px] tracking-[0.02em] sm:text-[13px]">
-                <span
-                  className="grid h-[30px] w-[30px] flex-none place-items-center rounded-full border border-bone font-display text-[18px] italic text-bone"
-                >
-                  R
-                </span>
-                <span className="truncate">
-                  <b className="font-semibold text-bone">ReasoningReceipt</b>
-                  <span className="ml-2 hidden text-bone-faint sm:inline">/ rr-trace 3</span>
-                </span>
-              </Link>
-              <nav className="hidden gap-7 md:flex">
-                {nav.map((n) => (
-                  <Link
-                    key={n.href}
-                    href={n.href}
-                    className="font-mono text-[12px] lowercase tracking-[0.06em] text-bone-dim transition-colors hover:text-lime"
-                  >
-                    {n.label}
-                  </Link>
-                ))}
-              </nav>
-              <Link
-                href="/build"
-                className="inline-flex flex-none items-center gap-2 border border-bone bg-bone px-2.5 py-1.5 font-mono text-[11px] tracking-[0.04em] text-ink transition-all hover:border-lime hover:bg-lime sm:px-3.5 sm:py-2 sm:text-[12px]"
-              >
-                <span
-                  className="block h-[7px] w-[7px] flex-none rounded-full bg-terra"
-                  style={{ animation: "pulse-ring 1.4s ease-out infinite" }}
-                  aria-hidden
-                />
-                <span className="hidden sm:inline">build a receipt →</span>
-                <span className="sm:hidden">build →</span>
-              </Link>
-            </div>
-          </header>
-          <main className="mx-auto max-w-[1480px] px-4 py-8 sm:px-6 sm:py-10 lg:px-8">{children}</main>
+          <SiteHeader />
+          <main className="mx-auto w-full min-w-0 max-w-[1480px] overflow-hidden px-4 sm:px-6 lg:px-8">{children}</main>
           <footer className="mt-12 border-t border-ink-3 sm:mt-16">
           <div className="mx-auto flex max-w-[1480px] flex-wrap items-baseline justify-between gap-3 px-4 py-6 text-[11px] text-bone-dim sm:px-6 sm:text-xs lg:px-8">
             <div>
