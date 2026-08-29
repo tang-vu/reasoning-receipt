@@ -1,7 +1,6 @@
 import { api } from "@/lib/api";
-import { LandingDebate } from "@/components/landing-debate";
 import { LandingHero } from "@/components/landing-hero";
-import { LandingTicker } from "@/components/landing-ticker";
+import { LandingUseCases } from "@/components/landing-use-cases";
 import { LiveReceiptsFeed } from "@/components/live-receipts-feed";
 import { LiveStatsGrid } from "@/components/live-stats-grid";
 import { VolumeChart } from "@/components/volume-chart";
@@ -15,19 +14,21 @@ export default async function Home() {
 
   return (
     <>
-      {/* Top ticker sits flush against the nav — break out of the layout padding
-       *  (which is responsive: px-4 / sm:px-6 / lg:px-8). */}
-      <div className="-mx-4 -mt-8 mb-8 sm:-mx-6 sm:-mt-10 sm:mb-10 lg:-mx-8">
-        <LandingTicker initial={recent} />
-      </div>
-
       <LandingHero initialStats={stats} initialReceipt={latestReceipt} />
 
       <section className="py-14 sm:py-20 lg:py-24" style={{ borderTop: "1px solid var(--ink-3)" }}>
-        <LandingDebate />
+        <LandingUseCases />
       </section>
 
       <section className="py-14 sm:py-20 lg:py-24" style={{ borderTop: "1px solid var(--ink-3)" }}>
+        <div className="mb-8 max-w-3xl">
+          <div className="micro mb-3 text-lime">reference adapter · forecasting</div>
+          <h2 className="font-display text-4xl italic sm:text-5xl">Battle-tested in prediction markets.</h2>
+          <p className="mt-4 text-sm leading-relaxed text-bone-dim">
+            The original oracle remains as a production reference: thousands of receipts,
+            on-chain commitments, paid consumers, and outcome calibration.
+          </p>
+        </div>
         <LiveStatsGrid initial={stats} />
       </section>
 

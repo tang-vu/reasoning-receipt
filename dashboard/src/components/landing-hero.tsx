@@ -48,7 +48,7 @@ export function LandingHero({
             style={{ background: "var(--lime)" }}
             aria-hidden
           />
-          x402 oracle · Arc Testnet · ~$0.0007 / receipt
+          open protocol · any AI workflow · verify offline
         </div>
 
         {/* Headline */}
@@ -72,18 +72,16 @@ export function LandingHero({
 
         {/* Lede */}
         <p className="mb-8 max-w-[560px] text-[16px] leading-relaxed text-bone-dim sm:mb-10 sm:text-[18px]">
-          ReasoningReceipt is a paid oracle for{" "}
-          <b className="font-medium text-bone">Polymarket</b> and{" "}
-          <b className="font-medium text-bone">Kalshi</b>. Pay a few cents of USDC over x402,
-          get a probability — <b className="font-medium text-bone">plus a byte-verifiable,
-          Merkle-rooted reasoning DAG</b> committed to Arc. Not a hash of an opaque blob. The
-          whole chain-of-thought. Auditable, leaf by leaf.
+          ReasoningReceipt gives every AI decision or action a{" "}
+          <b className="font-medium text-bone">portable, byte-verifiable evidence trail</b>.
+          Capture intent, sources, policy checks, tool calls, human approvals, and outcomes
+          as independently provable nodes. Model-neutral, storage-neutral, and chain-optional.
         </p>
 
         {/* CTAs */}
         <div className="flex flex-wrap items-center gap-3.5">
           <Link
-            href="/try-live"
+            href="/build"
             className="group inline-flex items-center gap-2.5 border px-5 py-3.5 text-[13px] tracking-[0.04em] transition-all hover:-translate-y-0.5"
             style={{
               fontFamily: "var(--f-mono)",
@@ -93,15 +91,15 @@ export function LandingHero({
               fontWeight: 600,
             }}
           >
-            Pay $0.01 · query live
+            Build a receipt
             <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
           </Link>
           <Link
-            href="/try"
+            href="https://github.com/tang-vu/reasoning-receipt"
             className="group inline-flex items-center gap-2.5 border border-bone px-5 py-3.5 text-[13px] tracking-[0.04em] text-bone transition-all hover:border-lime hover:text-lime"
             style={{ fontFamily: "var(--f-mono)" }}
           >
-            See the x402 protocol
+            View the protocol
             <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
           </Link>
         </div>
@@ -114,10 +112,10 @@ export function LandingHero({
             borderBottom: "1px solid var(--ink-3)",
           }}
         >
-          <MetaCell label="receipts on chain" value={stats?.total_receipts.toLocaleString() ?? "—"} />
-          <MetaCell label="distinct markets" value={stats?.distinct_markets.toLocaleString() ?? "—"} />
-          <MetaCell label="distinct consumers" value={stats?.distinct_consumers.toString() ?? "—"} />
-          <MetaCell label="per-receipt gas" value="0.0007" suffix=" usdc" last />
+          <MetaCell label="reference receipts" value={stats?.total_receipts.toLocaleString() ?? "—"} />
+          <MetaCell label="typed nodes" value="128" suffix=" max" />
+          <MetaCell label="hash primitive" value="SHA" suffix="-256" />
+          <MetaCell label="core cost" value="$0" suffix=" offline" last />
         </div>
       </div>
 

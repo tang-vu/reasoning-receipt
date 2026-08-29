@@ -27,11 +27,13 @@ from storage.db import init_db
 from storage.irys import IrysClient
 
 from .chain import ChainClient
+from .cron import router as cron_router
 from .demo import router as demo_router
 from .events import ReceiptBroker, poll_db_and_broadcast
 from .events import router as events_router
 from .facilitator import router as facilitator_router
 from .mcp_paywalled import router as mcp_router
+from .portable import router as portable_router
 from .routes import router as oracle_router
 from .verify import router as verify_router
 from .x402 import X402Paywall
@@ -65,25 +67,33 @@ async def lifespan(app: FastAPI):
     )
     # Bridge the daemon's direct emits (chain.publish_v2 → DB row, no HTTP)
     # into the SSE broker so dashboard subscribers see live updates.
-    poll_interval = float(os.getenv("RR_BROKER_POLL_S", "2.0"))
-    poll_task = _asyncio.create_task(poll_db_and_broadcast(app.state.broker, interval_s=poll_interval))
+    poll_task = None
+    if not app.state.serverless:
+        poll_interval = float(os.getenv("RR_BROKER_POLL_S", "2.0"))
+        poll_task = _asyncio.create_task(
+            poll_db_and_broadcast(app.state.broker, interval_s=poll_interval)
+        )
     import contextlib
 
     try:
         yield
     finally:
-        poll_task.cancel()
-        with contextlib.suppress(Exception, BaseException):
-            await poll_task
+        if poll_task is not None:
+            poll_task.cancel()
+            with contextlib.suppress(Exception, BaseException):
+                await poll_task
 
 
-def create_app() -> FastAPI:
+def create_app(*, serverless: bool | None = None) -> FastAPI:
+    if serverless is None:
+        serverless = bool(os.getenv("VERCEL"))
     app = FastAPI(
         title="ReasoningReceipt",
         version="0.1.0",
-        description="x402-paywalled AI oracle for prediction markets.",
+        description="Portable, byte-verifiable receipts for AI decisions and actions.",
         lifespan=lifespan,
     )
+    app.state.serverless = serverless
     origins = [o.strip() for o in os.getenv("CORS_ORIGINS", "*").split(",") if o.strip()]
     app.add_middleware(
         CORSMiddleware,
@@ -94,10 +104,13 @@ def create_app() -> FastAPI:
         expose_headers=["Accept-Payment", "X-Payment-Challenge"],
     )
     app.include_router(oracle_router)
+    app.include_router(portable_router)
     app.include_router(verify_router)
-    app.include_router(events_router)
+    if not serverless:
+        app.include_router(events_router)
     app.include_router(mcp_router)
     app.include_router(demo_router)
+    app.include_router(cron_router)
     if os.getenv("RR_LOCAL_FACILITATOR", "").lower() in {"1", "true", "yes"}:
         app.include_router(facilitator_router)
     return app

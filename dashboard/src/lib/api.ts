@@ -5,8 +5,8 @@
  *
  *  1. Live mode (production custom domain) — set
  *     `NEXT_PUBLIC_LIVE_API_BASE=https://api.rrtrace.xyz`. Every call hits
- *     the deployed FastAPI via Cloudflare Tunnel. If a call fails (tunnel
- *     down, CORS, network), falls through to snapshot data if available.
+ *     the deployed FastAPI serverless functions on Vercel. If a call fails
+ *     (CORS or network), falls through to snapshot data if available.
  *
  *  2. Snapshot-only mode (build-time prerender) — set
  *     `NEXT_PUBLIC_USE_SNAPSHOT=1` AND leave `NEXT_PUBLIC_LIVE_API_BASE`
@@ -80,7 +80,7 @@ async function loadSnapshot(): Promise<Snapshot> {
     })();
     return _snapshot;
   }
-  // GitHub Pages serves under /<repo>/, so prefix the asset URL.
+  // Support an optional base path for alternate static hosting.
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
   _snapshot = fetch(`${basePath}/snapshot.json`, { cache: "force-cache" }).then((r) => {
     if (!r.ok) throw new Error(`snapshot.json: ${r.status}`);
@@ -145,11 +145,13 @@ async function getJSON<T>(path: string): Promise<T> {
       if (!r.ok) throw new Error(`${path} failed: ${r.status}`);
       return (await r.json()) as T;
     } catch (err) {
-      if (useSnapshot) {
-        // Backend unreachable but a snapshot exists — degrade gracefully.
+      try {
+        // The committed snapshot is also the production fallback when a
+        // serverless database or provider has a transient outage.
         return fromSnapshot<T>(path);
+      } catch {
+        throw err;
       }
-      throw err;
     }
   }
   // Mode 2: snapshot-only.
@@ -158,22 +160,6 @@ async function getJSON<T>(path: string): Promise<T> {
   const r = await fetch(`${devBase}${path}`, { cache: "no-store" });
   if (!r.ok) throw new Error(`${path} failed: ${r.status}`);
   return (await r.json()) as T;
-}
-
-/** Base URL for the SSE event stream. Live mode uses events.rrtrace.xyz,
- * snapshot/dev modes use the same `/api` base since they hit the local API.
- * SSE doesn't have a snapshot fallback — when live is down, the UI just
- * shows static last-known data without live updates. */
-export function eventsStreamUrl(): string {
-  if (liveApiBase) {
-    // Try a dedicated events subdomain first (longer keepalive in CF Tunnel
-    // config), fall back to the main API base.
-    if (typeof process !== "undefined" && process.env.NEXT_PUBLIC_EVENTS_BASE) {
-      return `${process.env.NEXT_PUBLIC_EVENTS_BASE}/events/stream`;
-    }
-    return `${liveApiBase}/events/stream`;
-  }
-  return `${devBase}/events/stream`;
 }
 
 export interface CalibrationBucket {

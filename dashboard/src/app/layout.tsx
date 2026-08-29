@@ -31,10 +31,10 @@ const SITE_URL = "https://rrtrace.xyz";
 const SITE_NAME = "ReasoningReceipt";
 // 130 chars — Open Graph / Twitter Card sweet spot is 110-160.
 const SITE_DESC =
-  "x402-paywalled AI oracle for prediction markets. Every price ships with a byte-verifiable reasoning trace, Merkle-rooted on Arc.";
+  "Portable, byte-verifiable receipts for AI decisions and actions. Capture evidence, policy checks, tool calls, approvals, and outcomes.";
 // 55 chars — title sweet spot is 50-60. Same value for HTML <title>,
 // OG title, and Twitter title so previews are consistent everywhere.
-const SITE_TITLE = "ReasoningReceipt — Byte-verifiable AI oracle on Arc";
+const SITE_TITLE = "ReasoningReceipt — Verifiable receipts for AI decisions";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -48,19 +48,15 @@ export const metadata: Metadata = {
   generator: "Next.js",
   keywords: [
     "x402",
-    "prediction market oracle",
-    "Arc Testnet",
-    "Circle",
-    "USDC",
+    "AI audit trail",
+    "AI governance",
+    "agent observability",
     "Merkle DAG",
     "verifiable reasoning",
     "AI agent",
-    "Polymarket",
-    "Kalshi",
     "ReasoningReceipt",
     "byte-verifiable trace",
-    "Agora hackathon",
-    "Canteen",
+    "portable receipt",
   ],
   category: "technology",
   alternates: {
@@ -89,7 +85,7 @@ export const metadata: Metadata = {
         url: "/og-banner.png",
         width: 1200,
         height: 630,
-        alt: "ReasoningReceipt — Five agents debate. Supervisor merges. Critic audits. Merkle-rooted reasoning DAG on Arc.",
+        alt: "ReasoningReceipt — Portable, byte-verifiable evidence for AI decisions and actions.",
         type: "image/png",
       },
       // SVG fallback for crawlers that prefer vector.
@@ -97,7 +93,7 @@ export const metadata: Metadata = {
         url: "/og-banner.svg",
         width: 1200,
         height: 630,
-        alt: "ReasoningReceipt — Five agents debate. Supervisor merges. Critic audits. Merkle-rooted reasoning DAG on Arc.",
+        alt: "ReasoningReceipt — Portable, byte-verifiable evidence for AI decisions and actions.",
         type: "image/svg+xml",
       },
     ],
@@ -135,12 +131,10 @@ export const viewport: Viewport = {
 };
 
 const nav = [
+  { href: "/build", label: "build" },
   { href: "/agents", label: "agents" },
-  { href: "/try-live", label: "live" },
-  { href: "/try", label: "x402" },
   { href: "/inclusion", label: "verify" },
   { href: "/traces", label: "traces" },
-  { href: "/calibration", label: "calibration" },
   { href: "/stats", label: "stats" },
 ];
 
@@ -171,12 +165,7 @@ const structuredData = {
       url: SITE_URL,
       codeRepository: "https://github.com/tang-vu/reasoning-receipt",
       programmingLanguage: ["Python", "TypeScript", "Solidity"],
-      offers: {
-        "@type": "Offer",
-        price: "0.01",
-        priceCurrency: "USDC",
-        description: "Per paid query via x402 v2 on Arc Testnet",
-      },
+      isAccessibleForFree: true,
       description: SITE_DESC,
     },
   ],
@@ -224,7 +213,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 ))}
               </nav>
               <Link
-                href="/try-live"
+                href="/build"
                 className="inline-flex flex-none items-center gap-2 border border-bone bg-bone px-2.5 py-1.5 font-mono text-[11px] tracking-[0.04em] text-ink transition-all hover:border-lime hover:bg-lime sm:px-3.5 sm:py-2 sm:text-[12px]"
               >
                 <span
@@ -232,8 +221,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   style={{ animation: "pulse-ring 1.4s ease-out infinite" }}
                   aria-hidden
                 />
-                <span className="hidden sm:inline">live oracle →</span>
-                <span className="sm:hidden">live →</span>
+                <span className="hidden sm:inline">build a receipt →</span>
+                <span className="sm:hidden">build →</span>
               </Link>
             </div>
           </header>
@@ -241,7 +230,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <footer className="mt-12 border-t border-ink-3 sm:mt-16">
           <div className="mx-auto flex max-w-[1480px] flex-wrap items-baseline justify-between gap-3 px-4 py-6 text-[11px] text-bone-dim sm:px-6 sm:text-xs lg:px-8">
             <div>
-              Settled on Arc testnet · per-receipt cost ≈ $0.01 · traces pinned to Irys
+              Open protocol · verify offline · optional Arc, Irys, and x402 adapters
             </div>
             <div className="flex flex-wrap gap-4">
               <a href="https://github.com/tang-vu/reasoning-receipt" rel="noopener" className="hover:text-bone">GitHub</a>

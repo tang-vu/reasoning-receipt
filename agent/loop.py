@@ -15,8 +15,10 @@ import os
 import signal
 import time
 from dataclasses import dataclass
+from datetime import UTC, datetime, timedelta
 
 from dotenv import load_dotenv
+from sqlalchemy import select
 
 from server.chain import ChainClient
 from storage.db import Receipt as ReceiptRow
@@ -120,7 +122,11 @@ class AgentLoop:
                 continue
             await asyncio.sleep(self.config.scan_interval_s)
 
-    async def _tick(self) -> None:
+    async def run_once(self) -> dict[str, int]:
+        """Run one bounded tick for cron/serverless workers."""
+        return await self._tick()
+
+    async def _tick(self) -> dict[str, int]:
         loop = asyncio.get_running_loop()
         self._tick_count += 1
 
@@ -141,12 +147,28 @@ class AgentLoop:
         candidates = await loop.run_in_executor(None, self.scanner.scan)
         now = time.time()
         cooldown = self.config.market_cooldown_s
+        recently_persisted: set[str] = set()
+        if cooldown > 0 and candidates:
+            cutoff = datetime.now(UTC) - timedelta(seconds=cooldown)
+            with Session() as session:
+                recently_persisted = set(
+                    session.execute(
+                        select(ReceiptRow.market_id).where(
+                            ReceiptRow.market_id.in_([c.market_id for c in candidates]),
+                            ReceiptRow.created_at >= cutoff,
+                        )
+                    ).scalars()
+                )
         eligible = [
             c
             for c in candidates
             if cooldown <= 0
-            or self._processed.get(c.market_id, 0) + cooldown <= now
+            or (
+                c.market_id not in recently_persisted
+                and self._processed.get(c.market_id, 0) + cooldown <= now
+            )
         ]
+        processed = 0
         for candidate in eligible[: self.config.per_tick]:
             try:
                 await loop.run_in_executor(None, self._process_candidate, candidate)
@@ -155,6 +177,8 @@ class AgentLoop:
             # Stamp processed regardless of success so we don't immediately retry
             # the same bad market on the next tick. TTL still lets it come back.
             self._processed[candidate.market_id] = time.time()
+            processed += 1
+        return {"candidates": len(candidates), "eligible": len(eligible), "processed": processed}
 
     def _process_candidate(self, candidate: MarketCandidate) -> None:
         if self._ensemble is not None:

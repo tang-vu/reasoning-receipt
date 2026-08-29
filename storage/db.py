@@ -29,8 +29,17 @@ from sqlalchemy.orm import Session as OrmSession
 _DEFAULT_DB_URL = "sqlite:///./data/reasoning_receipt.db"
 
 
+def normalize_database_url(url: str) -> str:
+    """Select psycopg 3 for provider URLs that omit an explicit driver."""
+    if url.startswith("postgres://"):
+        url = "postgresql+psycopg://" + url.removeprefix("postgres://")
+    elif url.startswith("postgresql://") and "+psycopg" not in url.split("://", 1)[0]:
+        url = "postgresql+psycopg://" + url.removeprefix("postgresql://")
+    return url
+
+
 def _db_url() -> str:
-    url = os.getenv("DATABASE_URL", _DEFAULT_DB_URL)
+    url = normalize_database_url(os.getenv("DATABASE_URL", _DEFAULT_DB_URL))
     if url.startswith("sqlite:///./"):
         Path(url.replace("sqlite:///./", "")).parent.mkdir(parents=True, exist_ok=True)
     return url

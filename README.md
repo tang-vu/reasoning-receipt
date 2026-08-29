@@ -1,7 +1,7 @@
 # ReasoningReceipt
 
-> **An x402-paywalled AI oracle for prediction markets where the reasoning trace *is* the product.**
-> Every price ships with a hashed, byte-verifiable chain-of-thought. Settled on Arc in under a second for ~$0.0007 gas.
+> **Portable, byte-verifiable receipts for AI decisions and actions.**
+> Capture intent, evidence, policy checks, tool calls, approvals, and outcomes as independently provable Merkle nodes.
 
 [![CI](https://github.com/tang-vu/reasoning-receipt/actions/workflows/ci.yml/badge.svg)](https://github.com/tang-vu/reasoning-receipt/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -11,17 +11,23 @@
 
 ---
 
-## Live now
+## Product status
+
+The domain-neutral `reasoning-receipt/1` protocol and HTTP API are the active product.
+The prediction-market oracle below is retained as a reference adapter and historical dataset.
+Production is fully serverless: the dashboard and FastAPI run on Vercel, durable data lives in
+Neon Postgres, and bounded background work is invoked by Vercel Cron. No local PC or tunnel is
+required to keep the product online.
 
 | | |
 |---|---|
-| 🌐 **Dashboard** (live + snapshot fallback) | https://rrtrace.xyz |
-| 🔌 **Live API** (FastAPI via Cloudflare Tunnel) | https://api.rrtrace.xyz/stats |
-| 📡 **SSE event stream** | https://events.rrtrace.xyz/events/stream |
+| 🌐 **Product** | https://rrtrace.xyz |
+| 🔌 **Portable API** | `https://reasoning-receipt-api.vercel.app/v1/{receipts,verify,proofs}` |
+| 📡 **Reference oracle API** | Serverless on Vercel; polling replaces the former SSE tunnel |
 | 🌳 **ReceiptRegistryV2** (Merkle root + schemaVersion, source-verified) | https://testnet.arcscan.app/address/0x27d93c52fea923f956345af27f61d7bf47f0c4c1 |
 | 🔍 **ReceiptRegistry V1** (source-verified) | https://testnet.arcscan.app/address/0x59022EFd46a697bbf2fAd36CcfA8F2099f0bd1Bf |
-| 📜 **Receipts emitted on-chain** | **4,558** and rising (V1: 2,281 legacy · V2: 2,277 Merkle-rooted rr-trace/3, byte-verifiable from #2273 forward) |
-| 🎯 **Distinct markets priced** | **217** across **Polymarket Gamma + Kalshi Trade API** (RFB 03 plural) |
+| 📜 **Reference receipts emitted on-chain** | **4,558** historical (V1: 2,281 legacy · V2: 2,277 Merkle-rooted rr-trace/3) |
+| 🎯 **Reference markets priced** | **217** across **Polymarket Gamma + Kalshi Trade API** |
 | 💰 **Per-receipt gas cost** | **$0.000683 USDC** (~1/15 of a cent) |
 | 🧪 **Cross-chain demo** | 1 USDC moved Sepolia → Arc via CCTP V2 ([burn tx](https://sepolia.etherscan.io/tx/0x2aebe23128bb7742c6c3babbd32889c29f3b938940176c41d794169a28f4d615) / [mint tx](https://testnet.arcscan.app/tx/0x8a4ae433cfef773298bb766e1ea4c2d5d1f5005f3a5002fbe03439c370baeccf)) |
 | 🏷️ **Latest release** | [v0.4.0 — Kalshi + App Kit + Merkle playground](https://github.com/tang-vu/reasoning-receipt/releases/tag/v0.4.0) |
@@ -39,7 +45,42 @@ Or offline, without trusting our server: pass a `--cid` and `--expected-hash`, t
 
 ## What it is
 
-A paid oracle: pay a few cents of USDC over [x402 v2](https://docs.cdp.coinbase.com/x402/docs/welcome), get a probability for a **Polymarket or Kalshi event**, **plus a receipt** — a hashed, byte-verifiable, **Merkle-rooted reasoning DAG** committed to Arc.
+ReasoningReceipt is a small protocol layer between an AI system and the world it affects.
+It turns the evidence behind any decision or action into canonical JSON, hashes every typed
+node independently, and commits those nodes under one Merkle root. Receipts verify locally
+without trusting this server, a model provider, a blockchain, or a storage vendor.
+
+Use it for autonomous agent actions, support and financial approvals, compliance audits,
+tool-call provenance, human sign-off, or forecasts. Arc anchoring, Irys storage, and x402
+payments are optional adapters. The original Polymarket/Kalshi oracle is the first reference
+implementation, not the boundary of the product.
+
+### Portable API
+
+```http
+POST /v1/receipts  # create a canonical receipt
+POST /v1/verify    # verify every commitment offline
+POST /v1/proofs    # produce a proof for one evidence node
+```
+
+Example receipt input:
+
+```json
+{
+  "subject": "support:refund-approval",
+  "metadata": { "workflow": "customer-support" },
+  "nodes": [
+    { "id": "intent", "kind": "request", "payload": { "refund_usd": 49 } },
+    { "id": "policy", "kind": "policy", "payload": { "limit_usd": 100 } },
+    { "id": "decision", "kind": "outcome", "payload": { "approved": true } }
+  ]
+}
+```
+
+### Reference adapter: prediction markets
+
+Pay a few cents of USDC over x402 v2, get a probability for a Polymarket or Kalshi event,
+plus a hashed, byte-verifiable, Merkle-rooted reasoning DAG committed to Arc.
 
 Each market goes through a **5-agent ensemble**:
 
@@ -65,7 +106,7 @@ graph LR
   K -->|approved trace| S[Canonicalise<br/>per-node SHA-256 + Merkle root]
   S -->|JSON bytes| F[Irys upload]
   S -->|hashes + root| G[ReceiptRegistryV2 on Arc]
-  G -.->|Receipt event| H[Dashboard - GitHub Pages]
+  G -.->|Receipt event| H[Dashboard - Vercel]
   G -.->|resolved outcomes| Q[Resolver → Brier calibration]
   Q -.->|category prior| SV
   D[Trader - Kelly sizing] -.->|reads probability| SV
@@ -106,11 +147,11 @@ uv run python -m scripts.circle-setup
 # 3. Deploy ReceiptRegistry to Arc (one-time)
 ./scripts/deploy-contract.sh   # writes RECEIPT_REGISTRY_ADDRESS to .env
 
-# 4. Run the agent loop (continuous)
-uv run python -m agent.loop
-
-# 5. (optional) Serve x402-paywalled /price endpoint for external consumers
+# 4. Run the portable API locally
 uv run uvicorn server.main:app --reload
+
+# 5. (optional) Run the legacy prediction adapter on demand
+uv run python -m agent.loop
 
 # 6. (optional) Local dashboard
 cd dashboard && npm install && npm run dev
@@ -161,8 +202,8 @@ contracts/    ReceiptRegistry.sol (V1) + ReceiptRegistryV2.sol (V2 with
 storage/      Irys sidecar dispatcher + SQLAlchemy ORM (SQLite dev / Postgres prod)
 wallets/      Circle developer-controlled wallets + Kelly trader portfolio
 dashboard/    Next.js 15 — Home / Agents / Traces / Trace detail / Inclusion
-              / Calibration / Events / Stats / Try. Hybrid mode: live API
-              first, snapshot fallback. Auto-deployed to GitHub Pages.
+              / Calibration / Events / Stats / Try / Build. Deployed to
+              Vercel with live API polling and snapshot fallback.
 services/
   irys/         Node sidecar for @irys/upload Bundlr-signed uploads
   mcp/          MCP stdio server for Claude Desktop / Cursor / Cline
@@ -189,7 +230,7 @@ docs/         architecture / demo / submission / mcp / canteen-walkthrough /
 - **Cross-chain**: CCTP V2 direct-mint path (TokenMessengerV2 + MessageTransmitterV2 + Iris attestation).
 - **Unified Balance**: Circle App Kit (`@circle-fin/app-kit@1.5.1` + adapter-viem-v2) — reads agent operator USDC across 12 testnet chains incl. Arc as one pool. See `services/app-kit/`.
 - **Storage**: Irys (Bundlr-signed uploads via tiny Node sidecar) + SQLAlchemy 2.0.
-- **Dashboard**: Next.js 15 static export, deployed automatically to GitHub Pages on every push. Hybrid mode — live API first (`api.rrtrace.xyz` via Cloudflare Tunnel) with client-side refresh on mount, snapshot fallback when the tunnel hiccups.
+- **Deployment**: Next.js 15 dashboard and FastAPI functions on Vercel, Neon Postgres for durable data, Vercel Cron for bounded scheduled work, and snapshot fallback for read resilience.
 - **MCP**: `@modelcontextprotocol/sdk` stdio server (4 tools, free) + paywalled HTTP variant at `/mcp/v1/{get_price,audit}` ($0.01 USDC per call, same x402 envelope).
 
 ## Why this is interesting

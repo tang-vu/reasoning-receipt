@@ -1,38 +1,30 @@
 # ReasoningReceipt
 
-> An x402-paywalled AI oracle for prediction markets where the **reasoning trace is the product, not just the number**. Every price ships with a hashed, byte-verifiable chain-of-thought. Settled on Arc Testnet in under a second for ~$0.0007 USDC per receipt.
+> Portable, byte-verifiable receipts for AI decisions and actions. Capture evidence, policy checks, tool calls, approvals, and outcomes as independently provable Merkle nodes.
 
-ReasoningReceipt prices Polymarket events via a five-agent ensemble — three sub-researchers (Bull, Bear, Edge) run in parallel with isolated context, a Supervisor merges with weighted-Bayesian synthesis, and a Critic audits the result across six rigor dimensions. Each node of the resulting reasoning DAG (claim, evidence, counter-arguments, sensitivity factors, falsifiable claims, critic dimensions) gets its own SHA-256, and a Merkle root over all nodes lives on Arc inside ReceiptRegistryV2. Anyone can pull the trace, re-canonicalise it, re-hash it, and verify byte-for-byte — or challenge a single evidence URL with a ~200-byte inclusion proof.
+ReasoningReceipt is a domain-neutral protocol layer between an AI system and the world it affects. Each typed evidence node gets its own SHA-256 and one Merkle root commits the complete receipt. Receipts are canonical JSON and verify offline without trusting a model provider, chain, storage service, or ReasoningReceipt server. Arc anchoring, Irys storage, and x402 payment are optional adapters. The original Polymarket/Kalshi oracle remains as a reference implementation and historical dataset.
 
-## How to use
+## Portable API
 
-- Paid query: `GET https://api.rrtrace.xyz/price/{market_id}` returns `402 Payment Required` with an x402 v2 EIP-3009 challenge; signing + retrying returns a probability + trace pointer + Arc tx hash.
-- Verify a receipt: `GET https://api.rrtrace.xyz/verify/{receipt_id}` fetches the trace from Irys, re-hashes, returns `{verified: bool, recomputed_hash, fetched_trace}`.
-- Read receipts: `GET https://api.rrtrace.xyz/receipts?limit=N` for the latest N rows.
-- Live event stream: `GET https://events.rrtrace.xyz/events/stream` Server-Sent Events, one `event: receipt` frame per emission.
+- Create: `POST /v1/receipts` with a subject, metadata, and 1–128 typed evidence nodes.
+- Verify: `POST /v1/verify` recomputes every commitment locally.
+- Selective proof: `POST /v1/proofs` returns a Merkle inclusion proof for one node.
+
+## Production deployment
+
+- The dashboard and API run on Vercel; durable receipt data lives in Neon Postgres.
+- Vercel Cron invokes bounded agent batches, and the dashboard polls serverless endpoints instead of requiring a persistent SSE process.
+- Historical receipts remain available in the live dashboard and on Arc Testnet.
 
 ## Docs
 
-- [Architecture](https://github.com/tang-vu/reasoning-receipt/blob/main/docs/ARCHITECTURE.md): the daemon loop, schemas, contracts.
-- [Submission](https://github.com/tang-vu/reasoning-receipt/blob/main/docs/SUBMISSION.md): hackathon-form text with all rubric mappings.
-- [Demo walkthrough](https://github.com/tang-vu/reasoning-receipt/blob/main/docs/DEMO.md): 3-minute recorded demo script.
-- [MCP integration](https://github.com/tang-vu/reasoning-receipt/blob/main/docs/mcp.md): wire the oracle into Claude Desktop / Cursor / Cline as a stdio tool.
+- [Repository](https://github.com/tang-vu/reasoning-receipt): protocol, API, dashboard, tests, and reference adapters.
+- [Architecture](https://github.com/tang-vu/reasoning-receipt/blob/main/docs/ARCHITECTURE.md): receipt pipeline, schemas, and contracts.
+- [MCP integration](https://github.com/tang-vu/reasoning-receipt/blob/main/docs/mcp.md): legacy oracle tools for MCP clients.
 
-## Contracts on Arc Testnet (chain id 5042002)
+## Optional Arc adapter
 
-- ReceiptRegistryV2 (Merkle-rooted reasoning DAG, source-verified): `0x27d93c52fea923f956345af27f61d7bf47f0c4c1`
-- ReceiptRegistry V1 (back-compat, source-verified): `0x59022EFd46a697bbf2fAd36CcfA8F2099f0bd1Bf`
-- CanteenUSDC wrapper (source-verified): `0x7473d0db92F77aA89F19A2D74174D14D14CBD3E1`
-
-## Optional: agents and MCP
-
-ReasoningReceipt ships an MCP stdio server (`services/mcp/server.js`) exposing four tools to any MCP-aware client (Claude Desktop, Cursor, Cline, Continue):
-
-- `get_price(market_id)` — latest cached probability for a Polymarket market id
-- `verify_receipt(receipt_id)` — pull trace from Irys, re-hash, byte-match
-- `get_stats()` — receipts, USDC settled, distinct markets, distinct consumers
-- `get_calibration()` — Brier score + 10-bucket reliability curve
-
-## Hackathon context (Agora Agents, May 11–25, 2026)
-
-Built solo for the Agora Agents hackathon by Canteen × Circle. Targets RFB 02 (Prediction Market Trader Intelligence) and RFB 03 (per-action ≤ $0.01). Live at https://rrtrace.xyz. Source: https://github.com/tang-vu/reasoning-receipt.
+- ReceiptRegistryV2: `0x27d93c52fea923f956345af27f61d7bf47f0c4c1`
+- Chain id: `5042002` (Arc Testnet)
+- Product: https://rrtrace.xyz
+- API: https://reasoning-receipt-api.vercel.app

@@ -9,6 +9,7 @@ const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? (useSnapshot ? "/reasoning
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  outputFileTracingRoot: process.cwd(),
   // Static export when running against a snapshot — works for any static host.
   ...(useSnapshot
     ? {

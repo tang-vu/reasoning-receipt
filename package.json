@@ -1,0 +1,10 @@
+{
+  "name": "reasoning-receipt-api",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@irys/upload": "^0.0.15",
+    "@irys/upload-ethereum": "^0.0.16"
+  }
+}

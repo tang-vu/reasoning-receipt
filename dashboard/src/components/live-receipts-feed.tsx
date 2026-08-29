@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 import type { TraceRow } from "@/lib/api";
-import { api, eventsStreamUrl } from "@/lib/api";
+import { api } from "@/lib/api";
 
 type Status = "idle" | "connecting" | "live" | "fallback";
 
@@ -21,16 +21,12 @@ function timeAgo(iso: string): string {
 }
 
 /**
- * Live SSE-backed receipts feed. On mount it pulls the latest 100 receipts
- * from the live API (overriding the build-time seed so the static export
- * doesn't show hour-old rows), then subscribes to /events/stream and
- * prepends new receipts as they arrive. Falls back to the SSR seed if the
- * client fetch fails.
+ * Serverless-friendly feed. Polling works across short-lived function
+ * instances without relying on process-local SSE subscriber state.
  */
 export function LiveReceiptsFeed({ initial }: { initial: TraceRow[] }) {
   const [rows, setRows] = useState<TraceRow[]>(initial);
   const [status, setStatus] = useState<Status>("idle");
-  const seenIds = useRef<Set<number>>(new Set(initial.map((r) => r.id)));
 
   // On mount, refresh the table from the live API. The initial seed is baked
   // at build time on GH Pages, so without this the table stays frozen at the
@@ -38,47 +34,22 @@ export function LiveReceiptsFeed({ initial }: { initial: TraceRow[] }) {
   // between the latest fresh receipt and the next row.
   useEffect(() => {
     let cancelled = false;
-    api
-      .receipts(100)
-      .then((fresh) => {
-        if (cancelled || fresh.length === 0) return;
-        setRows(fresh);
-        seenIds.current = new Set(fresh.map((r) => r.id));
-      })
-      .catch(() => {
-        // Stay on the SSR seed — SSE will still add live receipts on top.
+    setStatus("connecting");
+    const refresh = () => {
+      api.receipts(100).then((fresh) => {
+        if (cancelled) return;
+        if (fresh.length) setRows(fresh);
+        setStatus("live");
+      }).catch(() => {
+        if (!cancelled) setStatus("fallback");
       });
+    };
+    refresh();
+    const timer = window.setInterval(refresh, 30_000);
+
     return () => {
       cancelled = true;
-    };
-  }, []);
-
-  useEffect(() => {
-    setStatus("connecting");
-    const url = eventsStreamUrl();
-    const es = new EventSource(url);
-
-    es.addEventListener("open", () => setStatus("live"));
-
-    es.addEventListener("receipt", (e: MessageEvent) => {
-      try {
-        const payload = JSON.parse((e as MessageEvent<string>).data) as TraceRow;
-        if (seenIds.current.has(payload.id)) return;
-        seenIds.current.add(payload.id);
-        setRows((prev) => [payload, ...prev].slice(0, 100));
-      } catch {
-        // Bad payload — drop silently, don't break the stream.
-      }
-    });
-
-    es.addEventListener("error", () => {
-      // EventSource auto-reconnects. We flip to "fallback" so the user knows
-      // the snapshot data isn't auto-updating, but keep the existing rows.
-      setStatus("fallback");
-    });
-
-    return () => {
-      es.close();
+      window.clearInterval(timer);
     };
   }, []);
 

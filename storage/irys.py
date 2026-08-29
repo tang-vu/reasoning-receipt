@@ -24,6 +24,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+import httpx
+
 logger = logging.getLogger(__name__)
 
 # Resolve once: services/irys lives at the repo root.
@@ -82,18 +84,23 @@ class IrysClient:
         mock: bool | None = None,
         sidecar_script: Path | None = None,
         sidecar_timeout_s: float = 30.0,
+        upload_url: str | None = None,
+        upload_secret: str | None = None,
     ) -> None:
         self.private_key = private_key or os.getenv("IRYS_PRIVATE_KEY")
         self.network = network or os.getenv("IRYS_NETWORK", "devnet")
         self.token = token or os.getenv("IRYS_TOKEN", "ethereum")
         self.sidecar_script = sidecar_script or _IRYS_SIDECAR_SCRIPT
         self.sidecar_timeout_s = sidecar_timeout_s
+        inferred_url = f"https://{os.getenv('VERCEL_URL')}/api/irys-upload" if os.getenv("VERCEL_URL") else ""
+        self.upload_url = upload_url or os.getenv("IRYS_UPLOAD_URL") or inferred_url
+        self.upload_secret = upload_secret or os.getenv("IRYS_UPLOAD_SECRET", "")
 
         env_mock = os.getenv("RR_MOCK_IRYS", "").lower() in {"1", "true", "yes"}
         self.mock = env_mock if mock is None else mock
-        if not self.private_key:
+        if not self.private_key and not (self.upload_url and self.upload_secret):
             self.mock = True
-        if not self.mock and not self.sidecar_script.exists():
+        if not self.mock and not self.upload_url and not self.sidecar_script.exists():
             logger.warning(
                 "irys: sidecar script not found at %s — falling back to mock",
                 self.sidecar_script,
@@ -107,6 +114,23 @@ class IrysClient:
         if self.mock:
             cid = "ar://" + h[2:34]
             return TraceUpload(hash_hex=h, cid=cid, size_bytes=len(blob), is_mock=True)
+
+        if self.upload_url:
+            response = httpx.post(
+                self.upload_url,
+                content=blob,
+                headers={
+                    "Authorization": f"Bearer {self.upload_secret}",
+                    "Content-Type": "application/json",
+                },
+                timeout=self.sidecar_timeout_s,
+            )
+            response.raise_for_status()
+            data = response.json()
+            cid = data.get("cid") or (f"ar://{data['id']}" if "id" in data else "")
+            if not cid:
+                raise RuntimeError(f"remote Irys uploader returned no id: {data}")
+            return TraceUpload(hash_hex=h, cid=cid, size_bytes=len(blob), is_mock=False)
 
         env = {**os.environ, "IRYS_PRIVATE_KEY": self.private_key or "", "IRYS_NETWORK": self.network}
         try:
