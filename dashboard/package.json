@@ -9,9 +9,12 @@
     "build:snapshot": "cross-env NEXT_PUBLIC_USE_SNAPSHOT=1 NEXT_PUBLIC_BASE_PATH=/reasoning-receipt next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "sync-sdk": "node scripts/sync-sdk.mjs"
   },
   "dependencies": {
+    "@noble/ed25519": "^2.3.0",
+    "@noble/hashes": "^1.8.0",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.6.1",
     "@tanstack/react-query": "^5.100.10",

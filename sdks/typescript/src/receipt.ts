@@ -28,9 +28,10 @@ import {
   SchemaError,
   ShapeError,
 } from "./errors.js";
-import { hexToBytes, merkleProof, merkleRoot, sha256Hex, verifyMerkleProof } from "./merkle.js";
+import { merkleProof, merkleRoot, sha256Hex, verifyMerkleProof } from "./merkle.js";
 import { verifySignatures } from "./signatures.js";
 import type { SignatureResult } from "./signatures.js";
+import { bytesToHex, hexToBytes, bytesEqual } from "./hex.js";
 
 export const SCHEMA_VERSION = "reasoning-receipt/1";
 export const CANONICALIZATION = CANONICALIZATION_ID;
@@ -99,7 +100,7 @@ export function bytes32Hex(value: unknown, what = "hash"): Uint8Array {
   if (!/^[0-9a-fA-F]+$/.test(raw)) {
     throw new ShapeError(`${what} is not hex`, E_BAD_HASH);
   }
-  const decoded = Uint8Array.from(Buffer.from(raw, "hex"));
+  const decoded = hexToBytes(raw);
   if (decoded.length !== 32) {
     throw new ShapeError(`${what} is ${decoded.length} bytes, expected 32`, E_BAD_HASH);
   }
@@ -316,17 +317,17 @@ export class PortableReceipt {
   nodeHashes(): Record<string, string> {
     const out: Record<string, string> = {};
     for (const nd of this.nodeDicts()) {
-      out[nd.id] = "0x" + Buffer.from(nodeLeaf(nd)).toString("hex");
+      out[nd.id] = "0x" + bytesToHex(nodeLeaf(nd));
     }
     return out;
   }
 
   edgeHashes(): string[] {
-    return this.edgeDicts().map((ed) => "0x" + Buffer.from(edgeLeaf(ed)).toString("hex"));
+    return this.edgeDicts().map((ed) => "0x" + bytesToHex(edgeLeaf(ed)));
   }
 
   merkleRootHex(): string {
-    return "0x" + Buffer.from(merkleRootOf(this.leaves())).toString("hex");
+    return "0x" + bytesToHex(merkleRootOf(this.leaves()));
   }
 
   committedEnvelope(): Record<string, JsonValue> {
@@ -384,8 +385,8 @@ export class PortableReceipt {
       schema_version: this.schema_version,
       item_type: "node",
       item: ordered[idx],
-      leaf: "0x" + Buffer.from(leaf).toString("hex"),
-      merkle_root: "0x" + Buffer.from(merkleRootOf(leaves)).toString("hex"),
+      leaf: "0x" + bytesToHex(leaf),
+      merkle_root: "0x" + bytesToHex(merkleRootOf(leaves)),
       proof: merkleProof(leaves, index),
     };
   }
@@ -402,8 +403,8 @@ export class PortableReceipt {
       schema_version: this.schema_version,
       item_type: "edge",
       item: edgeDicts[index],
-      leaf: "0x" + Buffer.from(leaf).toString("hex"),
-      merkle_root: "0x" + Buffer.from(merkleRootOf(leaves)).toString("hex"),
+      leaf: "0x" + bytesToHex(leaf),
+      merkle_root: "0x" + bytesToHex(merkleRootOf(leaves)),
       proof: merkleProof(leaves, leafIndex),
     };
   }
@@ -759,12 +760,12 @@ export function verifyProofDocument(proofDoc: unknown): boolean {
     } else {
       return false;
     }
-    if (Buffer.compare(Buffer.from(actualLeaf), Buffer.from(expectedLeaf)) !== 0) return false;
+    if (!bytesEqual(actualLeaf, expectedLeaf)) return false;
     const siblings = (doc.proof as unknown[]).map((p) => bytes32Hex(p, "proof element"));
     return verifyMerkleProof(
       doc.merkle_root as string,
       actualLeaf,
-      siblings.map((s) => "0x" + Buffer.from(s).toString("hex")),
+      siblings.map((s) => "0x" + bytesToHex(s)),
     );
   } catch (exc) {
     if (exc instanceof ReceiptError || exc instanceof TypeError) return false;

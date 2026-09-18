@@ -11,6 +11,7 @@ import {
   verifyReceipt,
 } from "./receipt.js";
 import type { VerifyReport } from "./receipt.js";
+import { hexToBytes } from "./hex.js";
 
 export const KNOWN_SCHEMAS = [SCHEMA_VERSION, "rr-trace/3", "rr-trace/2", "rr-trace/1"];
 const TRACE_BLOB_SCHEMAS = new Set(["rr-trace/1", "rr-trace/2"]);
@@ -39,7 +40,7 @@ function report(p: Partial<VerifyReport> & Pick<VerifyReport, "valid" | "schema_
 
 function bytes32(hexStr: unknown): Uint8Array {
   const raw = typeof hexStr === "string" && hexStr.startsWith("0x") ? hexStr.slice(2) : (hexStr as string);
-  return Uint8Array.from(Buffer.from(raw, "hex"));
+  return hexToBytes(raw);
 }
 
 export function legacyTraceHash(document: Record<string, JsonValue>): string {

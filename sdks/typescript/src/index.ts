@@ -6,11 +6,12 @@ export type { JsonValue } from "./canon.js";
 export { legacyCanonicalBytes, LEGACY_CANONICALIZATION_ID } from "./legacy_canon.js";
 export {
   sha256Hex,
-  hexToBytes,
+  digestBytes,
   merkleRoot,
   merkleProof,
   verifyMerkleProof,
 } from "./merkle.js";
+export { bytesToHex, hexToBytes, bytesEqual } from "./hex.js";
 export {
   SCHEMA_VERSION,
   CANONICALIZATION,

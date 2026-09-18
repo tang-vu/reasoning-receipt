@@ -9,6 +9,7 @@ import type { JsonValue } from "./canon.js";
 import { E_BAD_SIGNATURE, SignatureError } from "./errors.js";
 import { nodeLeaf, receiptHashOf, validTimestamp } from "./receipt.js";
 import type { NodeDict } from "./receipt.js";
+import { bytesToHex, hexToBytes } from "./hex.js";
 
 export const ALG_ED25519 = "ed25519";
 
@@ -39,7 +40,7 @@ function decodeKey(hexValue: unknown, length: number, what: string): Uint8Array 
   if (!/^[0-9a-fA-F]*$/.test(raw)) {
     throw new SignatureError(`${what} is not hex`, E_BAD_SIGNATURE);
   }
-  const decoded = Uint8Array.from(Buffer.from(raw, "hex"));
+  const decoded = hexToBytes(raw);
   if (decoded.length !== length) {
     throw new SignatureError(`${what} must be ${length} bytes`, E_BAD_SIGNATURE);
   }
@@ -53,8 +54,8 @@ function utcNowIso(): string {
 export function generateKeypair(): { private_key: string; public_key: string } {
   const seed = crypto.getRandomValues(new Uint8Array(32));
   return {
-    private_key: "0x" + Buffer.from(seed).toString("hex"),
-    public_key: "0x" + Buffer.from(getPublicKey(seed)).toString("hex"),
+    private_key: "0x" + bytesToHex(seed),
+    public_key: "0x" + bytesToHex(getPublicKey(seed)),
   };
 }
 
@@ -79,7 +80,7 @@ export function sign(
 
   let preimage: Uint8Array;
   if (scope === "receipt") {
-    const target = Buffer.from(receiptHashOf(committedEnvelope).slice(2), "hex");
+    const target = hexToBytes(receiptHashOf(committedEnvelope));
     preimage = concat(SIG_DOMAIN_RECEIPT, Uint8Array.from(target));
   } else if (scope.startsWith("node:")) {
     const nodeId = scope.slice(5);
@@ -103,8 +104,8 @@ export function sign(
   const sig: SignatureObject = {
     alg: ALG_ED25519,
     scope,
-    public_key: "0x" + Buffer.from(publicKey).toString("hex"),
-    sig: "0x" + Buffer.from(sigBytes).toString("hex"),
+    public_key: "0x" + bytesToHex(publicKey),
+    sig: "0x" + bytesToHex(sigBytes),
     signed_at: signedAt,
   };
   if (opts.key_id !== undefined) sig.key_id = opts.key_id;
@@ -154,7 +155,7 @@ export function verifySignatures(
 
       let preimage: Uint8Array;
       if (sig.scope === "receipt") {
-        const target = Buffer.from(receiptHashOf(committedEnvelope).slice(2), "hex");
+        const target = hexToBytes(receiptHashOf(committedEnvelope));
         preimage = concat(SIG_DOMAIN_RECEIPT, Uint8Array.from(target));
       } else if ((sig.scope as string).startsWith("node:")) {
         const nodeId = (sig.scope as string).slice(5);

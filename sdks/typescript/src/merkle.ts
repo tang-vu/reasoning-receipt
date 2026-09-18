@@ -4,14 +4,15 @@
 
 import { sha256 } from "@noble/hashes/sha2.js";
 import { ReceiptError } from "./errors.js";
+import { bytesToHex, hexToBytes } from "./hex.js";
 
 export function sha256Hex(data: Uint8Array): string {
-  return "0x" + Buffer.from(sha256(data)).toString("hex");
+  return "0x" + bytesToHex(sha256(data));
 }
 
-export function hexToBytes(hex: string): Uint8Array {
+export function digestBytes(hex: string): Uint8Array {
   if (!/^0x[0-9a-f]{64}$/.test(hex)) throw new ReceiptError("invalid_hash", hex);
-  return Uint8Array.from(Buffer.from(hex.slice(2), "hex"));
+  return hexToBytes(hex.slice(2));
 }
 
 function cmpBytes(a: Uint8Array, b: Uint8Array): number {
@@ -37,7 +38,7 @@ export function merkleRoot(leaves: Uint8Array[]): string {
     }
     level = next;
   }
-  return "0x" + Buffer.from(level[0]).toString("hex");
+  return "0x" + bytesToHex(level[0]);
 }
 
 function concat(a: Uint8Array, b: Uint8Array): Uint8Array {
@@ -67,7 +68,7 @@ export function merkleProof(leaves: Uint8Array[], index: number): string[] {
       }
     }
     if (sib < level.length) {
-      siblings.push("0x" + Buffer.from(level[sib]).toString("hex"));
+      siblings.push("0x" + bytesToHex(level[sib]));
     }
     idx = Math.floor(idx / 2);
     level = next;
@@ -78,9 +79,9 @@ export function merkleProof(leaves: Uint8Array[], index: number): string[] {
 export function verifyMerkleProof(root: string, leaf: Uint8Array, siblings: string[]): boolean {
   let node = leaf;
   for (const sib of siblings) {
-    const s = hexToBytes(sib);
+    const s = digestBytes(sib);
     const [a, b] = [node, s].sort(cmpBytes);
     node = sha256(concat(a, b));
   }
-  return "0x" + Buffer.from(node).toString("hex") === root;
+  return "0x" + bytesToHex(node) === root;
 }
