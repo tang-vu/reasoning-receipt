@@ -36,6 +36,7 @@ dev = [
 ]
 
 [project.scripts]
+rr = "protocol.cli:main"
 rr-agent = "agent.loop:main"
 rr-server = "server.main:run"
 

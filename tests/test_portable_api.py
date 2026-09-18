@@ -42,7 +42,11 @@ def test_create_verify_and_prove_domain_neutral_receipt() -> None:
 
     proof = client.post("/v1/proofs", json={"receipt": envelope, "node_id": "policy"})
     assert proof.status_code == 200
-    assert proof.json()["node"]["kind"] == "policy"
+    assert proof.json()["item"]["kind"] == "policy"
+
+    verified_proof = client.post("/v1/proofs/verify", json={"proof": proof.json()})
+    assert verified_proof.status_code == 200
+    assert verified_proof.json()["valid"] is True
 
 
 def test_verify_rejects_tampering() -> None:
@@ -52,7 +56,7 @@ def test_verify_rejects_tampering() -> None:
     tampered["nodes"][0]["payload"]["refund_usd"] = 499
     response = client.post("/v1/verify", json={"receipt": tampered})
     assert response.status_code == 200
-    assert response.json() == {"valid": False}
+    assert response.json()["valid"] is False
 
 
 def test_create_rejects_duplicate_node_ids() -> None:

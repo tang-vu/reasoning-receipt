@@ -43,8 +43,8 @@ def test_receipt_and_each_node_proof_verify() -> None:
 
 
 def test_tampered_node_fails_standalone_proof() -> None:
-    proof = _receipt().proof_for("policy").to_dict()
-    proof["node"]["payload"]["max_amount"] = 1000.0
+    proof = _receipt().proof_for("policy")
+    proof["item"]["payload"]["max_amount"] = 1000.0
     assert not verify_receipt_proof(proof)
 
 
@@ -58,7 +58,7 @@ def test_tampered_envelope_fails_verification() -> None:
 def test_duplicate_ids_and_empty_receipts_are_rejected() -> None:
     with pytest.raises(ValueError, match="at least one"):
         PortableReceipt(subject="x", nodes=[]).to_dict()
-    with pytest.raises(ValueError, match="unique"):
+    with pytest.raises(ValueError, match="duplicate"):
         PortableReceipt(
             subject="x",
             nodes=[ReceiptNode("a", "fact", {}), ReceiptNode("a", "fact", {})],
