@@ -42,6 +42,14 @@ versioning policy lives in `docs/versioning.md`.
   `docs/legacy-compatibility.md`, `docs/profiles.md`.
 - **API**: `server/portable.py` consumes the protocol core for
   create/verify/proof with per-check verification reports.
+- **Browser-safe TypeScript SDK**: all `Buffer` usage replaced with
+  isomorphic `Uint8Array` hex helpers (`src/hex.ts`); the strict `0x`
+  digest decoder is now exported as `digestBytes`. The SDK verifies
+  receipts in any runtime — Node, browser, edge.
+- **Dashboard `/verify`**: fully client-side offline receipt verifier —
+  paste/upload/build-sample input, one-byte tamper demo, and the full
+  verification report (checks, receipt hash, Merkle root, signature
+  results, errors). Vendored SDK refreshed via `npm run sync-sdk`.
 
 ### Fixed
 

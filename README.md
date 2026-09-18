@@ -232,9 +232,11 @@ contracts/    ReceiptRegistry.sol (V1) + ReceiptRegistryV2.sol (V2 with
               merkleRoot + verifyInclusion view), both source-verified on Arc
 storage/      Irys sidecar dispatcher + SQLAlchemy ORM (SQLite dev / Postgres prod)
 wallets/      Circle developer-controlled wallets + Kelly trader portfolio
-dashboard/    Next.js 15 — Home / Agents / Traces / Trace detail / Inclusion
-              / Calibration / Events / Stats / Try / Build. Deployed to
-              Vercel with live API polling and snapshot fallback.
+dashboard/    Next.js 15 — Home / Agents / Traces / Trace detail / Verify
+              (offline, client-side) / Inclusion / Calibration / Events /
+              Stats / Try / Build. Deployed to Vercel with live API polling
+              and snapshot fallback. The vendored SDK under src/vendor/ is
+              refreshed with `npm run sync-sdk`.
 services/
   irys/         Node sidecar for @irys/upload Bundlr-signed uploads
   mcp/          MCP stdio server for Claude Desktop / Cursor / Cline
