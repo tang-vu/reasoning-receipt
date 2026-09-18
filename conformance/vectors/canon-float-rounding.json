@@ -1,6 +1,6 @@
 {
   "expect": {
-    "canonical": "{\"down\":0.999999,\"negtiny\":0.000000,\"tiny\":0.000000,\"up\":0.123457}"
+    "canonical": "{\"down\":0.999999,\"negtiny\":0,\"tiny\":0,\"up\":0.123457}"
   },
   "input": {
     "down": 0.9999994,

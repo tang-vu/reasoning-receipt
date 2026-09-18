@@ -210,7 +210,12 @@ languages (`JSON.parse("5.0")` and `JSON.parse("5")` are indistinguishable).
   digits**, round-to-nearest at the 7th digit (a binary64 value can never
   sit exactly on a 7th-digit tie, so tie-breaking is unobservable):
   `0.580000`, `-3.141593`, `0.000001`.
-- `-0.0` and any value rounding to zero magnitude → `0.000000`
+- **Integer-collapse rule** — if the six-fraction-digit rendering is
+  integral (ends in `.000000`), the fractional part is dropped and the
+  integer form is emitted: `1e-7` → `0.000000` → `0`;
+  `999999.9999999` → `1000000.000000` → `1000000`. This keeps
+  canonicalization a fixed point: `canon(parse(canon(x))) = canon(x)`.
+- `-0.0` and any value rounding to zero magnitude → `0`
   (no negative zero in canonical form).
 - Consequence: non-integral numbers are quantized to 1e-6. Producers
   needing arbitrary precision MUST use decimal strings

@@ -65,6 +65,11 @@ fn encode_f64(value: f64, out: &mut String) -> Result<()> {
     if fixed.starts_with('-') && fixed[1..].parse::<f64>().unwrap_or(1.0) == 0.0 {
         fixed.remove(0);
     }
+    if fixed.ends_with(".000000") {
+        // Rounding collapsed the value to an integer — emit integer form
+        // so canonical output reparses to the same canonical bytes.
+        fixed.truncate(fixed.len() - ".000000".len());
+    }
     out.push_str(&fixed);
     Ok(())
 }

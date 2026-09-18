@@ -87,6 +87,10 @@ def _encode_number(value: int | float, out: list[str]) -> None:
     fixed = f"{value:.6f}"
     if fixed.startswith("-") and float(fixed) == 0.0:
         fixed = fixed[1:]
+    if fixed.endswith(".000000"):
+        # Rounding collapsed the value to an integer — emit integer form
+        # so canonical output reparses to the same canonical bytes.
+        fixed = fixed[: -len(".000000")]
     out.append(fixed)
 
 

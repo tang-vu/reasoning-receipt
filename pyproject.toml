@@ -33,6 +33,7 @@ dev = [
     "pytest-asyncio>=0.24",
     "pytest-httpx>=0.32",
     "respx>=0.21",
+    "hypothesis>=6.112",
 ]
 
 [project.scripts]

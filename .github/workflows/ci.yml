@@ -107,6 +107,8 @@ jobs:
           workspaces: sdks/rust
       - name: Python conformance corpus
         run: uv run --extra dev python -m protocol.cli conformance
+      - name: Fuzz harness (seeded)
+        run: uv run --extra dev python scripts/fuzz/fuzz.py --iterations 300
       - name: TypeScript SDK tests
         working-directory: sdks/typescript
         run: npm ci && npm test

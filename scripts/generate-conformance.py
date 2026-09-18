@@ -219,6 +219,7 @@ def main() -> int:
     canon_ok("canon-floats", {"p": 0.58, "q": -3.1415926535, "r": 0.1, "s": 123.4567891})
     canon_ok("canon-float-integral", {"five": 5.0, "neg": -2.0, "exp": 1e6})
     canon_ok("canon-float-rounding", {"up": 0.1234567, "down": 0.9999994, "tiny": 0.0000004, "negtiny": -0.0000004})
+    canon_ok("canon-float-collapse-int", {"tiny": 1e-7, "big": 999999.9999999, "neg": -1.9999999})
     canon_ok("canon-negative-zero", {"$rr": "-0"})
     canon_err("canon-err-nan", {"x": {"$rr": "nan"}}, "noncanonical_value")
     canon_err("canon-err-pos-inf", {"x": {"$rr": "+inf"}}, "noncanonical_value")

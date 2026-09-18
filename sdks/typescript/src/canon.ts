@@ -84,6 +84,11 @@ function encodeNumber(value: number, out: string[]): void {
   }
   let fixed = value.toFixed(6);
   if (fixed.startsWith("-") && Number(fixed) === 0) fixed = fixed.slice(1);
+  if (fixed.endsWith(".000000")) {
+    // Rounding collapsed the value to an integer — emit integer form so
+    // canonical output reparses to the same canonical bytes.
+    fixed = fixed.slice(0, -".000000".length);
+  }
   out.push(fixed);
 }
 
