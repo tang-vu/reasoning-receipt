@@ -55,6 +55,37 @@ tool-call provenance, human sign-off, or forecasts. Arc anchoring, Irys storage,
 payments are optional adapters. The original Polymarket/Kalshi oracle is the first reference
 implementation, not the boundary of the product.
 
+### Protocol
+
+| | |
+|---|---|
+| 📐 **Normative spec** | [`spec/REASONING-RECEIPT-1.md`](spec/REASONING-RECEIPT-1.md) |
+| 🧪 **Conformance corpus** | [`conformance/vectors/`](conformance/vectors/) — 62 language-independent vectors |
+| 🛡️ **Security model** | [`docs/security-model.md`](docs/security-model.md) |
+| 🔢 **Versioning** | [`docs/versioning.md`](docs/versioning.md) |
+| ✅ **Conformance guide** | [`docs/conformance.md`](docs/conformance.md) |
+| 🔌 **Adapter guide** | [`docs/adapters.md`](docs/adapters.md) |
+| 🕰️ **Legacy compatibility** | [`docs/legacy-compatibility.md`](docs/legacy-compatibility.md) |
+| 🧾 **Receipt profiles** | [`docs/profiles.md`](docs/profiles.md) — coding / support / finance recipes |
+
+### SDKs
+
+| Language | Package | Status |
+|---|---|---|
+| Python | `protocol/` (this repo) | 62/62 vectors |
+| TypeScript | [`sdks/typescript`](sdks/typescript) — ESM, zero-dep* | 62/62 vectors |
+| Rust | [`sdks/rust`](sdks/rust) — `serde`/`sha2`/`ed25519-dalek` | 62/62 vectors |
+
+```bash
+# verify a receipt offline — no server needed
+uv run rr verify receipt.json
+uv run rr conformance            # run the whole corpus
+uv run python -m protocol.mcp_server   # MCP tools over stdio
+```
+
+Every SDK emits byte-identical commitments for the same input — proven
+by the deterministic parity harness in [`conformance/parity/`](conformance/parity/).
+
 ### Portable API
 
 ```http
