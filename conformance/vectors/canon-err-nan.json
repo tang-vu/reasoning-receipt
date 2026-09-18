@@ -1,0 +1,12 @@
+{
+  "expect": {
+    "error": "noncanonical_value"
+  },
+  "input": {
+    "x": {
+      "$rr": "nan"
+    }
+  },
+  "kind": "canon",
+  "name": "canon-err-nan"
+}

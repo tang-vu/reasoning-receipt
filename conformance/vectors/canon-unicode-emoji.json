@@ -1,0 +1,11 @@
+{
+  "expect": {
+    "canonical": "{\"cjk\":\"漢字かなカナ\",\"s\":\"rocket 🚀✨\"}"
+  },
+  "input": {
+    "cjk": "漢字かなカナ",
+    "s": "rocket 🚀✨"
+  },
+  "kind": "canon",
+  "name": "canon-unicode-emoji"
+}

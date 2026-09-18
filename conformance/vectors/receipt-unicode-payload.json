@@ -1,0 +1,29 @@
+{
+  "expect": {
+    "canonical_envelope": "{\"edge_hashes\":[],\"edges\":[],\"merkle_root\":\"0x0ab923461f9e36687ed0d5f458c4ccccaa50a26438ed7ad4c89c8c74e1614032\",\"metadata\":{},\"node_hashes\":{\"i18n\":\"0x0ab923461f9e36687ed0d5f458c4ccccaa50a26438ed7ad4c89c8c74e1614032\"},\"nodes\":[{\"id\":\"i18n\",\"kind\":\"evidence\",\"payload\":{\"n\":-0.250000,\"text\":\"émoji 🚀 naïve 中文\"}}],\"produced_at\":\"2026-03-03T03:03:03Z\",\"receipt_id\":\"rr-conf-003\",\"schema_version\":\"reasoning-receipt/1\",\"subject\":\"unicode\"}",
+    "edge_hashes": [],
+    "merkle_root": "0x0ab923461f9e36687ed0d5f458c4ccccaa50a26438ed7ad4c89c8c74e1614032",
+    "node_hashes": {
+      "i18n": "0x0ab923461f9e36687ed0d5f458c4ccccaa50a26438ed7ad4c89c8c74e1614032"
+    },
+    "receipt_hash": "0xb6a97f0d718c828a077f1f451d4f71dd55e13b3c4e09c0397b9cc12bb7b27494",
+    "valid": true
+  },
+  "input": {
+    "nodes": [
+      {
+        "id": "i18n",
+        "kind": "evidence",
+        "payload": {
+          "n": -0.25,
+          "text": "émoji 🚀 naïve 中文"
+        }
+      }
+    ],
+    "produced_at": "2026-03-03T03:03:03Z",
+    "receipt_id": "rr-conf-003",
+    "subject": "unicode"
+  },
+  "kind": "receipt",
+  "name": "receipt-unicode-payload"
+}

@@ -1,0 +1,56 @@
+{
+  "expect": {
+    "error": "duplicate_edge"
+  },
+  "input": {
+    "edges": [
+      {
+        "from": "decision",
+        "rel": "evaluated_against",
+        "to": "policy"
+      },
+      {
+        "from": "decision",
+        "rel": "produced",
+        "to": "intent"
+      },
+      {
+        "from": "decision",
+        "rel": "evaluated_against",
+        "to": "policy"
+      }
+    ],
+    "metadata": {
+      "channel": "email",
+      "workflow": "customer-support"
+    },
+    "nodes": [
+      {
+        "id": "decision",
+        "kind": "decision",
+        "payload": {
+          "approved": true
+        }
+      },
+      {
+        "id": "intent",
+        "kind": "intent",
+        "payload": {
+          "refund_usd": 49
+        }
+      },
+      {
+        "id": "policy",
+        "kind": "policy",
+        "payload": {
+          "limit_usd": 100
+        }
+      }
+    ],
+    "produced_at": "2026-01-01T00:00:00Z",
+    "receipt_id": "rr-conf-001",
+    "subject": "support:refund-approval"
+  },
+  "kind": "receipt",
+  "name": "receipt-err-duplicate-edge"
+}

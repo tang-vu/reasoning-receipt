@@ -1,0 +1,12 @@
+{
+  "expect": {
+    "canonical": "{\"a\":[],\"o\":{},\"s\":\"\"}"
+  },
+  "input": {
+    "a": [],
+    "o": {},
+    "s": ""
+  },
+  "kind": "canon",
+  "name": "canon-empty-structures"
+}

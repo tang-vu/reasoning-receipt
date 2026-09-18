@@ -1,0 +1,46 @@
+{
+  "expect": {
+    "errors": [],
+    "valid": true
+  },
+  "input": {
+    "merkle_root": "0xa00308b6a252666097a275613843de864ce13d8f70a5023bc92429461bbe31a9",
+    "metadata": {
+      "workflow": "customer-support"
+    },
+    "node_hashes": {
+      "decision": "0x5af5f2752feb5a3a9d304dde5de7d290aefe43aa84fd28905075b0f8811d11d4",
+      "intent": "0x3af211b867b561f359113508ef476d1ad9f1f0b7eaf32306b0d3383dce8ee870",
+      "policy": "0x173b951a53049d07dddb265bab766430e833bca9ac7462be57fae8beb01199b9"
+    },
+    "nodes": [
+      {
+        "id": "decision",
+        "kind": "outcome",
+        "payload": {
+          "approved": true
+        }
+      },
+      {
+        "id": "intent",
+        "kind": "request",
+        "payload": {
+          "refund_usd": 49.0
+        }
+      },
+      {
+        "id": "policy",
+        "kind": "policy",
+        "payload": {
+          "limit_usd": 100.0
+        }
+      }
+    ],
+    "produced_at": "2026-08-30T00:00:00Z",
+    "receipt_id": "rr-draft-001",
+    "schema_version": "reasoning-receipt/1",
+    "subject": "support:refund-approval"
+  },
+  "kind": "document",
+  "name": "document-draft-legacy"
+}

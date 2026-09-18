@@ -1,0 +1,56 @@
+{
+  "expect": {
+    "leaf": "0xbc284323b27c178d5ffb3d9961c4af3be3a7a9c6bb6ac76c1f5859e987ccc461",
+    "merkle_root": "0x307476483d05312ad670e7a1114af6a8a268084928108379d99b73a8823fd069",
+    "node": "policy",
+    "proof": [
+      "0x5159f7dfb7bf3efdd118a511e652f9f43b298deaf58b1dd66856d0fba269e011"
+    ]
+  },
+  "input": {
+    "edges": [
+      {
+        "from": "decision",
+        "rel": "evaluated_against",
+        "to": "policy"
+      },
+      {
+        "from": "decision",
+        "rel": "produced",
+        "to": "intent"
+      }
+    ],
+    "metadata": {
+      "channel": "email",
+      "workflow": "customer-support"
+    },
+    "nodes": [
+      {
+        "id": "decision",
+        "kind": "decision",
+        "payload": {
+          "approved": true
+        }
+      },
+      {
+        "id": "intent",
+        "kind": "intent",
+        "payload": {
+          "refund_usd": 49
+        }
+      },
+      {
+        "id": "policy",
+        "kind": "policy",
+        "payload": {
+          "limit_usd": 100
+        }
+      }
+    ],
+    "produced_at": "2026-01-01T00:00:00Z",
+    "receipt_id": "rr-conf-001",
+    "subject": "support:refund-approval"
+  },
+  "kind": "proof",
+  "name": "proof-node-policy"
+}

@@ -1,0 +1,29 @@
+{
+  "expect": {
+    "error": "empty_nodes"
+  },
+  "input": {
+    "edges": [
+      {
+        "from": "decision",
+        "rel": "evaluated_against",
+        "to": "policy"
+      },
+      {
+        "from": "decision",
+        "rel": "produced",
+        "to": "intent"
+      }
+    ],
+    "metadata": {
+      "channel": "email",
+      "workflow": "customer-support"
+    },
+    "nodes": [],
+    "produced_at": "2026-01-01T00:00:00Z",
+    "receipt_id": "rr-conf-001",
+    "subject": "support:refund-approval"
+  },
+  "kind": "receipt",
+  "name": "receipt-err-empty-nodes"
+}

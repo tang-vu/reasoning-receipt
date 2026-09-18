@@ -1,0 +1,100 @@
+{
+  "expect": {
+    "valid": false
+  },
+  "input": {
+    "edges": [
+      {
+        "from": "decision",
+        "rel": "evaluated_against",
+        "to": "policy"
+      },
+      {
+        "from": "decision",
+        "rel": "produced",
+        "to": "intent"
+      }
+    ],
+    "metadata": {
+      "channel": "email",
+      "workflow": "customer-support"
+    },
+    "nodes": [
+      {
+        "id": "decision",
+        "kind": "decision",
+        "payload": {
+          "approved": true
+        }
+      },
+      {
+        "id": "intent",
+        "kind": "intent",
+        "payload": {
+          "refund_usd": 49
+        }
+      },
+      {
+        "id": "policy",
+        "kind": "policy",
+        "payload": {
+          "limit_usd": 100
+        }
+      }
+    ],
+    "produced_at": "2026-01-01T00:00:00Z",
+    "receipt_id": "rr-conf-001",
+    "subject": "support:refund-approval"
+  },
+  "kind": "signature",
+  "name": "signature-wrong-message",
+  "sign": {
+    "private_key": "0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+    "scope": "receipt",
+    "signed_at": "2026-01-01T00:00:00Z"
+  },
+  "verify_against": {
+    "edges": [
+      {
+        "from": "decision",
+        "rel": "evaluated_against",
+        "to": "policy"
+      },
+      {
+        "from": "decision",
+        "rel": "produced",
+        "to": "intent"
+      }
+    ],
+    "metadata": {
+      "channel": "email",
+      "workflow": "customer-support"
+    },
+    "nodes": [
+      {
+        "id": "decision",
+        "kind": "decision",
+        "payload": {
+          "approved": true
+        }
+      },
+      {
+        "id": "intent",
+        "kind": "intent",
+        "payload": {
+          "refund_usd": 49000
+        }
+      },
+      {
+        "id": "policy",
+        "kind": "policy",
+        "payload": {
+          "limit_usd": 100
+        }
+      }
+    ],
+    "produced_at": "2026-01-01T00:00:00Z",
+    "receipt_id": "rr-conf-001",
+    "subject": "support:refund-approval"
+  }
+}

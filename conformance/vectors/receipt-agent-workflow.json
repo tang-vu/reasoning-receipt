@@ -1,0 +1,149 @@
+{
+  "expect": {
+    "canonical_envelope": "{\"edge_hashes\":[\"0xcc79eb9cc3b3ec0c96d5db51f3d25628a49bcd774ea78b2def1ed3700ed05147\",\"0xde04bb4d9d7e78900d3e98c7184c7c31b46f2d33a9bc31f7b71c914be879f2cd\",\"0x191b895a4b56c8ff46477070467627b8348e947f11535e4367e6d0362b657f3c\",\"0xe23454cba20b3869a386c2963b0555bc0552214232156e4242ad92cbf06e9217\",\"0xbef0c811efe156f84d1e1894f34e879c40b143cf65d6ebd345e38433e292fbfb\",\"0xae249125ebd3f27f16acacb57af94270b3932a01baf369c51fc4d3f53d35d5d8\",\"0x0a423788a3ad4e48b7f33acb3aa0a089ae79b7e2d6363d002dc3f7785f5d1f9a\"],\"edges\":[{\"from\":\"commit\",\"rel\":\"approved_by\",\"to\":\"approval\"},{\"from\":\"outcome\",\"rel\":\"caused\",\"to\":\"commit\"},{\"from\":\"test_run\",\"rel\":\"supported_by\",\"to\":\"evidence\"},{\"from\":\"test_run\",\"rel\":\"produced\",\"to\":\"tool_result\"},{\"from\":\"tool_call\",\"rel\":\"derived_from\",\"to\":\"intent\"},{\"from\":\"tool_call\",\"rel\":\"evaluated_against\",\"to\":\"policy\"},{\"from\":\"tool_result\",\"rel\":\"returned\",\"to\":\"tool_call\"}],\"merkle_root\":\"0x06fdce78e485f2c85ce99c6d2a61a18f747c8977bf1d8747dd3783fb7b0451f4\",\"metadata\":{\"base_sha\":\"cafebabe\",\"repo\":\"acme/widget\"},\"node_hashes\":{\"approval\":\"0x2e52b9ef8018c19693ca29ac35897551f038c061d67fc2900569d2ee4c9fc20b\",\"commit\":\"0x1410630bcfb2bfc4164e9bda6b815f1b2d0fefee2725890d39e226a89071d6db\",\"evidence\":\"0x76723e8c22ad2f24f576c04e15058fa230c158e4f28df44221dfe902856399ab\",\"intent\":\"0x04f8ef311312359161f93fe6cdb9b5730b0c248c8852ac210a7fd185b5ce40bd\",\"outcome\":\"0x6d72a916e0964ca3264f10b70042270a1d96d4ee6f4bac52f3ced6ae03254d4a\",\"policy\":\"0xe21715e2268fbd180877288ed6170b15512e94864609eb7baa1ad5f6353bdb04\",\"test_run\":\"0xdc98e848f821f7f2e46b540ea0bd2189f427bb82917012c30137ef7f83b816a8\",\"tool_call\":\"0x1de08536d388b633278000437441139e98598792e4f8b82c407fb88302fcb414\",\"tool_result\":\"0xcedcd1caf4330d892e824d8677e6825a1b219985aed8dbc01f092121ed6d3df7\"},\"nodes\":[{\"id\":\"approval\",\"kind\":\"approval\",\"payload\":{\"approver\":\"harvey\",\"method\":\"github-review\"}},{\"id\":\"commit\",\"kind\":\"execution\",\"payload\":{\"sha\":\"deadbeef\"}},{\"id\":\"evidence\",\"kind\":\"evidence\",\"payload\":{\"failure_rate\":0.400000,\"test\":\"test_x\"}},{\"id\":\"intent\",\"kind\":\"intent\",\"payload\":{\"request\":\"fix flaky test\"}},{\"id\":\"outcome\",\"kind\":\"outcome\",\"payload\":{\"status\":\"merged\"}},{\"id\":\"policy\",\"kind\":\"policy\",\"payload\":{\"allow_paths\":[\"tests/\"],\"require_review\":true}},{\"id\":\"test_run\",\"kind\":\"tool_result\",\"payload\":{\"cmd\":\"pytest -q\",\"failed\":0,\"passed\":140}},{\"id\":\"tool_call\",\"kind\":\"tool_call\",\"payload\":{\"path\":\"tests/test_x.py\",\"tool\":\"edit_file\"}},{\"id\":\"tool_result\",\"kind\":\"tool_result\",\"payload\":{\"diff_lines\":12}}],\"produced_at\":\"2026-02-02T12:30:00Z\",\"receipt_id\":\"rr-conf-002\",\"schema_version\":\"reasoning-receipt/1\",\"subject\":\"coding-agent:pr-42\"}",
+    "edge_hashes": [
+      "0xcc79eb9cc3b3ec0c96d5db51f3d25628a49bcd774ea78b2def1ed3700ed05147",
+      "0xde04bb4d9d7e78900d3e98c7184c7c31b46f2d33a9bc31f7b71c914be879f2cd",
+      "0x191b895a4b56c8ff46477070467627b8348e947f11535e4367e6d0362b657f3c",
+      "0xe23454cba20b3869a386c2963b0555bc0552214232156e4242ad92cbf06e9217",
+      "0xbef0c811efe156f84d1e1894f34e879c40b143cf65d6ebd345e38433e292fbfb",
+      "0xae249125ebd3f27f16acacb57af94270b3932a01baf369c51fc4d3f53d35d5d8",
+      "0x0a423788a3ad4e48b7f33acb3aa0a089ae79b7e2d6363d002dc3f7785f5d1f9a"
+    ],
+    "merkle_root": "0x06fdce78e485f2c85ce99c6d2a61a18f747c8977bf1d8747dd3783fb7b0451f4",
+    "node_hashes": {
+      "approval": "0x2e52b9ef8018c19693ca29ac35897551f038c061d67fc2900569d2ee4c9fc20b",
+      "commit": "0x1410630bcfb2bfc4164e9bda6b815f1b2d0fefee2725890d39e226a89071d6db",
+      "evidence": "0x76723e8c22ad2f24f576c04e15058fa230c158e4f28df44221dfe902856399ab",
+      "intent": "0x04f8ef311312359161f93fe6cdb9b5730b0c248c8852ac210a7fd185b5ce40bd",
+      "outcome": "0x6d72a916e0964ca3264f10b70042270a1d96d4ee6f4bac52f3ced6ae03254d4a",
+      "policy": "0xe21715e2268fbd180877288ed6170b15512e94864609eb7baa1ad5f6353bdb04",
+      "test_run": "0xdc98e848f821f7f2e46b540ea0bd2189f427bb82917012c30137ef7f83b816a8",
+      "tool_call": "0x1de08536d388b633278000437441139e98598792e4f8b82c407fb88302fcb414",
+      "tool_result": "0xcedcd1caf4330d892e824d8677e6825a1b219985aed8dbc01f092121ed6d3df7"
+    },
+    "receipt_hash": "0x4cfc3bec87a80a62d007ed5b9f1c6cbbde6099eb4e905f33c3824842bd035041",
+    "valid": true
+  },
+  "input": {
+    "edges": [
+      {
+        "from": "tool_call",
+        "rel": "evaluated_against",
+        "to": "policy"
+      },
+      {
+        "from": "tool_result",
+        "rel": "returned",
+        "to": "tool_call"
+      },
+      {
+        "from": "test_run",
+        "rel": "produced",
+        "to": "tool_result"
+      },
+      {
+        "from": "commit",
+        "rel": "approved_by",
+        "to": "approval"
+      },
+      {
+        "from": "outcome",
+        "rel": "caused",
+        "to": "commit"
+      },
+      {
+        "from": "tool_call",
+        "rel": "derived_from",
+        "to": "intent"
+      },
+      {
+        "from": "test_run",
+        "rel": "supported_by",
+        "to": "evidence"
+      }
+    ],
+    "metadata": {
+      "base_sha": "cafebabe",
+      "repo": "acme/widget"
+    },
+    "nodes": [
+      {
+        "id": "intent",
+        "kind": "intent",
+        "payload": {
+          "request": "fix flaky test"
+        }
+      },
+      {
+        "id": "policy",
+        "kind": "policy",
+        "payload": {
+          "allow_paths": [
+            "tests/"
+          ],
+          "require_review": true
+        }
+      },
+      {
+        "id": "evidence",
+        "kind": "evidence",
+        "payload": {
+          "failure_rate": 0.4,
+          "test": "test_x"
+        }
+      },
+      {
+        "id": "tool_call",
+        "kind": "tool_call",
+        "payload": {
+          "path": "tests/test_x.py",
+          "tool": "edit_file"
+        }
+      },
+      {
+        "id": "tool_result",
+        "kind": "tool_result",
+        "payload": {
+          "diff_lines": 12
+        }
+      },
+      {
+        "id": "test_run",
+        "kind": "tool_result",
+        "payload": {
+          "cmd": "pytest -q",
+          "failed": 0,
+          "passed": 140
+        }
+      },
+      {
+        "id": "approval",
+        "kind": "approval",
+        "payload": {
+          "approver": "harvey",
+          "method": "github-review"
+        }
+      },
+      {
+        "id": "commit",
+        "kind": "execution",
+        "payload": {
+          "sha": "deadbeef"
+        }
+      },
+      {
+        "id": "outcome",
+        "kind": "outcome",
+        "payload": {
+          "status": "merged"
+        }
+      }
+    ],
+    "produced_at": "2026-02-02T12:30:00Z",
+    "receipt_id": "rr-conf-002",
+    "subject": "coding-agent:pr-42"
+  },
+  "kind": "receipt",
+  "name": "receipt-agent-workflow"
+}

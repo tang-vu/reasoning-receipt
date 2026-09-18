@@ -1,0 +1,12 @@
+{
+  "expect": {
+    "canonical": "{\"hangul\":\"한\",\"nfc\":\"é\",\"nfd\":\"é\"}"
+  },
+  "input": {
+    "hangul": "한",
+    "nfc": "é",
+    "nfd": "é"
+  },
+  "kind": "canon",
+  "name": "canon-combining-chars"
+}

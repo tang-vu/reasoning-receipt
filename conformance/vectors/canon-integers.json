@@ -1,0 +1,13 @@
+{
+  "expect": {
+    "canonical": "{\"big\":9007199254740991,\"neg\":-7,\"negbig\":-9007199254740991,\"zero\":0}"
+  },
+  "input": {
+    "big": 9007199254740991,
+    "neg": -7,
+    "negbig": -9007199254740991,
+    "zero": 0
+  },
+  "kind": "canon",
+  "name": "canon-integers"
+}

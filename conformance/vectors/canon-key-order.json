@@ -1,0 +1,19 @@
+{
+  "expect": {
+    "canonical": "{\"a\":[true,null,\"x\"],\"b\":1,\"m\":{\"b\":3,\"y\":2}}"
+  },
+  "input": {
+    "a": [
+      true,
+      null,
+      "x"
+    ],
+    "b": 1,
+    "m": {
+      "b": 3,
+      "y": 2
+    }
+  },
+  "kind": "canon",
+  "name": "canon-key-order"
+}

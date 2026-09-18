@@ -1,0 +1,10 @@
+{
+  "expect": {
+    "canonical": "{\"s\":\"  \\u0001\"}"
+  },
+  "input": {
+    "s": "  \u0001"
+  },
+  "kind": "canon",
+  "name": "canon-line-separators"
+}

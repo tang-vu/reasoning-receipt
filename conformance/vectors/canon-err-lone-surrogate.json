@@ -1,0 +1,10 @@
+{
+  "expect": {
+    "error": "noncanonical_value"
+  },
+  "input": {
+    "s": "\ud800"
+  },
+  "kind": "canon",
+  "name": "canon-err-lone-surrogate"
+}

@@ -1,0 +1,66 @@
+{
+  "expect": {
+    "errors": [
+      "invalid_timestamp"
+    ],
+    "valid": false
+  },
+  "input": {
+    "edge_hashes": [
+      "0x0e9d620c661987c138691c57addb3ae1becad1ce625cb28f5b4fd57972ca0dd2",
+      "0x1e49d2fcbccd02c5eb75bdb597a0473c37c88583a924693ab8ba91a76b8c6c21"
+    ],
+    "edges": [
+      {
+        "from": "decision",
+        "rel": "produced",
+        "to": "intent"
+      },
+      {
+        "from": "decision",
+        "rel": "evaluated_against",
+        "to": "policy"
+      }
+    ],
+    "merkle_root": "0x307476483d05312ad670e7a1114af6a8a268084928108379d99b73a8823fd069",
+    "metadata": {
+      "channel": "email",
+      "workflow": "customer-support"
+    },
+    "node_hashes": {
+      "decision": "0x29ad525b359d66f0553fa84b01575a34c9d5414e075b6336b8473662e0cd115b",
+      "intent": "0x77a1769eed6701780dddec179f6450426be29099cba1f6742b0d8e6f9f14f75c",
+      "policy": "0xbc284323b27c178d5ffb3d9961c4af3be3a7a9c6bb6ac76c1f5859e987ccc461"
+    },
+    "nodes": [
+      {
+        "id": "decision",
+        "kind": "decision",
+        "payload": {
+          "approved": true
+        }
+      },
+      {
+        "id": "intent",
+        "kind": "intent",
+        "payload": {
+          "refund_usd": 49
+        }
+      },
+      {
+        "id": "policy",
+        "kind": "policy",
+        "payload": {
+          "limit_usd": 100
+        }
+      }
+    ],
+    "produced_at": "not-a-timestamp",
+    "receipt_hash": "0x6b86196e5f9d5cd20d7a1597c2017c2913b125a1507b9688f3265cd68a1ce0b2",
+    "receipt_id": "rr-conf-001",
+    "schema_version": "reasoning-receipt/1",
+    "subject": "support:refund-approval"
+  },
+  "kind": "document",
+  "name": "document-bad-timestamp"
+}

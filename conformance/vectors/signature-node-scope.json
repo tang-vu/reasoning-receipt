@@ -1,0 +1,133 @@
+{
+  "expect": {
+    "public_key": "0x76a1592044a6e4f511265bca73a604d90b0529d1df602be30a19a9257660d1f5",
+    "sig": "0xf9f453ea7af298c4fa1ace5d8898c6a5ffd8c19daf526c527802f1fe0558d753dcc3c6e2e5143f742f8bcfbc8790a8a3fe72a85f7d2aeb328acfea77c7edc90d",
+    "valid": true
+  },
+  "input": {
+    "edges": [
+      {
+        "from": "tool_call",
+        "rel": "evaluated_against",
+        "to": "policy"
+      },
+      {
+        "from": "tool_result",
+        "rel": "returned",
+        "to": "tool_call"
+      },
+      {
+        "from": "test_run",
+        "rel": "produced",
+        "to": "tool_result"
+      },
+      {
+        "from": "commit",
+        "rel": "approved_by",
+        "to": "approval"
+      },
+      {
+        "from": "outcome",
+        "rel": "caused",
+        "to": "commit"
+      },
+      {
+        "from": "tool_call",
+        "rel": "derived_from",
+        "to": "intent"
+      },
+      {
+        "from": "test_run",
+        "rel": "supported_by",
+        "to": "evidence"
+      }
+    ],
+    "metadata": {
+      "base_sha": "cafebabe",
+      "repo": "acme/widget"
+    },
+    "nodes": [
+      {
+        "id": "intent",
+        "kind": "intent",
+        "payload": {
+          "request": "fix flaky test"
+        }
+      },
+      {
+        "id": "policy",
+        "kind": "policy",
+        "payload": {
+          "allow_paths": [
+            "tests/"
+          ],
+          "require_review": true
+        }
+      },
+      {
+        "id": "evidence",
+        "kind": "evidence",
+        "payload": {
+          "failure_rate": 0.4,
+          "test": "test_x"
+        }
+      },
+      {
+        "id": "tool_call",
+        "kind": "tool_call",
+        "payload": {
+          "path": "tests/test_x.py",
+          "tool": "edit_file"
+        }
+      },
+      {
+        "id": "tool_result",
+        "kind": "tool_result",
+        "payload": {
+          "diff_lines": 12
+        }
+      },
+      {
+        "id": "test_run",
+        "kind": "tool_result",
+        "payload": {
+          "cmd": "pytest -q",
+          "failed": 0,
+          "passed": 140
+        }
+      },
+      {
+        "id": "approval",
+        "kind": "approval",
+        "payload": {
+          "approver": "harvey",
+          "method": "github-review"
+        }
+      },
+      {
+        "id": "commit",
+        "kind": "execution",
+        "payload": {
+          "sha": "deadbeef"
+        }
+      },
+      {
+        "id": "outcome",
+        "kind": "outcome",
+        "payload": {
+          "status": "merged"
+        }
+      }
+    ],
+    "produced_at": "2026-02-02T12:30:00Z",
+    "receipt_id": "rr-conf-002",
+    "subject": "coding-agent:pr-42"
+  },
+  "kind": "signature",
+  "name": "signature-node-scope",
+  "sign": {
+    "private_key": "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "scope": "node:approval",
+    "signed_at": "2026-01-01T00:00:00Z"
+  }
+}

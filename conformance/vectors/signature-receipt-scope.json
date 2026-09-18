@@ -1,0 +1,59 @@
+{
+  "expect": {
+    "public_key": "0x03a107bff3ce10be1d70dd18e74bc09967e4d6309ba50d5f1ddc8664125531b8",
+    "sig": "0xad4d121f5c18b6a42fed9e9aa94deba10675aeae42a5d572435f73317f7616f541b05b5dc7192553e23b9e4a7f1b3ed8425ee5db7922b1b9f8aef59081dab10b",
+    "valid": true
+  },
+  "input": {
+    "edges": [
+      {
+        "from": "decision",
+        "rel": "evaluated_against",
+        "to": "policy"
+      },
+      {
+        "from": "decision",
+        "rel": "produced",
+        "to": "intent"
+      }
+    ],
+    "metadata": {
+      "channel": "email",
+      "workflow": "customer-support"
+    },
+    "nodes": [
+      {
+        "id": "decision",
+        "kind": "decision",
+        "payload": {
+          "approved": true
+        }
+      },
+      {
+        "id": "intent",
+        "kind": "intent",
+        "payload": {
+          "refund_usd": 49
+        }
+      },
+      {
+        "id": "policy",
+        "kind": "policy",
+        "payload": {
+          "limit_usd": 100
+        }
+      }
+    ],
+    "produced_at": "2026-01-01T00:00:00Z",
+    "receipt_id": "rr-conf-001",
+    "subject": "support:refund-approval"
+  },
+  "kind": "signature",
+  "name": "signature-receipt-scope",
+  "sign": {
+    "key_id": "agent-01",
+    "private_key": "0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+    "scope": "receipt",
+    "signed_at": "2026-01-01T00:00:00Z"
+  }
+}

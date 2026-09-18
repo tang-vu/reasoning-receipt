@@ -1,0 +1,134 @@
+{
+  "expect": {
+    "leaf": "0xdc98e848f821f7f2e46b540ea0bd2189f427bb82917012c30137ef7f83b816a8",
+    "merkle_root": "0x06fdce78e485f2c85ce99c6d2a61a18f747c8977bf1d8747dd3783fb7b0451f4",
+    "node": "test_run",
+    "proof": [
+      "0xde04bb4d9d7e78900d3e98c7184c7c31b46f2d33a9bc31f7b71c914be879f2cd",
+      "0xa5bf1d4600aaf3a01923a82808bec0f20ab049d66bbf86f754555503dc040157",
+      "0x63974d0fcea02c60ccc85ea1346fd9092ac1cb235b6e0325bf31997bc4e1947f",
+      "0x57cab8a1ba912281fb72ade585ca12f1cefaa95d20f9febc49fc808872da21a7"
+    ]
+  },
+  "input": {
+    "edges": [
+      {
+        "from": "tool_call",
+        "rel": "evaluated_against",
+        "to": "policy"
+      },
+      {
+        "from": "tool_result",
+        "rel": "returned",
+        "to": "tool_call"
+      },
+      {
+        "from": "test_run",
+        "rel": "produced",
+        "to": "tool_result"
+      },
+      {
+        "from": "commit",
+        "rel": "approved_by",
+        "to": "approval"
+      },
+      {
+        "from": "outcome",
+        "rel": "caused",
+        "to": "commit"
+      },
+      {
+        "from": "tool_call",
+        "rel": "derived_from",
+        "to": "intent"
+      },
+      {
+        "from": "test_run",
+        "rel": "supported_by",
+        "to": "evidence"
+      }
+    ],
+    "metadata": {
+      "base_sha": "cafebabe",
+      "repo": "acme/widget"
+    },
+    "nodes": [
+      {
+        "id": "intent",
+        "kind": "intent",
+        "payload": {
+          "request": "fix flaky test"
+        }
+      },
+      {
+        "id": "policy",
+        "kind": "policy",
+        "payload": {
+          "allow_paths": [
+            "tests/"
+          ],
+          "require_review": true
+        }
+      },
+      {
+        "id": "evidence",
+        "kind": "evidence",
+        "payload": {
+          "failure_rate": 0.4,
+          "test": "test_x"
+        }
+      },
+      {
+        "id": "tool_call",
+        "kind": "tool_call",
+        "payload": {
+          "path": "tests/test_x.py",
+          "tool": "edit_file"
+        }
+      },
+      {
+        "id": "tool_result",
+        "kind": "tool_result",
+        "payload": {
+          "diff_lines": 12
+        }
+      },
+      {
+        "id": "test_run",
+        "kind": "tool_result",
+        "payload": {
+          "cmd": "pytest -q",
+          "failed": 0,
+          "passed": 140
+        }
+      },
+      {
+        "id": "approval",
+        "kind": "approval",
+        "payload": {
+          "approver": "harvey",
+          "method": "github-review"
+        }
+      },
+      {
+        "id": "commit",
+        "kind": "execution",
+        "payload": {
+          "sha": "deadbeef"
+        }
+      },
+      {
+        "id": "outcome",
+        "kind": "outcome",
+        "payload": {
+          "status": "merged"
+        }
+      }
+    ],
+    "produced_at": "2026-02-02T12:30:00Z",
+    "receipt_id": "rr-conf-002",
+    "subject": "coding-agent:pr-42"
+  },
+  "kind": "proof",
+  "name": "proof-agent-node"
+}

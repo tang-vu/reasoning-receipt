@@ -1,0 +1,12 @@
+{
+  "expect": {
+    "canonical": "{\"exp\":1000000,\"five\":5,\"neg\":-2}"
+  },
+  "input": {
+    "exp": 1000000.0,
+    "five": 5.0,
+    "neg": -2.0
+  },
+  "kind": "canon",
+  "name": "canon-float-integral"
+}

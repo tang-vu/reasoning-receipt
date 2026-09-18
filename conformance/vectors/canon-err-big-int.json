@@ -1,0 +1,10 @@
+{
+  "expect": {
+    "error": "noncanonical_value"
+  },
+  "input": {
+    "x": 9007199254740992
+  },
+  "kind": "canon",
+  "name": "canon-err-big-int"
+}

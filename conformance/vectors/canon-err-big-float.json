@@ -1,0 +1,10 @@
+{
+  "expect": {
+    "error": "noncanonical_value"
+  },
+  "input": {
+    "x": 1e+20
+  },
+  "kind": "canon",
+  "name": "canon-err-big-float"
+}

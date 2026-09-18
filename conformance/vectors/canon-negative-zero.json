@@ -1,0 +1,10 @@
+{
+  "expect": {
+    "canonical": "0"
+  },
+  "input": {
+    "$rr": "-0"
+  },
+  "kind": "canon",
+  "name": "canon-negative-zero"
+}

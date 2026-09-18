@@ -1,0 +1,28 @@
+{
+  "expect": {
+    "canonical_envelope": "{\"edge_hashes\":[],\"edges\":[],\"merkle_root\":\"0x7094044f78439a74426e8ae338e3133b07ee0f784eb12bd2725aa11d9e3161af\",\"metadata\":{},\"node_hashes\":{\"only\":\"0x7094044f78439a74426e8ae338e3133b07ee0f784eb12bd2725aa11d9e3161af\"},\"nodes\":[{\"id\":\"only\",\"kind\":\"intent\",\"payload\":{\"x\":1}}],\"produced_at\":\"2026-01-01T00:00:00Z\",\"receipt_id\":\"rr-conf-000\",\"schema_version\":\"reasoning-receipt/1\",\"subject\":\"one-node\"}",
+    "edge_hashes": [],
+    "merkle_root": "0x7094044f78439a74426e8ae338e3133b07ee0f784eb12bd2725aa11d9e3161af",
+    "node_hashes": {
+      "only": "0x7094044f78439a74426e8ae338e3133b07ee0f784eb12bd2725aa11d9e3161af"
+    },
+    "receipt_hash": "0x8f5beb56e1e1c5490108f8f563c8fad012cdbe089994eb415a7ef5ab8bd07a52",
+    "valid": true
+  },
+  "input": {
+    "nodes": [
+      {
+        "id": "only",
+        "kind": "intent",
+        "payload": {
+          "x": 1
+        }
+      }
+    ],
+    "produced_at": "2026-01-01T00:00:00Z",
+    "receipt_id": "rr-conf-000",
+    "subject": "one-node"
+  },
+  "kind": "receipt",
+  "name": "receipt-minimal"
+}

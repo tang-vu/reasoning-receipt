@@ -1,0 +1,23 @@
+{
+  "expect": {
+    "verify": false
+  },
+  "kind": "proof",
+  "name": "proof-tampered-item",
+  "proof_document": {
+    "item": {
+      "id": "policy",
+      "kind": "policy",
+      "payload": {
+        "limit_usd": 5
+      }
+    },
+    "item_type": "node",
+    "leaf": "0xbc284323b27c178d5ffb3d9961c4af3be3a7a9c6bb6ac76c1f5859e987ccc461",
+    "merkle_root": "0x307476483d05312ad670e7a1114af6a8a268084928108379d99b73a8823fd069",
+    "proof": [
+      "0x5159f7dfb7bf3efdd118a511e652f9f43b298deaf58b1dd66856d0fba269e011"
+    ],
+    "schema_version": "reasoning-receipt/1"
+  }
+}

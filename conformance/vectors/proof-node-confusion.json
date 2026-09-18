@@ -1,0 +1,23 @@
+{
+  "expect": {
+    "verify": false
+  },
+  "kind": "proof",
+  "name": "proof-node-confusion",
+  "proof_document": {
+    "item": {
+      "id": "intent",
+      "kind": "intent",
+      "payload": {
+        "refund_usd": 49
+      }
+    },
+    "item_type": "node",
+    "leaf": "0x77a1769eed6701780dddec179f6450426be29099cba1f6742b0d8e6f9f14f75c",
+    "merkle_root": "0x307476483d05312ad670e7a1114af6a8a268084928108379d99b73a8823fd069",
+    "proof": [
+      "0x5159f7dfb7bf3efdd118a511e652f9f43b298deaf58b1dd66856d0fba269e011"
+    ],
+    "schema_version": "reasoning-receipt/1"
+  }
+}

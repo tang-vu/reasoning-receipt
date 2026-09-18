@@ -1,0 +1,32 @@
+{
+  "expect": {
+    "canonical_envelope": "{\"edge_hashes\":[],\"edges\":[],\"merkle_root\":\"0x1de853b5c647d5c67b3a3b093afa800e911aa26713cf4536b7cb7033cfb513c6\",\"metadata\":{},\"node_hashes\":{\"ev\":\"0x1de853b5c647d5c67b3a3b093afa800e911aa26713cf4536b7cb7033cfb513c6\"},\"nodes\":[{\"id\":\"ev\",\"kind\":\"evidence\",\"meta\":{\"confidence\":0.900000,\"redacted\":true},\"payload\":{\"url\":\"https://x.example\"}}],\"produced_at\":\"2026-01-01T00:00:00Z\",\"receipt_id\":\"rr-conf-004\",\"schema_version\":\"reasoning-receipt/1\",\"subject\":\"meta\"}",
+    "edge_hashes": [],
+    "merkle_root": "0x1de853b5c647d5c67b3a3b093afa800e911aa26713cf4536b7cb7033cfb513c6",
+    "node_hashes": {
+      "ev": "0x1de853b5c647d5c67b3a3b093afa800e911aa26713cf4536b7cb7033cfb513c6"
+    },
+    "receipt_hash": "0x4ee6cc320bf34ba3014920938960fc26cc4329bddd190fb1ff138fd63cb56bfe",
+    "valid": true
+  },
+  "input": {
+    "nodes": [
+      {
+        "id": "ev",
+        "kind": "evidence",
+        "meta": {
+          "confidence": 0.9,
+          "redacted": true
+        },
+        "payload": {
+          "url": "https://x.example"
+        }
+      }
+    ],
+    "produced_at": "2026-01-01T00:00:00Z",
+    "receipt_id": "rr-conf-004",
+    "subject": "meta"
+  },
+  "kind": "receipt",
+  "name": "receipt-node-meta"
+}

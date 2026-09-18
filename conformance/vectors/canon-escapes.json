@@ -1,0 +1,10 @@
+{
+  "expect": {
+    "canonical": "{\"s\":\"quote \\\" backslash \\\\ slash / tab\\t nl\\n cr\\r bs\\b ff\\f\"}"
+  },
+  "input": {
+    "s": "quote \" backslash \\ slash / tab\t nl\n cr\r bs\b ff\f"
+  },
+  "kind": "canon",
+  "name": "canon-escapes"
+}

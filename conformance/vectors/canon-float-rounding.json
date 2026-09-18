@@ -1,0 +1,13 @@
+{
+  "expect": {
+    "canonical": "{\"down\":0.999999,\"negtiny\":0.000000,\"tiny\":0.000000,\"up\":0.123457}"
+  },
+  "input": {
+    "down": 0.9999994,
+    "negtiny": -4e-07,
+    "tiny": 4e-07,
+    "up": 0.1234567
+  },
+  "kind": "canon",
+  "name": "canon-float-rounding"
+}

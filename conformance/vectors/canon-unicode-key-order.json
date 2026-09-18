@@ -1,0 +1,14 @@
+{
+  "expect": {
+    "canonical": "{\"a\":4,\"z\":1,\"Á\":5,\"ä\":2,\"😀\":3}"
+  },
+  "input": {
+    "a": 4,
+    "z": 1,
+    "Á": 5,
+    "ä": 2,
+    "😀": 3
+  },
+  "kind": "canon",
+  "name": "canon-unicode-key-order"
+}

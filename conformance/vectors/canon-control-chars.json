@@ -1,0 +1,10 @@
+{
+  "expect": {
+    "canonical": "{\"s\":\"\\u0001\\u001f\"}"
+  },
+  "input": {
+    "s": "\u0001\u001f"
+  },
+  "kind": "canon",
+  "name": "canon-control-chars"
+}
