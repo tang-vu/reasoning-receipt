@@ -1,0 +1,98 @@
+{
+  "schema_version": "reasoning-receipt/1",
+  "receipt_id": "rr-parity-0001",
+  "subject": "parity:cross-language",
+  "produced_at": "2026-05-20T00:00:00Z",
+  "metadata": {
+    "harness": "rr-parity/1",
+    "unicode": "héllo wörld — 数据 ✓"
+  },
+  "nodes": [
+    {
+      "id": "decision",
+      "kind": "decision",
+      "payload": {
+        "approved": true,
+        "score": 0.125
+      }
+    },
+    {
+      "id": "intent",
+      "kind": "intent",
+      "payload": {
+        "action": "deploy",
+        "target": "testnet"
+      },
+      "meta": {
+        "source": "emit"
+      }
+    },
+    {
+      "id": "outcome",
+      "kind": "outcome",
+      "payload": {
+        "status": "success",
+        "emoji": "🧾"
+      }
+    },
+    {
+      "id": "policy",
+      "kind": "policy",
+      "payload": {
+        "limit": 100,
+        "rules": [
+          "r1",
+          "r2"
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "decision",
+      "to": "intent",
+      "rel": "produced"
+    },
+    {
+      "from": "decision",
+      "to": "policy",
+      "rel": "evaluated_against"
+    },
+    {
+      "from": "outcome",
+      "to": "decision",
+      "rel": "produced"
+    }
+  ],
+  "node_hashes": {
+    "decision": "0xfce954e82b7e090141ea2daa1c793b1b6d1e765a39ff287f5bb6ce3b2c05e0ff",
+    "intent": "0xd6724cc5649e599bc703e4d265e60979ba9180ddabe27dcafefe87edf7db9ade",
+    "outcome": "0x0667aefd5bb73491b23552acc2aad609a59dc0326d8c53a699b5eb76a4ad752c",
+    "policy": "0xaaecab7bd7376a276fb9d656fb452178a6a9a96433bc8a758d2b6a5c4be2d336"
+  },
+  "edge_hashes": [
+    "0x0e9d620c661987c138691c57addb3ae1becad1ce625cb28f5b4fd57972ca0dd2",
+    "0x1e49d2fcbccd02c5eb75bdb597a0473c37c88583a924693ab8ba91a76b8c6c21",
+    "0xc14f2cc8f451fb53688b8f25ee2b7017d46ed4d0f71bb4c977942e1079d56a8b"
+  ],
+  "merkle_root": "0xbc5cb2ece0b32888378ecc8637ab1b6773de0972f36bae854035660ffd7c713e",
+  "signatures": [
+    {
+      "alg": "ed25519",
+      "scope": "receipt",
+      "public_key": "0x207a067892821e25d770f1fba0c47c11ff4b813e54162ece9eb839e076231ab6",
+      "sig": "0xb29e73618d822029e1dc01529e2e4de5f7bf40adadf5d9cab5c233cc720655344fee458628f3226d0bdc7a76f067bc165e6070b76c88a2c62776edae55005008",
+      "signed_at": "2026-05-20T00:00:00Z",
+      "key_id": "parity-key"
+    },
+    {
+      "alg": "ed25519",
+      "scope": "node:decision",
+      "public_key": "0x207a067892821e25d770f1fba0c47c11ff4b813e54162ece9eb839e076231ab6",
+      "sig": "0x8f093ead6f48b19e1394570c36fafc68f3bfe9c8b408aaf8361e5808c206eeeee8a5e58ded13bbdc2689fc8d268733255a56513e0c7890de7f5b20bc4b1f7902",
+      "signed_at": "2026-05-20T00:00:00Z",
+      "key_id": "parity-key"
+    }
+  ],
+  "receipt_hash": "0x1c32cd06587f94513aef1799a3f8474c58e65b3e8273e255a850368ffcb630c6"
+}

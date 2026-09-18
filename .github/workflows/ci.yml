@@ -82,3 +82,46 @@ jobs:
       - name: Build (server mode)
         working-directory: dashboard
         run: npx next build
+
+  protocol:
+    name: conformance + cross-language parity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "latest"
+      - name: Set up Python
+        run: uv python install 3.11
+      - name: Install Python deps
+        run: uv sync --extra dev --frozen
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: sdks/typescript/package-lock.json
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: sdks/rust
+      - name: Python conformance corpus
+        run: uv run --extra dev python -m protocol.cli conformance
+      - name: TypeScript SDK tests
+        working-directory: sdks/typescript
+        run: npm ci && npm test
+      - name: Rust SDK tests
+        working-directory: sdks/rust
+        run: cargo test
+      - name: Emit parity receipts (py / ts / rs)
+        run: |
+          uv run python scripts/parity/emit.py conformance/parity/py.receipt.json
+          node sdks/typescript/scripts/emit-parity.mjs conformance/parity/ts.receipt.json
+          cd sdks/rust && cargo run --example emit_parity -- ../../conformance/parity/rs.receipt.json
+      - name: Cross-verify parity (python)
+        run: uv run python scripts/parity/check.py
+      - name: Cross-verify parity (typescript)
+        run: node sdks/typescript/scripts/check-parity.mjs
+      - name: Cross-verify parity (rust)
+        working-directory: sdks/rust
+        run: cargo run --example check_parity
