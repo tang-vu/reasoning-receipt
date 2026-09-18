@@ -1,0 +1,184 @@
+/** Optional Ed25519 signatures for `reasoning-receipt/1` (spec §8).
+ * Mirrors `protocol/signatures.py`. Signatures live outside the committed
+ * envelope: `receipt` scope signs the 32-byte receipt_hash, `node:<id>`
+ * signs one node leaf. A valid signature proves key possession only. */
+
+import { etc, sign as edSign, verify as edVerify, getPublicKey } from "@noble/ed25519";
+import { sha512 } from "@noble/hashes/sha2.js";
+import type { JsonValue } from "./canon.js";
+import { E_BAD_SIGNATURE, SignatureError } from "./errors.js";
+import { nodeLeaf, receiptHashOf, validTimestamp } from "./receipt.js";
+import type { NodeDict } from "./receipt.js";
+
+export const ALG_ED25519 = "ed25519";
+
+const SIG_DOMAIN_RECEIPT = concat(te("RR1:sig:receipt"), new Uint8Array([0]));
+const SIG_DOMAIN_NODE = concat(te("RR1:sig:node"), new Uint8Array([0]));
+
+const SIG_FIELDS = new Set(["alg", "scope", "public_key", "sig", "signed_at", "key_id", "meta"]);
+const SIG_REQUIRED = ["alg", "scope", "public_key", "sig"];
+
+function te(s: string): Uint8Array {
+  return new TextEncoder().encode(s);
+}
+function concat(a: Uint8Array, b: Uint8Array): Uint8Array {
+  const out = new Uint8Array(a.length + b.length);
+  out.set(a, 0);
+  out.set(b, a.length);
+  return out;
+}
+
+// @noble/ed25519 v2 requires an explicit sync SHA-512 implementation.
+etc.sha512Sync = (...msgs: Uint8Array[]) => sha512(msgs.reduce((a, m) => concat(a, m), new Uint8Array()));
+
+function decodeKey(hexValue: unknown, length: number, what: string): Uint8Array {
+  if (typeof hexValue !== "string") {
+    throw new SignatureError(`${what} is not a string`, E_BAD_SIGNATURE);
+  }
+  const raw = hexValue.startsWith("0x") ? hexValue.slice(2) : hexValue;
+  if (!/^[0-9a-fA-F]*$/.test(raw)) {
+    throw new SignatureError(`${what} is not hex`, E_BAD_SIGNATURE);
+  }
+  const decoded = Uint8Array.from(Buffer.from(raw, "hex"));
+  if (decoded.length !== length) {
+    throw new SignatureError(`${what} must be ${length} bytes`, E_BAD_SIGNATURE);
+  }
+  return decoded;
+}
+
+function utcNowIso(): string {
+  return new Date().toISOString().replace(/\.\d{3}Z$/, "Z");
+}
+
+export function generateKeypair(): { private_key: string; public_key: string } {
+  const seed = crypto.getRandomValues(new Uint8Array(32));
+  return {
+    private_key: "0x" + Buffer.from(seed).toString("hex"),
+    public_key: "0x" + Buffer.from(getPublicKey(seed)).toString("hex"),
+  };
+}
+
+export interface SignatureObject {
+  alg: string;
+  scope: string;
+  public_key: string;
+  sig: string;
+  signed_at: string;
+  key_id?: string;
+  meta?: Record<string, JsonValue>;
+}
+
+export function sign(
+  committedEnvelope: Record<string, JsonValue>,
+  privateKeyHex: string,
+  opts: { scope?: string; key_id?: string; signed_at?: string; meta?: Record<string, JsonValue> } = {},
+): SignatureObject {
+  const scope = opts.scope ?? "receipt";
+  const seed = decodeKey(privateKeyHex, 32, "private_key");
+  const publicKey = getPublicKey(seed);
+
+  let preimage: Uint8Array;
+  if (scope === "receipt") {
+    const target = Buffer.from(receiptHashOf(committedEnvelope).slice(2), "hex");
+    preimage = concat(SIG_DOMAIN_RECEIPT, Uint8Array.from(target));
+  } else if (scope.startsWith("node:")) {
+    const nodeId = scope.slice(5);
+    const leaves: Record<string, Uint8Array> = {};
+    const nodes = (committedEnvelope.nodes ?? []) as unknown as NodeDict[];
+    for (const nd of nodes) leaves[nd.id] = nodeLeaf(nd);
+    if (!(nodeId in leaves)) {
+      throw new SignatureError(`node ${nodeId} not in envelope`, E_BAD_SIGNATURE);
+    }
+    preimage = concat(SIG_DOMAIN_NODE, leaves[nodeId]);
+  } else {
+    throw new SignatureError(`unknown signature scope ${scope}`, E_BAD_SIGNATURE);
+  }
+
+  const signedAt = opts.signed_at ?? utcNowIso();
+  if (opts.signed_at !== undefined && !validTimestamp(signedAt)) {
+    throw new SignatureError(`invalid signed_at ${signedAt}`, E_BAD_SIGNATURE);
+  }
+
+  const sigBytes = edSign(preimage, seed);
+  const sig: SignatureObject = {
+    alg: ALG_ED25519,
+    scope,
+    public_key: "0x" + Buffer.from(publicKey).toString("hex"),
+    sig: "0x" + Buffer.from(sigBytes).toString("hex"),
+    signed_at: signedAt,
+  };
+  if (opts.key_id !== undefined) sig.key_id = opts.key_id;
+  if (opts.meta !== undefined) sig.meta = opts.meta;
+  return sig;
+}
+
+export interface SignatureResult {
+  index: number;
+  valid: boolean;
+  scope?: string;
+  public_key?: string;
+  reason?: string;
+}
+
+export function verifySignatures(
+  committedEnvelope: Record<string, JsonValue>,
+  signatures: unknown[],
+): SignatureResult[] {
+  const results: SignatureResult[] = [];
+  for (const [index, raw] of signatures.entries()) {
+    const result: SignatureResult = { index, valid: false };
+    try {
+      if (raw === null || typeof raw !== "object" || Array.isArray(raw)) {
+        throw new SignatureError("signature is not an object");
+      }
+      const sig = raw as Record<string, unknown>;
+      const missing = SIG_REQUIRED.filter((k) => !(k in sig));
+      if (missing.length) {
+        throw new SignatureError(`signature missing ${JSON.stringify(missing.sort())}`);
+      }
+      const extra = Object.keys(sig).filter((k) => !SIG_FIELDS.has(k));
+      if (extra.length) {
+        throw new SignatureError(`signature has unknown fields ${JSON.stringify(extra.sort())}`);
+      }
+      result.scope = sig.scope as string;
+      result.public_key = sig.public_key as string;
+      if (sig.alg !== ALG_ED25519) {
+        throw new SignatureError(`unsupported alg ${String(sig.alg)}`);
+      }
+      if ("signed_at" in sig && !validTimestamp(sig.signed_at)) {
+        throw new SignatureError("invalid signed_at");
+      }
+
+      const publicKey = decodeKey(sig.public_key, 32, "public_key");
+      const signature = decodeKey(sig.sig, 64, "sig");
+
+      let preimage: Uint8Array;
+      if (sig.scope === "receipt") {
+        const target = Buffer.from(receiptHashOf(committedEnvelope).slice(2), "hex");
+        preimage = concat(SIG_DOMAIN_RECEIPT, Uint8Array.from(target));
+      } else if ((sig.scope as string).startsWith("node:")) {
+        const nodeId = (sig.scope as string).slice(5);
+        const leaves: Record<string, Uint8Array> = {};
+        const nodes = (committedEnvelope.nodes ?? []) as unknown as NodeDict[];
+        for (const nd of nodes) leaves[nd.id] = nodeLeaf(nd);
+        if (!(nodeId in leaves)) {
+          throw new SignatureError(`node ${nodeId} not in envelope`);
+        }
+        preimage = concat(SIG_DOMAIN_NODE, leaves[nodeId]);
+      } else {
+        throw new SignatureError(`unknown scope ${String(sig.scope)}`);
+      }
+
+      result.valid = edVerify(signature, preimage, publicKey);
+      if (!result.valid) result.reason = "signature verification failed";
+    } catch (exc) {
+      if (exc instanceof SignatureError) {
+        result.reason = exc.message;
+      } else {
+        throw exc;
+      }
+    }
+    results.push(result);
+  }
+  return results;
+}
