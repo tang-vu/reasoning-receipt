@@ -127,3 +127,14 @@ jobs:
       - name: Cross-verify parity (rust)
         working-directory: sdks/rust
         run: cargo run --example check_parity
+
+  dogfood:
+    name: verify action dogfood
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify committed parity receipts + corpus
+        uses: ./.github/actions/verify
+        with:
+          files: "conformance/parity/*.receipt.json"
+          conformance: "true"

@@ -1,0 +1,83 @@
+name: "ReasoningReceipt verify"
+description: >-
+  Offline verification of reasoning-receipt documents. Fails if any
+  matched file has a hash, Merkle-root, proof or structure mismatch.
+  No secrets or network access are required.
+inputs:
+  files:
+    description: "Glob pattern of receipt documents to verify (e.g. 'receipts/**/*.json')"
+    required: false
+    default: ""
+  conformance:
+    description: "Also run the language-independent conformance corpus ('true'/'false')"
+    required: false
+    default: "false"
+  install:
+    description: "How to obtain the verifier: 'local' uses this checkout, 'pip' installs reasoning-receipt from PyPI/git"
+    required: false
+    default: "local"
+  package-ref:
+    description: "Pip requirement used when install='pip' (e.g. 'reasoning-receipt' or a git URL)"
+    required: false
+    default: "reasoning-receipt"
+outputs:
+  verified:
+    description: "Number of receipt documents verified"
+    value: ${{ steps.verify.outputs.verified }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install uv
+      uses: astral-sh/setup-uv@v3
+      with:
+        version: "latest"
+
+    - name: Set up Python
+      shell: bash
+      run: uv python install 3.11
+
+    - name: Install verifier (local checkout)
+      if: ${{ inputs.install == 'local' }}
+      shell: bash
+      run: |
+        root="${{ github.action_path }}/../../.."
+        cd "$root"
+        uv sync --frozen
+
+    - name: Install verifier (package)
+      if: ${{ inputs.install == 'pip' }}
+      shell: bash
+      run: |
+        uv venv .rr-verify
+        uv pip install --python .rr-verify/bin/python "${{ inputs.package-ref }}"
+        echo "$PWD/.rr-verify/bin" >> "$GITHUB_PATH"
+
+    - name: Verify receipt files
+      if: ${{ inputs.files != '' }}
+      shell: bash
+      run: |
+        root="${{ github.action_path }}/../../.."
+        cd "$root"
+        shopt -s globstar nullglob
+        matched=0
+        failed=0
+        for f in ${{ inputs.files }}; do
+          matched=$((matched + 1))
+          if ! uv run python -m protocol.cli verify "$f" --json; then
+            failed=$((failed + 1))
+            echo "::error file=$f::verification failed"
+          fi
+        done
+        echo "verified=$matched" >> "$GITHUB_OUTPUT"
+        echo "verified receipt documents: $matched (failed: $failed)"
+        [ "$failed" -eq 0 ]
+      id: verify
+
+    - name: Run conformance corpus
+      if: ${{ inputs.conformance == 'true' }}
+      shell: bash
+      run: |
+        root="${{ github.action_path }}/../../.."
+        cd "$root"
+        uv run python -m protocol.cli conformance
