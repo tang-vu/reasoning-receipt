@@ -15,7 +15,6 @@ synthetic CID derived from the trace hash so tests + offline dev still pass.
 
 from __future__ import annotations
 
-import hashlib
 import json
 import logging
 import os
@@ -25,6 +24,10 @@ from pathlib import Path
 from typing import Any
 
 import httpx
+
+# The canonicalization + hash primitives live in the protocol package now
+# (frozen legacy-json-6dp — see spec §14). Re-exported here for compatibility.
+from protocol.legacy_canon import canonical_bytes, sha256_hex
 
 logger = logging.getLogger(__name__)
 
@@ -42,34 +45,6 @@ class TraceUpload:
     cid: str
     size_bytes: int
     is_mock: bool
-
-
-def canonical_bytes(trace: dict[str, Any]) -> bytes:
-    """Return canonical JSON bytes used for hashing & uploading.
-
-    Rules:
-    - Sorted keys
-    - UTF-8 encoded
-    - Separators '(",", ":")' (no extra whitespace)
-    - Floats stringified to 6 decimal places before serialization, so any
-      cross-language verifier reproduces the same bytes.
-    """
-
-    def _norm(obj: Any) -> Any:
-        if isinstance(obj, float):
-            return float(f"{obj:.6f}")
-        if isinstance(obj, dict):
-            return {k: _norm(v) for k, v in obj.items()}
-        if isinstance(obj, list):
-            return [_norm(v) for v in obj]
-        return obj
-
-    return json.dumps(_norm(trace), sort_keys=True, separators=(",", ":")).encode("utf-8")
-
-
-def sha256_hex(blob: bytes) -> str:
-    """Hex-prefixed SHA-256, suitable for use as the on-chain bytes32 traceHash."""
-    return "0x" + hashlib.sha256(blob).hexdigest()
 
 
 class IrysClient:
