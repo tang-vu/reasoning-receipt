@@ -1,4 +1,4 @@
-# Secrets
+﻿# Secrets
 .env
 .env.*
 !.env.example
@@ -42,7 +42,7 @@ contracts/lib/
 .idea/
 *.swp
 
-# AI tooling — NEVER commit any of these
+# AI tooling â€” NEVER commit any of these
 CLAUDE.md
 notes/
 plans/
@@ -71,3 +71,6 @@ services/*/node_modules/
 
 .vercel
 .env*
+
+# AI assistant artifacts
+.devin/
