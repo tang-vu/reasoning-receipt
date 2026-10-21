@@ -26,6 +26,7 @@ from agent.trace import TraceSealer
 from storage.db import init_db
 from storage.irys import IrysClient
 
+from .audit import router as audit_router
 from .chain import ChainClient
 from .cron import router as cron_router
 from .demo import router as demo_router
@@ -105,6 +106,7 @@ def create_app(*, serverless: bool | None = None) -> FastAPI:
     )
     app.include_router(oracle_router)
     app.include_router(portable_router)
+    app.include_router(audit_router)
     app.include_router(verify_router)
     if not serverless:
         app.include_router(events_router)

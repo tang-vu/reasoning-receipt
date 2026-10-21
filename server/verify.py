@@ -257,6 +257,9 @@ def _find_node_in_trace(trace: dict, node_id: str) -> dict | Any:
     for fc in trace.get("falsifiable_claims", []) or []:
         if isinstance(fc, dict) and fc.get("id") == node_id:
             return fc
+    external = (trace.get("external_audit") or {}).get("nodes") or {}
+    if node_id in external:
+        return external[node_id]
     audit = trace.get("critic_audit") or {}
     if node_id.startswith("cd_"):
         dim_key = node_id[len("cd_"):]

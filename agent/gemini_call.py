@@ -37,12 +37,15 @@ def call_with_fallback(
     thinking_budget: int | None = None,
     enable_web_search: bool = False,
     log_label: str = "gemini",
+    grounded_sources: list[dict] | None = None,
 ) -> tuple[str, str]:
     """Call Gemini with a model fallback chain.
 
     Returns `(response_text, model_actually_used)`. Raises the last exception
     only if every model in the chain failed with a non-retryable error or with
-    a retry-trigger that exhausted the chain.
+    a retry-trigger that exhausted the chain. When `grounded_sources` is given,
+    the Google Search results the answer was grounded on are appended to it as
+    `{"uri", "title"}` (the uri is Google's redirect to the page).
     """
     from google.genai import types  # type: ignore
 
@@ -72,6 +75,15 @@ def call_with_fallback(
     for model in chain:
         try:
             resp = client.models.generate_content(model=model, contents=user, config=cfg)
+            if grounded_sources is not None:
+                for cand in getattr(resp, "candidates", []) or []:
+                    meta = getattr(cand, "grounding_metadata", None)
+                    for chunk in getattr(meta, "grounding_chunks", None) or []:
+                        web = getattr(chunk, "web", None)
+                        if web is not None and getattr(web, "uri", None):
+                            grounded_sources.append(
+                                {"uri": web.uri, "title": getattr(web, "title", "") or ""}
+                            )
             text = getattr(resp, "text", None)
             if text:
                 if model != primary:

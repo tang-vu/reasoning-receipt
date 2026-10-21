@@ -1,4 +1,4 @@
-"""SQLAlchemy 2.0 ORM — receipts, positions, scan candidates.
+"""SQLAlchemy 2.0 ORM — receipts, audits, positions, scan candidates.
 
 Single engine for both SQLite (dev) and Postgres (prod via Neon). The DATABASE_URL
 in `.env` decides — no code branch needed.
@@ -147,6 +147,37 @@ class MemoryItem(Base):
     embedding = Column(LargeBinary, nullable=False)  # float32 bytes, model-native dim
     embed_model = Column(String(48), nullable=False, default="mock")
     embedded_at = Column(DateTime(timezone=True), nullable=False, default=_now)
+
+
+class Audit(Base):
+    """One oracle trace awaiting, refused by, or carrying an independent audit.
+
+    In ``RR_AUDIT_MODE=aomi`` the loop stores the critic-approved trace here
+    instead of sealing it. The auditor's findings become extra trace nodes and
+    the auditor's own wallet publishes the sealed trace (see ``server.audit``).
+    """
+
+    __tablename__ = "audits"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    market_id = Column(String(80), nullable=False, index=True)
+    market_question = Column(Text, nullable=True)
+    market_source = Column(String(16), nullable=False, default="polymarket")
+    status = Column(String(16), nullable=False, default="pending", index=True)
+    trace = Column(Text, nullable=False)  # the oracle's trace exactly as produced
+    sealed_trace = Column(Text, nullable=True)
+    findings = Column(Text, nullable=True)  # what the auditor reported, approved or not
+    auditor = Column(String(64), nullable=True)
+    chain_id = Column(Integer, nullable=True)
+    registry = Column(String(64), nullable=True)
+    trace_hash = Column(String(70), nullable=True, unique=True)
+    merkle_root = Column(String(70), nullable=True)
+    trace_cid = Column(String(120), nullable=True)
+    calldata = Column(Text, nullable=True)
+    transaction_hash = Column(String(80), nullable=True, unique=True)
+    receipt_id = Column(Integer, nullable=True)  # receipts.id once published
+    created_at = Column(DateTime(timezone=True), nullable=False, default=_now, index=True)
+    updated_at = Column(DateTime(timezone=True), nullable=True)
 
 
 _engine = None

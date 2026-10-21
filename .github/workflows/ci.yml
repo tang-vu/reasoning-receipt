@@ -63,6 +63,24 @@ jobs:
         working-directory: contracts
         run: forge test -vv
 
+  aomi-audit:
+    name: aomi auditor app (cargo test)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      # Default build: audits disabled, no EVM namespace.
+      - name: cargo test (disabled)
+        working-directory: integrations/aomi-audit
+        run: cargo test --locked
+      # Configured build with placeholder addresses: guard and auditor-wallet checks.
+      - name: cargo test (configured)
+        working-directory: integrations/aomi-audit
+        run: |
+          sed 's/"enabled": false/"enabled": true/; s/<AUDITOR_WALLET_ADDRESS>/0x5555555555555555555555555555555555555555/' \
+            audit-deployment.example.json > "$RUNNER_TEMP/audit.json"
+          RR_AUDIT_CONFIG="$RUNNER_TEMP/audit.json" cargo test --locked
+
   dashboard:
     name: next build + typecheck
     runs-on: ubuntu-latest

@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "platform": "community",
+  "applications": [
+    "integrations/aomi-audit/aomi.toml"
+  ]
+}
