@@ -1,0 +1,8 @@
+[app]
+# Must equal the `name` in `dyn_aomi_app!` (src/lib.rs); it becomes the release tag.
+name         = "reasoning-receipt"
+display_name = "ReasoningReceipt · Settlement"
+# Private until the live Arc testnet acceptance run passes.
+public       = false
+# api.aomi.dev advertises only `prod`; the default ["staging"] would never load there.
+server_tags  = ["prod"]

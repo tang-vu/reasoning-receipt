@@ -1,0 +1,8 @@
+{
+  "enabled": false,
+  "chain_id": 5042002,
+  "token": "0x3600000000000000000000000000000000000000",
+  "recipient": "<RECIPIENT_ADDRESS>",
+  "amount_units": "10000",
+  "api_url": "https://api.rrtrace.xyz"
+}

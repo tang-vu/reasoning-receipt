@@ -26,6 +26,8 @@ from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
 
+import httpx
+
 from .analyst import (
     DEFAULT_FALLBACK_MODELS,
     DEFAULT_REASONING_MODEL,
@@ -238,6 +240,7 @@ class Ensemble:
     def _run_one_stance(self, role: str, candidate: MarketCandidate) -> Stance:
         if self.mock or self._client is None:
             return stance_from_dict(role, self.config.stance_model, mock_stance(role, candidate))
+        sources: list[dict] = []
         raw, _ = call_with_fallback(
             self._client,
             models=[self.config.stance_model, *self.config.fallback_models],
@@ -248,12 +251,53 @@ class Ensemble:
             thinking_budget=self.config.stance_thinking_budget,
             enable_web_search=self.config.enable_web_search,
             log_label=f"ensemble.{role}",
+            grounded_sources=sources,
         )
+        # A model writing its own URLs invents many of them. Cite only pages the search
+        # actually returned: resolve each grounding redirect to its page, have the stance
+        # rewrite its evidence against that list, and drop anything still outside it.
+        pages: dict[str, str] = {}
+        if self.config.enable_web_search:
+            for source in sources:
+                try:
+                    page = httpx.get(source["uri"], follow_redirects=False, timeout=10).headers.get(
+                        "location"
+                    )
+                except httpx.HTTPError:
+                    page = None
+                if page and page.startswith("https://"):
+                    pages.setdefault(page, source["title"])
+            if pages:
+                listing = "\n".join(f"- {url} ({title})" for url, title in pages.items())
+                raw, _ = call_with_fallback(
+                    self._client,
+                    models=[self.config.stance_model, *self.config.fallback_models],
+                    system_prompt=self._stance_prompts[role],
+                    user=(
+                        f"{_user_msg_for_stance(candidate)}\n\nYour research draft:\n{raw}\n\n"
+                        "Pages your search returned. Every evidence url must be one of these exact URLs; "
+                        f"drop any point you cannot tie to one of them:\n{listing}"
+                    ),
+                    temperature=self.config.supervisor_temperature,
+                    max_output_tokens=self.config.stance_max_tokens,
+                    thinking_budget=self.config.stance_thinking_budget,
+                    log_label=f"ensemble.{role}.cite",
+                )
         try:
             obj = _extract_first_json(raw)
         except Exception as exc:  # noqa: BLE001
             logger.warning("ensemble: %s stance unparseable (%s); using mock", role, exc)
             obj = mock_stance(role, candidate)
+        else:
+            if self.config.enable_web_search:
+                cited = obj.get("evidence") or []
+                obj["evidence"] = [e for e in cited if isinstance(e, dict) and e.get("url") in pages]
+                if len(obj["evidence"]) < len(cited):
+                    logger.info(
+                        "ensemble: %s dropped %d ungrounded citations",
+                        role,
+                        len(cited) - len(obj["evidence"]),
+                    )
         return stance_from_dict(role, self.config.stance_model, obj)
 
     def _run_supervisor(
