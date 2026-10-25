@@ -21,9 +21,9 @@ sequenceDiagram
     Loop->>API: Critic-approved trace, stored as pending (no upload, no publish)
     Aomi->>API: GET /v1/audits/next
     Aomi->>Web: Fetch every cited URL (the app's own requests)
-    Aomi->>Aomi: Judge each source and the claim
-    Aomi->>Web: Fetch again at seal time
-    Aomi->>API: POST /seal (fetch results + judgments + verdict)
+    Aomi->>Aomi: Return authenticated source snapshots; judge each source and the claim
+    Aomi->>Web: Fetch again at seal time; stop and re-review if changed
+    Aomi->>API: POST /seal (original reviewed snapshots + judgments + verdict)
     alt any source unreachable or unsupported, or verdict rejected
         API-->>Aomi: rejected, with reasons. Nothing is published
     else approved
@@ -58,7 +58,7 @@ claims. It does not say the forecast is right; calibration still judges that.
 
 | Rule | Where |
 |---|---|
-| The model cannot write fetch results | `rr_seal_audit` re-fetches every source itself and sends those results. The model only adds `supports`, a note per source, a verdict and notes. |
+| Judgments bind to the reviewed content | `rr_next_audit` authenticates each fetched snapshot with a deployment-bound, one-hour review token. Pass that token unchanged with each judgment. `rr_seal_audit` verifies the token, exact trace and citation, then re-fetches every source. Any changed content, status, redirect, title or error requires re-review; otherwise it sends the original reviewed observations and timestamp. The model only adds `supports`, a note per source, a verdict and notes. |
 | Approval is earned, not declared | The API skips sources that refused the fetch (403, 429, timeouts) and counts a 404 or 410 as unsupported. It rejects the audit unless more than half of the counted sources were retrieved with a 2xx and a body hash and `supports` them, and it rejects if the trace cites nothing or the verdict is `rejected`. Skipped sources are listed in `xa_verdict`. It requires exactly one finding per cited source at its cited URL. |
 | Only the configured auditor publishes | Seal requires the connected wallet to equal the deployment's auditor on its chain. The skill guard limits writes to that chain, the registry and the `publishV2` selector. Confirmation requires the `ReceiptV2` publisher topic to be the auditor. |
 | The publish matches the seal | The app decodes every word of the returned calldata (no consumer, market hash, probabilities, trace hash, root, schema, CID) before staging, and the host simulates it with stop on failure. Confirmation compares the logged event to the sealed calldata. |

@@ -20,6 +20,7 @@ Usage: uv run python scripts/e2e-audit-testnet.py
 from __future__ import annotations
 
 import asyncio
+import fcntl
 import hashlib
 import html
 import ipaddress
@@ -37,7 +38,10 @@ from pathlib import Path
 import httpx
 from eth_abi import decode as abi_decode
 from eth_account import Account
-from eth_utils import to_checksum_address
+from eth_account._utils.legacy_transactions import Transaction
+from eth_account.typed_transactions import TypedTransaction
+from eth_utils import keccak, to_checksum_address
+from hexbytes import HexBytes
 
 REGISTRY = os.getenv("RR_E2E_REGISTRY", "0x27d93c52fea923f956345af27f61d7bf47f0c4c1").lower()
 CHAIN_ID = 5042002
@@ -45,44 +49,53 @@ RPC = os.getenv("RR_AUDIT_RPC_URL", "https://rpc.testnet.arc.network")
 PUBLISH_V2 = "0xfd7b54b6"
 EXPLORER = "https://testnet.arcscan.app/tx/"
 
-for name in ("GOOGLE_API_KEY", "IRYS_PRIVATE_KEY", "RR_AUDITOR_ARC_TESTNET_PRIVATE_KEY"):
-    if not os.getenv(name):
-        sys.exit(f"missing {name}")
-auditor = Account.from_key(os.environ["RR_AUDITOR_ARC_TESTNET_PRIVATE_KEY"])
-# RR_E2E_WORK reuses an earlier run's database, so a sealed audit can be published without re-running the oracle.
-work = Path(os.getenv("RR_E2E_WORK") or tempfile.mkdtemp(prefix="rr-e2e-"))
-(work / "audit.json").write_text(
-    json.dumps(
-        {"enabled": True, "chain_id": CHAIN_ID, "registry": REGISTRY, "auditor": auditor.address.lower()}
+
+def configure_runtime() -> None:
+    """Initialize live services only when explicitly running this driver."""
+    global auditor, work, AUTH, api, gemini, AgentLoop, init_db, genai_errors
+    for name in ("GOOGLE_API_KEY", "IRYS_PRIVATE_KEY", "RR_AUDITOR_ARC_TESTNET_PRIVATE_KEY"):
+        if not os.getenv(name):
+            sys.exit(f"missing {name}")
+    auditor = Account.from_key(os.environ["RR_AUDITOR_ARC_TESTNET_PRIVATE_KEY"])
+    # RR_E2E_WORK reuses an earlier run's database, so a sealed audit can be published without re-running the oracle.
+    work = Path(os.getenv("RR_E2E_WORK") or tempfile.mkdtemp(prefix="rr-e2e-"))
+    work.mkdir(parents=True, exist_ok=True)
+    # An older database may already have broadcast a transaction without saving it.
+    # Never silently upgrade it into a work directory allowed to sign again.
+    if not (work / "e2e.db").exists() and not (work / "transaction-journal-v1.json").exists():
+        durable_json(work / "transaction-journal-v1.json", {"version": 1})
+    (work / "audit.json").write_text(
+        json.dumps(
+            {"enabled": True, "chain_id": CHAIN_ID, "registry": REGISTRY, "auditor": auditor.address.lower()}
+        )
     )
-)
-token = secrets.token_hex(16)
-os.environ.update(
-    DATABASE_URL=f"sqlite:///{work / 'e2e.db'}",
-    RR_AUDIT_MODE="aomi",
-    RR_USE_ENSEMBLE="1",
-    RR_AUDIT_CONFIG=str(work / "audit.json"),
-    RR_AUDIT_API_TOKEN=token,
-    RR_AUDIT_RPC_URL=RPC,
-    RPC=RPC,
-    RECEIPT_REGISTRY_V2_ADDRESS=REGISTRY,
-    RR_LOOP_TRADER="0",
-    RR_LOOP_PER_TICK=os.getenv("RR_E2E_MAX_AUDITS", "3"),
-    IRYS_NETWORK=os.getenv("IRYS_NETWORK", "devnet"),
-)
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    token = secrets.token_hex(16)
+    os.environ.update(
+        DATABASE_URL=f"sqlite:///{work / 'e2e.db'}",
+        RR_AUDIT_MODE="aomi",
+        RR_USE_ENSEMBLE="1",
+        RR_AUDIT_CONFIG=str(work / "audit.json"),
+        RR_AUDIT_API_TOKEN=token,
+        RR_AUDIT_RPC_URL=RPC,
+        RPC=RPC,
+        RECEIPT_REGISTRY_V2_ADDRESS=REGISTRY,
+        RR_LOOP_TRADER="0",
+        RR_LOOP_PER_TICK=os.getenv("RR_E2E_MAX_AUDITS", "3"),
+        IRYS_NETWORK=os.getenv("IRYS_NETWORK", "devnet"),
+    )
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from fastapi.testclient import TestClient  # noqa: E402
-from google import genai  # noqa: E402
-from google.genai import errors as genai_errors  # noqa: E402
+    from fastapi.testclient import TestClient  # noqa: E402
+    from google import genai  # noqa: E402
+    from google.genai import errors as genai_errors  # noqa: E402
 
-from agent.loop import AgentLoop  # noqa: E402
-from server.main import app  # noqa: E402
-from storage.db import init_db  # noqa: E402
+    from agent.loop import AgentLoop  # noqa: E402
+    from server.main import app  # noqa: E402
+    from storage.db import init_db  # noqa: E402
 
-AUTH = {"Authorization": f"Bearer {token}"}
-api = TestClient(app)
-gemini = genai.Client(api_key=os.environ["GOOGLE_API_KEY"])
+    AUTH = {"Authorization": f"Bearer {token}"}
+    api = TestClient(app)
+    gemini = genai.Client(api_key=os.environ["GOOGLE_API_KEY"])
 
 
 def step(msg: str) -> None:
@@ -187,7 +200,61 @@ def judge(question: str, claim: dict, evidence: dict, excerpt: str) -> tuple[boo
     return bool(verdict["supports"]), str(verdict.get("note", ""))[:200]
 
 
+def durable_json(path: Path, value: dict) -> None:
+    """Atomic, owner-only, crash-durable journal; failure must prevent broadcast."""
+    fd, temporary = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
+    try:
+        with os.fdopen(fd, "w") as stream:
+            json.dump(value, stream)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary, path)
+        directory = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
+        try:
+            os.fsync(directory)
+        finally:
+            os.close(directory)
+    finally:
+        if os.path.exists(temporary):
+            os.unlink(temporary)
+
+
 def publish(sealed: dict) -> str:
+    # Two resumed processes must not both observe a missing journal and sign.
+    with (work / "publish.lock").open("a") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        return publish_locked(sealed)
+
+
+def validate_saved_transaction(raw: str, tx_hash: str, binding: dict) -> None:
+    """Validate the signed payload itself, not just editable journal metadata."""
+    encoded = HexBytes(raw)
+    try:
+        if encoded and encoded[0] <= 0x7F:
+            # No blob or authorization-list transactions belong in this driver.
+            if encoded[0] not in (1, 2):
+                raise ValueError("unsupported transaction type")
+            tx = TypedTransaction.from_bytes(encoded).as_dict()
+            chain_id = tx["chainId"]
+        else:
+            tx = Transaction.from_bytes(encoded).as_dict()
+            # Unprotected legacy signatures (v=27/28) must never be replayed.
+            chain_id = (tx["v"] - 35) // 2 if tx["v"] >= 35 else None
+        valid = (
+            "0x" + keccak(encoded).hex() == tx_hash
+            and Account.recover_transaction(raw).lower() == binding["auditor"]
+            and chain_id == binding["chain_id"]
+            and bytes(tx["to"]) == bytes.fromhex(binding["registry"].removeprefix("0x"))
+            and tx["value"] == 0
+            and bytes(tx["data"]) == bytes.fromhex(binding["data"].removeprefix("0x"))
+        )
+    except (ValueError, TypeError, KeyError) as exc:
+        raise RuntimeError("Invalid saved transaction; manual recovery required") from exc
+    if not valid:
+        raise RuntimeError("Invalid saved transaction; manual recovery required")
+
+
+def publish_locked(sealed: dict) -> str:
     tx = sealed["transaction"]
     assert tx["to"].lower() == REGISTRY and tx["chain_id"] == CHAIN_ID and tx["value"] == "0"
     data = tx["data"]
@@ -201,6 +268,36 @@ def publish(sealed: dict) -> str:
     assert "0x" + words[5].hex() == sealed["merkle_root"], "merkle root differs from the seal"
     assert words[7] == sealed["trace_cid"], "CID differs from the seal"
     step(f"calldata decoded and matches the seal (prob={words[2]} conf={words[3]} cid={words[7]})")
+
+    binding = {
+        "audit_id": sealed["audit_id"],
+        "auditor": auditor.address.lower(),
+        "chain_id": CHAIN_ID,
+        "registry": REGISTRY,
+        "data": data,
+        "trace_hash": sealed["trace_hash"],
+        "merkle_root": sealed["merkle_root"],
+        "trace_cid": sealed["trace_cid"],
+    }
+    # Hash the identifier rather than allowing it to become a filesystem path.
+    key = hashlib.sha256(str(sealed["audit_id"]).encode()).hexdigest()
+    journal = work / f"publish-{key}.json"
+    if journal.exists():
+        saved = json.loads(journal.read_text())
+        if saved.get("binding") != binding:
+            raise RuntimeError("Saved publication differs from the seal/deployment; manual recovery required")
+        raw = saved["raw_transaction"]
+        tx_hash = saved["transaction_hash"]
+        validate_saved_transaction(raw, tx_hash, binding)
+        step(f"resuming the original signed transaction: {EXPLORER}{tx_hash}")
+        broadcast_saved(raw, tx_hash)
+        return tx_hash
+    marker = work / "transaction-journal-v1.json"
+    if not marker.exists() or json.loads(marker.read_text()) != {"version": 1}:
+        raise RuntimeError(
+            "Legacy work directory has no durable transaction journal; recover its original transaction "
+            "hash manually and confirm it. Do not republish this audit."
+        )
 
     call = {"from": auditor.address, "to": REGISTRY, "data": data, "value": "0x0"}
     sim = rpc("eth_call", [call, "latest"])
@@ -221,15 +318,35 @@ def publish(sealed: dict) -> str:
             "gasPrice": gas_price,
         }
     )
-    sent = rpc("eth_sendRawTransaction", ["0x" + signed.raw_transaction.hex().removeprefix("0x")])
+    raw = "0x" + signed.raw_transaction.hex().removeprefix("0x")
+    tx_hash = "0x" + keccak(signed.raw_transaction).hex()
+    durable_json(journal, {"binding": binding, "raw_transaction": raw, "transaction_hash": tx_hash})
+    broadcast_saved(raw, tx_hash)
+    return tx_hash
+
+
+def broadcast_saved(raw: str, tx_hash: str) -> None:
+    # A prior broadcast may have succeeded even if its response was lost. A known
+    # transaction (pending or mined) only needs confirmation, never a new nonce.
+    known = rpc("eth_getTransactionByHash", [tx_hash])
+    if "error" in known or "result" not in known:
+        raise RuntimeError("Cannot determine saved transaction status; retry with the same work directory")
+    if known["result"] is not None:
+        return
+    sent = rpc("eth_sendRawTransaction", [raw])
     if "error" in sent:
-        sys.exit(f"broadcast failed: {sent['error']}")
-    step(f"publishV2 sent by the auditor: {EXPLORER}{sent['result']}")
-    return sent["result"]
+        raise RuntimeError(
+            f"Broadcast uncertain; saved transaction {tx_hash} must be resumed: {sent['error']}"
+        )
+    if str(sent.get("result", "")).lower() != tx_hash:
+        raise RuntimeError("RPC returned a different transaction hash; retain journal and investigate")
+    step(f"publishV2 sent by the auditor: {EXPLORER}{tx_hash}")
 
 
 async def main() -> None:
+    configure_runtime()
     init_db()
+    step(f"recovery work directory: {work}; resume with RR_E2E_WORK set to this exact path")
     step(f"auditor {auditor.address}, registry {REGISTRY}, rpc {RPC}")
     assert rpc("eth_chainId", [])["result"] == hex(CHAIN_ID), "RPC is not Arc testnet"
 
@@ -305,4 +422,5 @@ async def main() -> None:
     print(json.dumps({"verify": verified, "xa_verdict_proof": node}, indent=2, default=str)[:4000])
 
 
-asyncio.run(main())
+if __name__ == "__main__":
+    asyncio.run(main())

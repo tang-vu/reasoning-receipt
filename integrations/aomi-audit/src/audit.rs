@@ -5,6 +5,7 @@ use crate::RrAuditApp;
 use aomi_sdk::{
     DynAomiTool, DynToolCallCtx, EnforcementPolicy, ToolReturn, host, resolve_secret_value,
 };
+use hmac::{Hmac, Mac};
 use reqwest::Method;
 use schemars::JsonSchema;
 use serde::Deserialize;
@@ -42,6 +43,15 @@ fn deployment() -> Result<Deployment, String> {
     serde_json::from_value(value).map_err(|_| "Invalid audit deployment".into())
 }
 
+fn audit_key(ctx: &DynToolCallCtx) -> Result<String, String> {
+    let key = resolve_secret_value(ctx, None, "RR_AUDIT_API_TOKEN", "")
+        .map_err(|_| "Configure the audit API credential in the app environment.")?;
+    if key.trim().is_empty() {
+        return Err("Configure the audit API credential in the app environment.".into());
+    }
+    Ok(key)
+}
+
 fn request(
     ctx: &DynToolCallCtx,
     d: &Deployment,
@@ -49,8 +59,7 @@ fn request(
     path: &str,
     body: Option<Value>,
 ) -> Result<Value, String> {
-    let token = resolve_secret_value(ctx, None, "RR_AUDIT_API_TOKEN", "")
-        .map_err(|_| "Configure the audit API credential in the app environment.")?;
+    let token = audit_key(ctx)?;
     static HTTP: OnceLock<reqwest::blocking::Client> = OnceLock::new();
     let http = HTTP.get_or_init(|| {
         reqwest::blocking::Client::builder()
@@ -307,6 +316,101 @@ fn check_source(url: &str, cited_title: &str) -> (Value, String) {
     (check, squash(&visible, 2000))
 }
 
+// Review tokens are authenticated, portable snapshots, not model-provided hashes.
+// Aomi may start a new process for each call, so process-local caches are not enough.
+// HMAC-SHA256 using the already deployment-bound API credential.
+fn review_mac(key: &[u8], payload: &[u8]) -> Hmac<Sha256> {
+    let mut mac = Hmac::<Sha256>::new_from_slice(key).expect("HMAC accepts any key length");
+    mac.update(b"ReasoningReceipt-reviewed-source-v1\0");
+    mac.update(payload);
+    mac
+}
+
+fn review_time() -> Result<u64, String> {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map(|d| d.as_secs())
+        .map_err(|_| "System clock unavailable; stop.".into())
+}
+
+fn review_context(current: &Value, d: &Deployment) -> String {
+    let bound = json!([d.api_url, d.chain_id, d.registry, d.auditor, current]);
+    format!("{:x}", Sha256::digest(bound.to_string().as_bytes()))
+}
+
+fn review_token(key: &str, context: &str, evidence: &Value, check: &Value, now: u64) -> String {
+    let payload =
+        json!({"context": context, "evidence": evidence, "check": check, "issued_at": now})
+            .to_string();
+    let tag: String = review_mac(key.as_bytes(), payload.as_bytes())
+        .finalize()
+        .into_bytes()
+        .iter()
+        .map(|b| format!("{b:02x}"))
+        .collect();
+    format!("{tag}:{payload}")
+}
+
+fn reviewed_check(
+    key: &str,
+    context: &str,
+    evidence: &Value,
+    token: &str,
+    now: u64,
+) -> Result<Value, String> {
+    let invalid = || {
+        "Missing or invalid reviewed snapshot; call rr_next_audit and review the sources again."
+            .to_string()
+    };
+    // Bound untrusted arguments before parsing or hashing them.
+    if token.len() > 64 * 1024 {
+        return Err(invalid());
+    }
+    let (tag, payload) = token.split_once(':').ok_or_else(invalid)?;
+    if tag.len() != 64 || !tag.bytes().all(|b| b.is_ascii_hexdigit()) {
+        return Err(invalid());
+    }
+    let mut bytes = [0u8; 32];
+    for (i, byte) in bytes.iter_mut().enumerate() {
+        *byte = u8::from_str_radix(&tag[i * 2..i * 2 + 2], 16).map_err(|_| invalid())?;
+    }
+    review_mac(key.as_bytes(), payload.as_bytes())
+        .verify_slice(&bytes)
+        .map_err(|_| invalid())?;
+    let snapshot: Value = serde_json::from_str(payload).map_err(|_| invalid())?;
+    let issued_at = snapshot["issued_at"].as_u64().ok_or_else(invalid)?;
+    if now < issued_at || now - issued_at > 3600 {
+        return Err(
+            "Reviewed snapshot expired; call rr_next_audit and review the sources again.".into(),
+        );
+    }
+    if snapshot["context"] != context
+        || snapshot["evidence"] != *evidence
+        || !snapshot["check"].is_object()
+    {
+        return Err(invalid());
+    }
+    Ok(snapshot["check"].clone())
+}
+
+fn require_unchanged_source(reviewed: &Value, fresh: &Value) -> Result<(), String> {
+    // A later fetch time is expected, but every observation used in a judgment
+    // must stay the same. Never silently substitute fresh, unreviewed content.
+    for field in [
+        "http_status",
+        "final_url",
+        "content_sha256",
+        "page_title",
+        "title_matches",
+        "error",
+    ] {
+        if reviewed[field] != fresh[field] {
+            return Err("A cited source changed since review; call rr_next_audit and review the new sources before sealing.".into());
+        }
+    }
+    Ok(())
+}
+
 #[derive(Debug, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct NextArgs {}
@@ -323,6 +427,8 @@ pub enum Verdict {
 pub struct Judgment {
     /// evidence_id exactly as rr_next_audit listed it.
     pub evidence_id: String,
+    /// Copy the opaque review_token returned for this source by rr_next_audit unchanged.
+    pub review_token: String,
     /// True only if the fetched page shows what the trace cites it for.
     pub supports: bool,
     /// One sentence on what the page does or does not show.
@@ -371,6 +477,9 @@ impl DynAomiTool for NextAudit {
         if result["status"] != "pending" {
             return Ok(ToolReturn::value(result));
         }
+        let key = audit_key(&ctx)?;
+        let context = review_context(&result, &d);
+        let now = review_time()?;
         let evidence = result
             .as_object_mut()
             .and_then(|o| o.remove("evidence"))
@@ -386,6 +495,7 @@ impl DynAomiTool for NextAudit {
                 );
                 json!({"evidence_id": e["id"], "stance": e["stance"], "url": e["url"],
                     "cited_title": e["title"], "cited_for": e["cited_for"],
+                    "review_token": review_token(&key, &context, e, &check, now),
                     "check": check, "page_excerpt": excerpt})
             })
             .collect();
@@ -393,12 +503,45 @@ impl DynAomiTool for NextAudit {
     }
 }
 
+fn reviewed_sources(
+    evidence: &[Value],
+    judgments: &[Judgment],
+    key: &str,
+    context: &str,
+    now: u64,
+    mut fetch: impl FnMut(&str, &str) -> (Value, String),
+) -> Result<Vec<Value>, String> {
+    if judgments.len() != evidence.len() {
+        return Err("Give exactly one judgment per cited source.".into());
+    }
+    let mut sources = Vec::new();
+    for e in evidence {
+        let id = e["id"].as_str().unwrap_or("");
+        let mut found = judgments.iter().filter(|j| j.evidence_id == id);
+        let (Some(judgment), None) = (found.next(), found.next()) else {
+            return Err(format!("Give exactly one judgment for {id}."));
+        };
+        let mut check = reviewed_check(key, context, e, &judgment.review_token, now)?;
+        let (fresh, _) = fetch(
+            e["url"].as_str().unwrap_or(""),
+            e["title"].as_str().unwrap_or(""),
+        );
+        require_unchanged_source(&check, &fresh)?;
+        check["evidence_id"] = json!(id);
+        check["url"] = e["url"].clone();
+        check["supports"] = json!(judgment.supports);
+        check["note"] = json!(judgment.note.chars().take(500).collect::<String>());
+        sources.push(check);
+    }
+    Ok(sources)
+}
+
 pub struct SealAudit;
 impl DynAomiTool for SealAudit {
     type App = RrAuditApp;
     type Args = SealArgs;
     const NAME: &'static str = "rr_seal_audit";
-    const DESCRIPTION: &'static str = "Record the audit. Re-fetches every cited source itself and sends those results with your judgments. A rejected audit is stored and never published. An approved one is sealed into the trace and returned as one unsigned publishV2 from the auditor wallet, staged and simulated; commit only after explicit wallet approval.";
+    const DESCRIPTION: &'static str = "Record the audit using the authenticated review_token from rr_next_audit for each judgment. Re-fetches sources and refuses changed content; review again if refused. Sends the original reviewed snapshots with your judgments. A rejected audit is stored and never published. An approved one is sealed into the trace and returned as one unsigned publishV2 from the auditor wallet, staged and simulated; commit only after explicit wallet approval.";
     fn run_with_routes(
         _: &RrAuditApp,
         args: SealArgs,
@@ -418,23 +561,16 @@ impl DynAomiTool for SealAudit {
         if args.judgments.len() != evidence.len() {
             return Err("Give exactly one judgment per cited source.".into());
         }
-        let mut sources = Vec::new();
-        for e in &evidence {
-            let id = e["id"].as_str().unwrap_or("");
-            let mut found = args.judgments.iter().filter(|j| j.evidence_id == id);
-            let (Some(judgment), None) = (found.next(), found.next()) else {
-                return Err(format!("Give exactly one judgment for {id}."));
-            };
-            let (mut check, _) = check_source(
-                e["url"].as_str().unwrap_or(""),
-                e["title"].as_str().unwrap_or(""),
-            );
-            check["evidence_id"] = json!(id);
-            check["url"] = e["url"].clone();
-            check["supports"] = json!(judgment.supports);
-            check["note"] = json!(judgment.note.chars().take(500).collect::<String>());
-            sources.push(check);
-        }
+        let key = audit_key(&ctx)?;
+        let context = review_context(&current, &d);
+        let sources = reviewed_sources(
+            &evidence,
+            &args.judgments,
+            &key,
+            &context,
+            review_time()?,
+            check_source,
+        )?;
         let verdict = match args.verdict {
             Verdict::Approved => "approved",
             Verdict::Rejected => "rejected",
@@ -575,6 +711,148 @@ mod tests {
         DynAomiApp,
         testing::{TestCtxBuilder, run_tool},
     };
+
+    fn source_fixture() -> (Value, Value) {
+        (
+            json!({"id": "e-1", "url": "https://example.com/a", "title": "Report", "cited_for": "Claim"}),
+            json!({"http_status": 200, "final_url": "https://example.com/a", "content_sha256": "0xabc",
+                "page_title": "Report", "title_matches": true, "error": null,
+                "fetched_at": "2026-01-01T00:00:00Z"}),
+        )
+    }
+
+    #[test]
+    fn authenticated_review_survives_calls_but_cannot_be_forged_or_reused_elsewhere() {
+        let (evidence, check) = source_fixture();
+        let token = review_token("test-secret", "audit-context", &evidence, &check, 100);
+        assert_eq!(
+            reviewed_check("test-secret", "audit-context", &evidence, &token, 101).unwrap(),
+            check
+        );
+        for (key, context, token, now) in [
+            ("wrong-key", "audit-context", token.clone(), 101),
+            ("test-secret", "another-audit", token.clone(), 101),
+            (
+                "test-secret",
+                "audit-context",
+                token.replace("0xabc", "0xdef"),
+                101,
+            ),
+            ("test-secret", "audit-context", String::new(), 101),
+            ("test-secret", "audit-context", "x".repeat(65537), 101),
+            ("test-secret", "audit-context", token.clone(), 3701),
+            ("test-secret", "audit-context", token.clone(), 99),
+        ] {
+            assert!(reviewed_check(key, context, &evidence, &token, now).is_err());
+        }
+        let mut changed_evidence = evidence.clone();
+        changed_evidence["cited_for"] = json!("Different claim");
+        assert!(
+            reviewed_check(
+                "test-secret",
+                "audit-context",
+                &changed_evidence,
+                &token,
+                101
+            )
+            .is_err()
+        );
+    }
+
+    #[test]
+    fn sealing_uses_only_authenticated_reviewed_observations() {
+        let (evidence, check) = source_fixture();
+        let mut judgment = Judgment {
+            evidence_id: "e-1".into(),
+            review_token: review_token("key", "audit", &evidence, &check, 100),
+            supports: true,
+            note: "The reviewed page supports the claim".into(),
+        };
+        let mut fresh = check.clone();
+        fresh["fetched_at"] = json!("2026-01-01T00:01:00Z");
+        let sources = reviewed_sources(
+            std::slice::from_ref(&evidence),
+            std::slice::from_ref(&judgment),
+            "key",
+            "audit",
+            101,
+            |_, _| (fresh.clone(), "reviewed text".into()),
+        )
+        .unwrap();
+        assert_eq!(sources[0]["fetched_at"], check["fetched_at"]);
+        assert_eq!(sources[0]["content_sha256"], check["content_sha256"]);
+        assert_eq!(sources[0]["supports"], true);
+        fresh["content_sha256"] = json!("0xdifferent");
+        assert!(
+            reviewed_sources(
+                std::slice::from_ref(&evidence),
+                std::slice::from_ref(&judgment),
+                "key",
+                "audit",
+                101,
+                |_, _| (fresh.clone(), "unreviewed text".into()),
+            )
+            .is_err()
+        );
+        judgment.review_token.clear();
+        assert!(
+            reviewed_sources(
+                &[evidence],
+                &[judgment],
+                "key",
+                "audit",
+                101,
+                |_, _| panic!("Invalid review token must fail before fetching"),
+            )
+            .is_err()
+        );
+    }
+
+    #[test]
+    fn review_context_binds_trace_and_deployment() {
+        let (mut deployment, _) = fixture();
+        let current = json!({"audit_id": 1, "claim": "original"});
+        let context = review_context(&current, &deployment);
+        assert_ne!(
+            context,
+            review_context(&json!({"audit_id": 2, "claim": "original"}), &deployment)
+        );
+        assert_ne!(
+            context,
+            review_context(&json!({"audit_id": 1, "claim": "changed"}), &deployment)
+        );
+        deployment.api_url = "https://other.example".into();
+        assert_ne!(context, review_context(&current, &deployment));
+    }
+
+    #[test]
+    fn changed_source_requires_rereview_and_never_relabels_old_judgment() {
+        let (evidence, reviewed) = source_fixture();
+        let token = review_token("key", "audit", &evidence, &reviewed, 100);
+        let check = reviewed_check("key", "audit", &evidence, &token, 101).unwrap();
+        for (field, value) in [
+            ("http_status", json!(404)),
+            ("final_url", json!("https://example.com/other")),
+            ("content_sha256", json!("0xchanged")),
+            ("page_title", json!("Changed title")),
+            ("title_matches", json!(false)),
+            ("error", json!("request failed")),
+        ] {
+            let mut fresh = reviewed.clone();
+            fresh[field] = value;
+            assert!(require_unchanged_source(&check, &fresh).is_err(), "{field}");
+        }
+        let mut fresh = reviewed.clone();
+        fresh["fetched_at"] = json!("2026-01-01T00:01:00Z");
+        require_unchanged_source(&check, &fresh).unwrap();
+        assert_eq!(check["fetched_at"], "2026-01-01T00:00:00Z");
+        assert_eq!(check["content_sha256"], "0xabc");
+        // A newly read page can be reviewed and sealed with its own fresh token.
+        fresh["content_sha256"] = json!("0xchanged");
+        let new_token = review_token("key", "audit", &evidence, &fresh, 101);
+        let new_check = reviewed_check("key", "audit", &evidence, &new_token, 102).unwrap();
+        require_unchanged_source(&new_check, &fresh).unwrap();
+    }
 
     fn fixture() -> (Deployment, Value) {
         let d = Deployment {
