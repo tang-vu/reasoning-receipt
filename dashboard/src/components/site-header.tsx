@@ -10,6 +10,7 @@ const nav = [
   { href: "/inclusion", label: "Verify" },
   { href: "/traces", label: "Traces" },
   { href: "/stats", label: "Stats" },
+  { href: "/agent", label: "Settle" },
 ];
 
 export function SiteHeader() {
