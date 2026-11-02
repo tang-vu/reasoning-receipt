@@ -233,7 +233,10 @@ class Ensemble:
                     stances.append(future.result(timeout=self.config.stance_timeout_s))
                 except Exception as exc:  # noqa: BLE001
                     logger.warning("ensemble: stance %s failed (%s); using mock", role, exc)
-                    stances.append(stance_from_dict(role, self.config.stance_model, mock_stance(role, candidate)))
+                    obj = mock_stance(role, candidate)
+                    if self.config.enable_web_search and not self.mock:
+                        obj["evidence"] = []  # no grounded page backs a mock citation
+                    stances.append(stance_from_dict(role, self.config.stance_model, obj))
         stances.sort(key=lambda s: _ROLE_ORDER.get(s.role, 99))
         return stances
 

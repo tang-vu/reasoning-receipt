@@ -182,9 +182,16 @@ def test_main_confirmation_timeout_then_resume_does_not_republish(driver, sealed
 
     class Api:
         finalized = False
+        resumed = False
 
         def get(self, path, **kwargs):
-            return Reply(sealed if path == "/v1/audits/next" else {"verified": True})
+            if path == "/v1/audits/next":
+                # After the first run another trace is pending; resume must not pick it up.
+                if self.resumed:
+                    return Reply({"audit_id": 8, "status": "pending"})
+                self.resumed = True
+                return Reply(sealed)
+            return Reply(sealed if path == "/v1/audits/7" else {"verified": True})
 
         def post(self, path, **kwargs):
             assert path == "/v1/audits/7/published"

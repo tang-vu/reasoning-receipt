@@ -63,7 +63,7 @@ def _deployment(authorization: str | None) -> dict[str, Any]:
     if config.get("enabled") is not True:
         raise HTTPException(503, "Settlement transfers are disabled until a recipient is configured")
     token = os.getenv("RR_SETTLEMENT_API_TOKEN", "")
-    if not token or not hmac.compare_digest(authorization or "", f"Bearer {token}"):
+    if not token or not hmac.compare_digest((authorization or "").encode(), f"Bearer {token}".encode()):
         raise HTTPException(401, "Settlement access denied")
     if not os.getenv("RR_SETTLEMENT_RPC_URL"):
         raise HTTPException(503, "Settlement RPC is not configured; do not submit a payment")

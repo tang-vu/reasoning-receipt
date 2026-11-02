@@ -358,7 +358,13 @@ async def main() -> None:
     if rpc("eth_chainId", [])["result"] != hex(CHAIN_ID):
         sys.exit("RPC is not Arc testnet; nothing run")
 
-    pending = api.get("/v1/audits/next", headers=AUTH).json()
+    # A saved publish journal names the audit already broadcast; resume that one, not /next.
+    journals = sorted(work.glob("publish-*.json"))
+    if journals:
+        audit_id = json.loads(journals[0].read_text())["binding"]["audit_id"]
+        pending = api.get(f"/v1/audits/{audit_id}", headers=AUTH).json()
+    else:
+        pending = api.get("/v1/audits/next", headers=AUTH).json()
     if pending.get("status") == "sealed":
         step(f"resuming sealed audit #{pending['audit_id']}; the oracle is not re-run")
     else:

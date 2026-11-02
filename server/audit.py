@@ -101,7 +101,7 @@ def _deployment(authorization: str | None) -> dict[str, Any]:
     if config.get("enabled") is not True:
         raise HTTPException(503, "Audits are disabled until an auditor and registry are configured")
     token = os.getenv("RR_AUDIT_API_TOKEN", "")
-    if not token or not hmac.compare_digest(authorization or "", f"Bearer {token}"):
+    if not token or not hmac.compare_digest((authorization or "").encode(), f"Bearer {token}".encode()):
         raise HTTPException(401, "Audit access denied")
     for key in ("registry", "auditor"):
         if not ADDRESS.match(str(config.get(key, ""))) or int(config[key], 16) == 0:
