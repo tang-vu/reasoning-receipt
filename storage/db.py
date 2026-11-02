@@ -180,6 +180,32 @@ class Audit(Base):
     updated_at = Column(DateTime(timezone=True), nullable=True)
 
 
+class Settlement(Base):
+    """One wallet-approved transfer linked to one published audit.
+
+    ``source_receipt_hash`` is the audited trace hash and ``source_receipt`` the
+    audit reference as it was when the payment was prepared. A successful
+    transfer adds a separate outcome receipt that references it. Unique source hash and transaction hash keep repeated verification from
+    creating a second success record.
+    """
+
+    __tablename__ = "settlements"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    source_receipt_hash = Column(String(70), nullable=False, unique=True, index=True)
+    source_receipt = Column(Text, nullable=False)
+    chain_id = Column(Integer, nullable=False)
+    token = Column(String(42), nullable=False)
+    recipient = Column(String(42), nullable=False)
+    amount_units = Column(String(40), nullable=False)
+    payer = Column(String(42), nullable=False)
+    status = Column(String(16), nullable=False, default="prepared", index=True)
+    transaction_hash = Column(String(66), nullable=True, unique=True)
+    outcome_receipt = Column(Text, nullable=True)
+    prepared_at = Column(DateTime(timezone=True), nullable=False, default=_now)
+    settled_at = Column(DateTime(timezone=True), nullable=True)
+
+
 _engine = None
 _Session: sessionmaker | None = None
 

@@ -36,6 +36,7 @@ from .facilitator import router as facilitator_router
 from .mcp_paywalled import router as mcp_router
 from .portable import router as portable_router
 from .routes import router as oracle_router
+from .settlement import router as settlement_router
 from .verify import router as verify_router
 from .x402 import X402Paywall
 
@@ -107,6 +108,7 @@ def create_app(*, serverless: bool | None = None) -> FastAPI:
     app.include_router(oracle_router)
     app.include_router(portable_router)
     app.include_router(audit_router)
+    app.include_router(settlement_router)
     app.include_router(verify_router)
     if not serverless:
         app.include_router(events_router)

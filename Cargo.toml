@@ -2,15 +2,15 @@
 #
 # `aomi-build deploy` reads the aomi-sdk pin from the Cargo.toml at the
 # repository root, never from the App's folder. The App is not in this
-# workspace: integrations/aomi-audit/Cargo.toml declares its own [workspace]
-# and builds from its own Cargo.lock, because Aomi's platform build walks up
-# from the App to the first [workspace] and requires Cargo.lock beside it.
-# Both pins must agree; a test in integrations/aomi-audit/src/lib.rs checks that.
+# workspace: each Aomi app under integrations/ (aomi, aomi-audit) declares its
+# own [workspace] and builds from its own Cargo.lock, because Aomi's platform
+# build walks up from the App to the first [workspace] and requires Cargo.lock
+# beside it. Both pins must agree; a test in each app's src/lib.rs checks that.
 
 [workspace]
 resolver = "3"
 members  = []
-exclude  = ["integrations/aomi-audit"]
+exclude  = ["integrations/aomi", "integrations/aomi-audit"]
 
 [workspace.dependencies]
 aomi-sdk = "=5.1.1"
