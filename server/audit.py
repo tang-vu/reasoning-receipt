@@ -8,9 +8,9 @@ which is re-rooted, uploaded and returned as unsigned ``publishV2`` calldata
 for the auditor's wallet -> ``/{id}/published`` checks the finalized
 ``ReceiptV2`` event and records the receipt with the auditor as publisher.
 
-The oracle's own nodes and their hashes are carried over unchanged, so every
-existing inclusion proof still works against the new root. A rejected audit
-records why and publishes nothing.
+The oracle's own nodes and their hashes are carried over unchanged. Inclusion
+proofs must be regenerated for the new root. A rejected audit records why and
+publishes nothing.
 
 The chain, registry and auditor address come only from the deployment JSON in
 ``RR_AUDIT_CONFIG`` (the same file the Aomi app is built from). Without it, or
@@ -280,12 +280,19 @@ def seal_audit(
 
     if verdict == "rejected":
         with Session() as s:
-            s.execute(
+            changed = s.execute(
                 update(AuditRow)
                 .where(AuditRow.id == audit_id, AuditRow.status == "pending")
                 .values(status="rejected", findings=findings, auditor=auditor, updated_at=datetime.now(UTC))
-            )
-        return {"status": "rejected", "audit_id": audit_id, "reasons": reasons}
+            ).rowcount
+            current = s.get(AuditRow, audit_id)
+            if current is None:
+                raise HTTPException(409, "Audit changed during rejection; manual review required")
+            s.refresh(current)
+            if changed != 1 and current.status != "rejected":
+                raise HTTPException(409, f"This audit is already {current.status}; nothing was rejected")
+            # A competing rejection may have different reasons: return the stored winner.
+            return _view(current, d)
 
     # The oracle's nodes keep their hashes; the audit adds nodes and a new root.
     node_hashes = {**trace["node_hashes"], **{i: sha256_hex(canonical_bytes(n)) for i, n in nodes.items()}}
@@ -297,6 +304,8 @@ def seal_audit(
         "merkle_root": "0x" + merkle.merkle_root(leaves).hex(),
     }
     upload = IrysClient().upload(sealed)
+    if upload.is_mock:
+        raise HTTPException(503, "Trace upload is mocked; nothing was sealed")
     args = (
         ZERO_ADDRESS,
         _market_id_bytes32(trace["market_id"]),

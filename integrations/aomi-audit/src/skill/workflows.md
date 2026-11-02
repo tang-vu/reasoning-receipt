@@ -9,7 +9,9 @@
    mention the figure does not support it. The title match is a hint, not proof.
 3. Judge the trace as a whole: does the claim and its probability follow from the
    stances and evidence, and are counter-arguments addressed? Then call rr_seal_audit
-   with one judgment per source, a verdict and short notes. Approve only if the
+   with one judgment per source (including its unchanged review_token), a verdict and short notes.
+   Tokens expire after one hour. If a token expires or any source changed, call
+   rr_next_audit again and re-read the returned excerpts before making new judgments. Approve only if the
    reasoning holds on the sources you could read. The API skips pages that refused
    the fetch and rejects the audit unless most of the remaining sources support it.
 4. rejected: say why; nothing is published, and the next trace can be audited.

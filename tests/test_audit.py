@@ -7,6 +7,7 @@ from __future__ import annotations
 import asyncio
 import json
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import contextmanager
 from dataclasses import replace
 from datetime import UTC, datetime
 from pathlib import Path
@@ -29,7 +30,7 @@ from server.verify import _find_node_in_trace
 from storage.db import Audit as AuditRow
 from storage.db import Receipt as ReceiptRow
 from storage.db import Session
-from storage.irys import canonical_bytes, sha256_hex
+from storage.irys import IrysClient, canonical_bytes, sha256_hex
 
 RPC = "https://rpc.test/arc"
 CHAIN = 5_042_002
@@ -109,6 +110,11 @@ def chain(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setenv("RR_AUDIT_CONFIG", str(config))
     monkeypatch.setenv("RR_AUDIT_API_TOKEN", "audit-test-token")
     monkeypatch.setenv("RR_AUDIT_RPC_URL", RPC)
+    # Explicit isolated uploader stub: production rejects synthetic uploads.
+    original_upload = IrysClient.upload
+    monkeypatch.setattr(
+        IrysClient, "upload", lambda self, trace: replace(original_upload(self, trace), is_mock=False)
+    )
     fake = FakeChain()
     with respx.mock(assert_all_called=False) as mock:
         mock.post(RPC).mock(side_effect=fake)
@@ -286,6 +292,16 @@ def test_approved_audit_adds_nodes_and_keeps_every_oracle_hash(chain, handed_off
     leaves = [bytes.fromhex(trace["node_hashes"][i][2:]) for i in sorted(trace["node_hashes"])]
     assert "0x" + merkle.merkle_root(leaves).hex() == trace["merkle_root"] == sealed["merkle_root"]
     assert sha256_hex(canonical_bytes(trace)) == sealed["trace_hash"]
+    # Old inclusion paths target the old root; regenerate proofs after adding audit nodes.
+    old_ids = sorted(handed_off["node_hashes"])
+    old_leaves = [bytes.fromhex(handed_off["node_hashes"][i][2:]) for i in old_ids]
+    new_ids = sorted(trace["node_hashes"])
+    new_root = bytes.fromhex(trace["merkle_root"][2:])
+    for index, node_id in enumerate(old_ids):
+        old_proof = merkle.merkle_proof(old_leaves, index)
+        assert not merkle.verify_proof(old_leaves[index], old_proof, new_root)
+        new_proof = merkle.merkle_proof(leaves, new_ids.index(node_id))
+        assert merkle.verify_proof(old_leaves[index], new_proof, new_root)
     verdict = audit_nodes["xa_verdict"]
     assert verdict["auditor"] == AUDITOR and verdict["verdict"] == "approved"
     assert verdict["oracle_merkle_root"] == handed_off["merkle_root"]
@@ -430,3 +446,52 @@ def test_a_trace_too_large_to_audit_is_not_handed_off(monkeypatch):
     with Session() as s:
         assert list(s.scalars(select(AuditRow))) == []
     assert receipts() == []
+
+
+def test_mock_upload_never_returns_wallet_calldata(chain, handed_off, monkeypatch):
+    from storage.irys import TraceUpload
+
+    monkeypatch.setattr(
+        IrysClient,
+        "upload",
+        lambda self, trace: TraceUpload(sha256_hex(canonical_bytes(trace)), "ar://synthetic", 1, True),
+    )
+    response = seal(findings(handed_off))
+    assert response.status_code == 503
+    assert "mocked" in response.json()["detail"]
+    with Session() as s:
+        row = s.get(AuditRow, 1)
+        assert row.status == "pending" and row.calldata is None and row.trace_cid is None
+    assert receipts() == []
+
+
+@pytest.mark.parametrize("winner", ["sealed", "rejected"])
+def test_rejection_race_reports_persisted_winner(chain, handed_off, monkeypatch, winner):
+    import server.audit as audit_module
+
+    real_session = audit_module.Session
+    calls = 0
+
+    @contextmanager
+    def racing_session():
+        nonlocal calls
+        calls += 1
+        # The losing request read pending, but another request wins before its UPDATE.
+        if calls == 2:
+            with real_session() as other:
+                row = other.get(AuditRow, 1)
+                row.status = winner
+                row.findings = json.dumps({"xa_verdict": {"reasons": ["winning rejection"]}})
+        with real_session() as session:
+            yield session
+
+    monkeypatch.setattr(audit_module, "Session", racing_session)
+    response = seal(findings(handed_off, verdict="rejected"))
+    if winner == "sealed":
+        assert response.status_code == 409
+        assert "already sealed" in response.json()["detail"]
+    else:
+        assert response.status_code == 200
+        assert response.json()["reasons"] == ["winning rejection"]
+    with real_session() as s:
+        assert s.get(AuditRow, 1).status == winner
