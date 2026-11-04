@@ -10,9 +10,9 @@ to the audited trace. Pending, sealed, rejected or unknown audits never settle,
 so a failed or inconclusive audit blocks payment.
 
 The chain, token, recipient and amount come only from the deployment JSON in
-``RR_SETTLEMENT_CONFIG`` (the same file the Aomi app is built from). Without
-it, or with ``enabled`` false, every route refuses: transfers stay disabled
-until a recipient is configured.
+``RR_SETTLEMENT_CONFIG_JSON`` or the file in ``RR_SETTLEMENT_CONFIG`` (the same
+values the Aomi app is built from). Without configuration, or with ``enabled``
+false, every route refuses: transfers stay disabled until a recipient is configured.
 """
 
 from __future__ import annotations
@@ -22,7 +22,6 @@ import json
 import os
 import re
 from datetime import UTC, datetime
-from pathlib import Path
 from typing import Any
 
 import httpx
@@ -35,6 +34,8 @@ from protocol.receipt import PortableReceipt, ReceiptNode
 from storage.db import Audit as AuditRow
 from storage.db import Session
 from storage.db import Settlement as SettlementRow
+
+from .deployment import load_deployment_config
 
 router = APIRouter(prefix="/v1/settlements", tags=["settlements"])
 
@@ -58,8 +59,7 @@ class VerifyRequest(BaseModel):
 
 def _deployment(authorization: str | None) -> dict[str, Any]:
     """Authorize the caller and load the deployment-bound transfer, or refuse."""
-    path = os.getenv("RR_SETTLEMENT_CONFIG", "")
-    config = json.loads(Path(path).read_text()) if path else {"enabled": False}
+    config = load_deployment_config("RR_SETTLEMENT")
     if config.get("enabled") is not True:
         raise HTTPException(503, "Settlement transfers are disabled until a recipient is configured")
     token = os.getenv("RR_SETTLEMENT_API_TOKEN", "")

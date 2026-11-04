@@ -13,8 +13,9 @@ proofs must be regenerated for the new root. A rejected audit records why and
 publishes nothing.
 
 The chain, registry and auditor address come only from the deployment JSON in
-``RR_AUDIT_CONFIG`` (the same file the Aomi app is built from). Without it, or
-with ``enabled`` false, every route refuses.
+``RR_AUDIT_CONFIG_JSON`` or the file in ``RR_AUDIT_CONFIG`` (the same values the
+Aomi app is built from). Without configuration, or with ``enabled`` false,
+every route refuses.
 """
 
 from __future__ import annotations
@@ -24,7 +25,6 @@ import json
 import os
 import re
 from datetime import UTC, datetime
-from pathlib import Path
 from typing import Any, Literal
 
 import httpx
@@ -43,6 +43,7 @@ from storage.db import Session
 from storage.irys import IrysClient, canonical_bytes, sha256_hex
 
 from .chain import ZERO_ADDRESS, _hex_to_bytes32, _market_id_bytes32, _scale_unit_to_ppm
+from .deployment import load_deployment_config
 
 router = APIRouter(prefix="/v1/audits", tags=["audits"])
 
@@ -96,8 +97,7 @@ class PublishedRequest(BaseModel):
 
 def _deployment(authorization: str | None) -> dict[str, Any]:
     """Authorize the caller and load the deployment-bound registry and auditor, or refuse."""
-    path = os.getenv("RR_AUDIT_CONFIG", "")
-    config = json.loads(Path(path).read_text()) if path else {"enabled": False}
+    config = load_deployment_config("RR_AUDIT")
     if config.get("enabled") is not True:
         raise HTTPException(503, "Audits are disabled until an auditor and registry are configured")
     token = os.getenv("RR_AUDIT_API_TOKEN", "")

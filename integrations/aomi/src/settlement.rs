@@ -340,7 +340,7 @@ mod tests {
     }
 
     #[test]
-    fn tools_are_skill_owned_and_disabled_by_default() {
+    fn tools_are_skill_owned_and_respect_build_configuration() {
         let manifest = RrApp.manifest();
         aomi_sdk::validate_app_skills_with_tools(&manifest.name, &manifest.skills, &manifest.tools)
             .unwrap();

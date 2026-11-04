@@ -72,7 +72,7 @@ jobs:
       # Default build: audits disabled, no EVM namespace.
       - name: cargo test (disabled)
         working-directory: integrations/aomi-audit
-        run: cargo test --locked
+        run: RR_AUDIT_CONFIG_JSON='{"enabled":false}' cargo test --locked
       # Configured build with placeholder addresses: guard and auditor-wallet checks.
       - name: cargo test (configured)
         working-directory: integrations/aomi-audit
@@ -80,6 +80,14 @@ jobs:
           sed 's/"enabled": false/"enabled": true/; s/<AUDITOR_WALLET_ADDRESS>/0x5555555555555555555555555555555555555555/' \
             audit-deployment.example.json > "$RUNNER_TEMP/audit.json"
           RR_AUDIT_CONFIG="$RUNNER_TEMP/audit.json" cargo test --locked
+      - name: cargo test (inline JSON configuration)
+        working-directory: integrations/aomi-audit
+        run: |
+          RR_AUDIT_CONFIG=/nonexistent/audit.json \
+          RR_AUDIT_CONFIG_JSON="$(cat "$RUNNER_TEMP/audit.json")" cargo test --locked
+      - name: cargo test (committed Arc testnet profile)
+        working-directory: integrations/aomi-audit
+        run: cargo test --locked
 
   aomi:
     name: aomi app (cargo test)
@@ -90,7 +98,7 @@ jobs:
       # Default build: transfers disabled, no EVM namespace.
       - name: cargo test (disabled)
         working-directory: integrations/aomi
-        run: cargo test --locked
+        run: RR_SETTLEMENT_CONFIG_JSON='{"enabled":false}' cargo test --locked
       # Configured build with a placeholder recipient: guard and route checks.
       - name: cargo test (configured)
         working-directory: integrations/aomi
@@ -98,6 +106,14 @@ jobs:
           sed 's/"enabled": false/"enabled": true/; s/<RECIPIENT_ADDRESS>/0x2222222222222222222222222222222222222222/' \
             settlement-deployment.example.json > "$RUNNER_TEMP/settlement.json"
           RR_SETTLEMENT_CONFIG="$RUNNER_TEMP/settlement.json" cargo test --locked
+      - name: cargo test (inline JSON configuration)
+        working-directory: integrations/aomi
+        run: |
+          RR_SETTLEMENT_CONFIG=/nonexistent/settlement.json \
+          RR_SETTLEMENT_CONFIG_JSON="$(cat "$RUNNER_TEMP/settlement.json")" cargo test --locked
+      - name: cargo test (committed Arc testnet profile)
+        working-directory: integrations/aomi
+        run: cargo test --locked
 
   dashboard:
     name: next build + typecheck
