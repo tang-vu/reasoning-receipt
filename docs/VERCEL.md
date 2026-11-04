@@ -62,6 +62,22 @@ NEXT_PUBLIC_LIVE_API_BASE=https://api.rrtrace.xyz
 
 `npm run build:vercel` explicitly disables the old static-export mode.
 
+## Optional Aomi audit and settlement
+
+The serverless API reads deployment objects from `RR_AUDIT_CONFIG_JSON` and
+`RR_SETTLEMENT_CONFIG_JSON`; local development may instead use the existing
+`RR_AUDIT_CONFIG` and `RR_SETTLEMENT_CONFIG` file paths. Inline JSON takes
+precedence, and invalid configuration fails closed. Build each Aomi artifact
+with the same deployment values.
+
+For each enabled integration, configure its separate `RR_AUDIT_API_TOKEN` or
+`RR_SETTLEMENT_API_TOKEN` and its `*_RPC_URL`. Keep API tokens in secret stores;
+deployment JSON contains public addresses and fixed transfer parameters only.
+
+Set `RR_AUDIT_MODE=aomi` only after the auditor app is deployed and can process
+the queue. The dashboard's `NEXT_PUBLIC_AOMI_APPLICATION_ID` is the deployed
+Settlement app's numeric ID and requires a dashboard rebuild.
+
 ## Verification
 
 ```text

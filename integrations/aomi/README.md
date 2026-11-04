@@ -7,8 +7,11 @@ paid for: a pending, sealed or rejected audit blocks settlement. Once the transf
 independently verified on chain, the API issues a **separate outcome receipt** that links
 back to the audited trace, which is never edited.
 
-**Transfers are disabled by default.** An ordinary build has no EVM namespace, and the
-API refuses every settlement route until a deployment with a recipient is configured.
+The API refuses settlement routes until a deployment and API credential are configured.
+Hosted app builds use `deployment.arc-testnet.json`, fixing the existing receiver wallet
+and 0.01 test USDC amount. Override it with `RR_SETTLEMENT_CONFIG_JSON` or
+`RR_SETTLEMENT_CONFIG`; explicit `{"enabled":false}` builds have no EVM namespace.
+The API token stays separate in Aomi's runtime secret store.
 
 ```mermaid
 sequenceDiagram
@@ -69,14 +72,20 @@ verify the hash it has rather than resubmit.
 2. On the API, set `RR_SETTLEMENT_CONFIG` to that file, `RR_SETTLEMENT_RPC_URL` to an Arc
    testnet RPC that supports the `finalized` block tag, and `RR_SETTLEMENT_API_TOKEN` to
    a random token.
+   On Vercel, set `RR_SETTLEMENT_CONFIG_JSON` to the JSON object's contents instead of
+   relying on a local file. Nonempty inline JSON takes precedence over the file; invalid
+   configuration refuses requests without falling back to a different deployment.
 3. Build the app with `RR_SETTLEMENT_CONFIG` pointing at the same file. An invalid
    enabled deployment fails the build. Give only `RR_SETTLEMENT_API_TOKEN` to the app's
    environment in Aomi.
+   Builds also accept the same `RR_SETTLEMENT_CONFIG_JSON`. This contains public
+   deployment values only; the API token stays in the runtime secret store.
 4. Publish an audit first (see integrations/aomi-audit), then run one settlement for its
    audit id on Arc testnet through Aomi with a funded test wallet. Keep the outcome
    receipt and check it with `POST /v1/verify`.
 
-The default artifact (no `RR_SETTLEMENT_CONFIG`) is the one to keep deployed until then.
+Keep the app private until the live acceptance run passes. The committed profile does
+not grant signing authority: staging still requires simulation and wallet approval.
 
 ## Deploy
 
@@ -88,7 +97,8 @@ this folder is its own Cargo workspace with `Cargo.lock` beside it. `aomi.toml` 
 ## Develop
 
 ```bash
-cargo test --locked                                             # disabled build
+RR_SETTLEMENT_CONFIG_JSON='{"enabled":false}' cargo test --locked # disabled build
+cargo test --locked                                             # committed Arc profile
 RR_SETTLEMENT_CONFIG=/abs/path/settlement.json cargo test --locked  # configured build
 uv run --extra dev pytest tests/test_settlement.py              # API, from the repo root
 ```

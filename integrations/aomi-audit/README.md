@@ -6,8 +6,11 @@ model pass inside the same system, and the loop then uploads the trace and calls
 `RR_AUDIT_MODE=aomi`, the loop stops at the raw trace. The auditor checks every cited
 source, and only an approved trace is sealed and published, from the auditor's own wallet.
 
-**Audits are disabled by default.** An ordinary build has no EVM namespace, and the API
-refuses every audit route until a registry and an auditor wallet are configured.
+The API refuses audit routes until a registry, auditor and API credential are configured.
+Hosted app builds use the committed `deployment.arc-testnet.json` profile, which fixes
+this deployment's auditor wallet and registry. Override it with `RR_AUDIT_CONFIG_JSON`
+or `RR_AUDIT_CONFIG`; explicit `{"enabled":false}` builds have no EVM namespace.
+The API token is supplied separately as an Aomi runtime secret.
 
 ```mermaid
 sequenceDiagram
@@ -79,9 +82,15 @@ fully excluded.
    `ReceiptRegistryV2` on Arc testnet (`0x27d93c52…c4c1`); `publishV2` is permissionless.
 2. On the API, set `RR_AUDIT_CONFIG` to that file, `RR_AUDIT_RPC_URL` to an Arc testnet RPC
    that supports the `finalized` block tag, and `RR_AUDIT_API_TOKEN` to a random token.
+   On Vercel, set `RR_AUDIT_CONFIG_JSON` to the JSON object's contents instead of relying
+   on a local file. Nonempty inline JSON takes precedence over `RR_AUDIT_CONFIG`;
+   malformed configuration refuses requests without falling back to another deployment.
 3. On the oracle loop, set `RR_AUDIT_MODE=aomi` (with `RR_USE_ENSEMBLE=1`).
 4. Build the app with `RR_AUDIT_CONFIG` pointing at the same file. An invalid enabled
    deployment fails the build. Give only `RR_AUDIT_API_TOKEN` to the app's environment.
+   Builds also accept `RR_AUDIT_CONFIG_JSON` with the same precedence as the API. The
+   configuration contains public deployment values; the API credential remains a separate
+   runtime secret and is never compiled into the artifact.
 5. Audit one trace on Arc testnet through Aomi with the funded auditor wallet, then open
    `/verify/{receipt_id}` for the recorded receipt.
 
@@ -94,7 +103,8 @@ SDK pin Aomi's deploy gate reads, and this folder is its own Cargo workspace wit
 ## Develop
 
 ```bash
-cargo test --locked                                         # disabled build
+RR_AUDIT_CONFIG_JSON='{"enabled":false}' cargo test --locked  # disabled build
+cargo test --locked                                         # committed Arc profile
 RR_AUDIT_CONFIG=/abs/path/audit.json cargo test --locked    # configured build
 uv run --extra dev pytest tests/test_audit.py               # API and loop, from the repo root
 ```

@@ -2,22 +2,49 @@ use serde_json::{Value, json};
 use std::{env, fs, path::PathBuf};
 
 // The settlement deployment is baked into the artifact from the same JSON the
-// API reads (RR_SETTLEMENT_CONFIG). Without it, or with enabled=false, the app
-// has no EVM namespace and its tools refuse before any HTTP call.
+// API reads. Inline JSON and an explicit file override the committed Arc profile.
+// An explicitly disabled build has no EVM namespace and refuses all tools.
 fn main() {
     println!("cargo::rustc-check-cfg=cfg(settlement_configured)");
     println!("cargo::rerun-if-env-changed=RR_SETTLEMENT_CONFIG");
+    println!("cargo::rerun-if-env-changed=RR_SETTLEMENT_CONFIG_JSON");
     let out = PathBuf::from(env::var_os("OUT_DIR").unwrap());
-    let config = match env::var("RR_SETTLEMENT_CONFIG") {
-        Ok(path) => {
-            println!("cargo::rerun-if-changed={path}");
-            serde_json::from_str::<Value>(
-                &fs::read_to_string(path).expect("read settlement deployment"),
-            )
-            .expect("valid settlement deployment JSON")
+    let config = if let Some(raw) = env::var("RR_SETTLEMENT_CONFIG_JSON")
+        .ok()
+        .filter(|value| !value.trim().is_empty())
+    {
+        serde_json::from_str::<Value>(&raw).expect("valid inline settlement deployment JSON")
+    } else {
+        match env::var("RR_SETTLEMENT_CONFIG")
+            .ok()
+            .filter(|path| !path.trim().is_empty())
+        {
+            Some(path) => {
+                println!("cargo::rerun-if-changed={path}");
+                serde_json::from_str::<Value>(
+                    &fs::read_to_string(path).expect("read settlement deployment"),
+                )
+                .expect("valid settlement deployment JSON")
+            }
+            None => {
+                let profile = PathBuf::from(env::var_os("CARGO_MANIFEST_DIR").unwrap())
+                    .join("deployment.arc-testnet.json");
+                println!("cargo::rerun-if-changed={}", profile.display());
+                if profile.is_file() {
+                    serde_json::from_str::<Value>(
+                        &fs::read_to_string(profile).expect("read Arc testnet profile"),
+                    )
+                    .expect("valid Arc testnet profile JSON")
+                } else {
+                    json!({"enabled": false})
+                }
+            }
         }
-        Err(_) => json!({"enabled": false}),
     };
+    assert!(
+        config.is_object(),
+        "settlement deployment must be a JSON object"
+    );
     if config["enabled"] == true {
         let chain = config["chain_id"]
             .as_u64()

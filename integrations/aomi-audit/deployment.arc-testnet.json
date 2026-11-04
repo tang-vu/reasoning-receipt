@@ -1,0 +1,7 @@
+{
+  "enabled": true,
+  "chain_id": 5042002,
+  "registry": "0x27d93c52fea923f956345af27f61d7bf47f0c4c1",
+  "auditor": "0x8939bc9926DD8BBB3A66F24511E1cC0506d50a64",
+  "api_url": "https://api.rrtrace.xyz"
+}
