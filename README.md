@@ -77,6 +77,34 @@ Example receipt input:
 }
 ```
 
+### Independent audit through Aomi (disabled by default)
+
+The oracle can hand each critic-approved trace to an independent auditor instead of
+sealing it itself. An [Aomi](https://aomi.dev) auditor fetches every cited source, judges
+whether it supports what it is cited for, and records its findings as extra nodes in the
+trace. Approved traces are re-rooted, uploaded and published to `ReceiptRegistryV2` from
+the auditor's own wallet, so the on-chain publisher marks audited receipts. Rejected
+traces are never published. See [integrations/aomi-audit](integrations/aomi-audit/README.md).
+
+```http
+GET  /v1/audits/next              # oldest trace waiting for audit
+POST /v1/audits/{id}/seal         # auditor findings; approved -> unsigned publishV2
+POST /v1/audits/{id}/published    # check the finalized ReceiptV2, record the receipt
+```
+
+### Settlement through Aomi (disabled by default)
+
+A receipt whose audit passed and was published can be settled with one wallet-approved
+USDC transfer prepared and simulated through [Aomi](https://aomi.dev). Failed or
+inconclusive audits block settlement. The verified transfer produces a separate outcome
+receipt that links to the audited trace. Chain, recipient and amount come only from a deployment
+file; see [integrations/aomi](integrations/aomi/README.md).
+
+```http
+POST /v1/settlements/prepare  # published audit only; simulate, return the unsigned transfer
+POST /v1/settlements/verify   # check the finalized transfer, issue the linked outcome receipt
+```
+
 ### Reference adapter: prediction markets
 
 Pay a few cents of USDC over x402 v2, get a probability for a Polymarket or Kalshi event,
