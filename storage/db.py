@@ -13,6 +13,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from sqlalchemy import (
+    BigInteger,
     Column,
     DateTime,
     Float,
@@ -199,6 +200,9 @@ class Settlement(Base):
     recipient = Column(String(42), nullable=False)
     amount_units = Column(String(40), nullable=False)
     payer = Column(String(42), nullable=False)
+    # Payments must be mined after the chain head observed at first preparation.
+    # NULL identifies legacy attempts that cannot safely establish this boundary.
+    prepared_after_block = Column(BigInteger, nullable=True)
     status = Column(String(16), nullable=False, default="prepared", index=True)
     transaction_hash = Column(String(66), nullable=True, unique=True)
     outcome_receipt = Column(Text, nullable=True)
@@ -235,13 +239,15 @@ def _migrate(engine) -> None:
         "ALTER TABLE receipts ADD COLUMN disagreement_pp FLOAT",
         "ALTER TABLE receipts ADD COLUMN merkle_root VARCHAR(70)",
         "ALTER TABLE receipts ADD COLUMN category VARCHAR(16)",
+        "ALTER TABLE settlements ADD COLUMN prepared_after_block BIGINT",
     ]
     import contextlib
 
-    with engine.begin() as conn:
-        for sql in statements:
-            with contextlib.suppress(Exception):
-                conn.execute(text(sql))
+    for sql in statements:
+        # PostgreSQL aborts a transaction after an already-existing column error.
+        # Give each migration its own transaction so later additions still run.
+        with contextlib.suppress(Exception), engine.begin() as conn:
+            conn.execute(text(sql))
 
 
 @contextmanager

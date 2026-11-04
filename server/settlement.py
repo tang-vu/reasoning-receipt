@@ -140,6 +140,16 @@ def prepare_settlement(
     if "error" in simulated or int(simulated.get("result") or "0x0", 16) != 1:
         raise HTTPException(409, "Simulation failed; nothing was prepared and nothing may be submitted")
 
+    # Snapshot the chain before exposing calldata. A matching transfer that was
+    # already mined must never be relabeled as payment for this new audit.
+    latest = _rpc("eth_getBlockByNumber", ["latest", False]).get("result")
+    try:
+        head = int(latest["number"], 16)
+        if head < 0:
+            raise ValueError("negative block")
+    except (KeyError, TypeError, ValueError) as exc:
+        raise HTTPException(503, "Cannot establish the payment's starting block; nothing was prepared") from exc
+
     # Keep the audit reference exactly as it was when the payment was prepared.
     stored = json.dumps(source, sort_keys=True, separators=(",", ":"))
     with Session() as s:
@@ -154,13 +164,20 @@ def prepare_settlement(
                     source_receipt_hash=source_hash,
                     source_receipt=stored,
                     payer=payer,
+                    prepared_after_block=head,
                     **d,
                 )
             )
         else:
-            row.payer = payer
-            row.chain_id, row.token = d["chain_id"], d["token"]
-            row.recipient, row.amount_units = d["recipient"], d["amount_units"]
+            # Preparation is immutable: another wallet or deployment must not
+            # replace a payment whose wallet prompt or broadcast is in flight.
+            if (row.payer, row.chain_id, row.token, row.recipient, row.amount_units) != (
+                payer, d["chain_id"], d["token"], d["recipient"], d["amount_units"]
+            ):
+                raise HTTPException(409, "This receipt already has a different payment prepared; manual review required")
+            if row.prepared_after_block is None:
+                raise HTTPException(409, "This legacy payment has no starting block; manual review required")
+        prepared_after_block = head if row is None else row.prepared_after_block
         try:
             s.flush()
         except IntegrityError as exc:
@@ -173,6 +190,7 @@ def prepare_settlement(
         "trace_hash": source_hash,
         "merkle_root": source["merkle_root"],
         "payer": payer,
+        "prepared_after_block": prepared_after_block,
         **d,
         "transaction": {"to": d["token"], "chain_id": d["chain_id"], "value": "0", "data": data},
     }
@@ -211,8 +229,11 @@ def verify_settlement(
             d["recipient"],
             d["amount_units"],
         ):
-            raise HTTPException(409, "Deployment changed since preparation; prepare and approve again")
+            raise HTTPException(409, "Deployment changed since preparation; manual review required")
+        if row.prepared_after_block is None:
+            raise HTTPException(409, "This legacy payment has no starting block; manual review required")
         row_id, payer, source = row.id, row.payer, json.loads(row.source_receipt)
+        prepared_after_block = row.prepared_after_block
 
     if _rpc("eth_chainId", []).get("result") != hex(d["chain_id"]):
         raise HTTPException(503, "Settlement RPC is on a different chain; nothing was recorded")
@@ -225,6 +246,8 @@ def verify_settlement(
     if not finalized:
         raise HTTPException(503, "RPC cannot report finality; nothing was recorded")
     block_number = int(receipt["blockNumber"], 16)
+    if block_number <= prepared_after_block:
+        raise HTTPException(409, "Transfer predates payment preparation; nothing was recorded")
     if block_number > int(finalized["number"], 16):
         return {"status": "pending_finality"}
     canonical = _rpc("eth_getBlockByNumber", [receipt["blockNumber"], False]).get("result") or {}
@@ -276,8 +299,10 @@ def verify_settlement(
                 kind="policy",
                 payload={
                     "finalized_block": int(finalized["number"], 16),
+                    "prepared_after_block": prepared_after_block,
                     "checks": [
                         "audit_published",
+                        "after_preparation",
                         "chain_id",
                         "receipt_status",
                         "finality",
@@ -301,6 +326,7 @@ def verify_settlement(
                     SettlementRow.id == row_id,
                     SettlementRow.status == "prepared",
                     SettlementRow.payer == payer,
+                    SettlementRow.prepared_after_block == prepared_after_block,
                 )
                 .values(
                     status="settled",

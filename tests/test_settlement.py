@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import itertools
 import json
+import os
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -13,7 +14,7 @@ import pytest
 import respx
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
-from sqlalchemy import select
+from sqlalchemy import create_engine, inspect, select, text
 
 from protocol.receipt import verify_receipt
 from server.settlement import TRANSFER_TOPIC
@@ -57,6 +58,7 @@ class FakeChain:
         self.call = {"result": word(1)}
         self.receipts: dict[str, dict] = {}
         self.finalized = 100
+        self.latest = 80
         self.blocks = {hex(n): "0x" + f"{n:064x}" for n in range(1, 200)}
 
     def mine(self, tx: str, *, status="0x1", block=90, logs=None) -> None:
@@ -78,6 +80,8 @@ class FakeChain:
             reply = {"result": self.receipts.get(params[0])}
         elif params[0] == "finalized":
             reply = {"result": {"number": hex(self.finalized)}}
+        elif params[0] == "latest":
+            reply = {"result": {"number": hex(self.latest), "hash": self.blocks[hex(self.latest)]}}
         else:
             reply = {"result": {"hash": self.blocks[params[0]]}}
         return httpx.Response(200, json={"jsonrpc": "2.0", "id": 1, **reply})
@@ -286,3 +290,110 @@ def test_repeated_processing_creates_one_success_record(chain) -> None:
     assert prepare(other).status_code == 200
     assert verify(other, TX).status_code == 409
     assert len(settled_rows()) == 1
+
+
+def test_another_wallet_cannot_replace_an_inflight_payment(chain) -> None:
+    audit_id = audit()
+    assert prepare(audit_id).status_code == 200
+    chain.mine(TX)
+    assert prepare(audit_id, execution_account="0x" + "44" * 20).status_code == 409
+    assert verify(audit_id).json()["status"] == "settled"
+
+
+@pytest.mark.parametrize("block", [1, 80])
+def test_a_preexisting_transfer_cannot_pay_for_a_new_audit(chain, block) -> None:
+    chain.mine(TX, block=block)
+    audit_id = audit()
+    assert prepare(audit_id).status_code == 200
+    response = verify(audit_id)
+    assert response.status_code == 409
+    assert "predates" in response.json()["detail"]
+    assert settled_rows() == []
+
+
+def test_retry_keeps_the_original_preparation_boundary(chain) -> None:
+    audit_id = audit()
+    first = prepare(audit_id).json()
+    chain.mine(TX)
+    chain.latest = 95
+    repeated = prepare(audit_id)
+    assert repeated.status_code == 200
+    assert repeated.json() == first
+    outcome = verify(audit_id).json()["outcome_receipt"]
+    policy = next(n["payload"] for n in outcome["nodes"] if n["id"] == "verification")
+    assert policy["prepared_after_block"] == 80
+    assert "after_preparation" in policy["checks"]
+
+
+def test_configuration_change_does_not_replace_an_inflight_payment(chain) -> None:
+    audit_id = audit()
+    assert prepare(audit_id).status_code == 200
+    config = Path(os.environ["RR_SETTLEMENT_CONFIG"])
+    original = config.read_text()
+    deployment = json.loads(original)
+    deployment["recipient"] = "0x" + "44" * 20
+    config.write_text(json.dumps(deployment))
+    assert prepare(audit_id).status_code == 409
+    with Session() as s:
+        row = s.scalars(select(SettlementRow)).one()
+        assert (row.payer, row.recipient, row.prepared_after_block) == (PAYER, RECIPIENT, 80)
+    config.write_text(original)
+    chain.mine(TX)
+    assert verify(audit_id).json()["status"] == "settled"
+
+
+def test_legacy_preparation_requires_manual_review_without_rebinding(chain) -> None:
+    audit_id = audit()
+    assert prepare(audit_id).status_code == 200
+    with Session() as s:
+        row = s.scalars(select(SettlementRow)).one()
+        row.prepared_after_block = None
+    assert prepare(audit_id).status_code == 409
+    chain.mine(TX)
+    assert verify(audit_id).status_code == 409
+    assert settled_rows() == []
+
+
+def test_missing_chain_head_never_prepares_a_payment(chain, monkeypatch) -> None:
+    from server import settlement
+
+    original = settlement._rpc
+
+    def missing_head(method, params):
+        if method == "eth_getBlockByNumber" and params[0] == "latest":
+            return {"result": None}
+        return original(method, params)
+
+    monkeypatch.setattr(settlement, "_rpc", missing_head)
+    assert prepare(audit()).status_code == 503
+    with Session() as s:
+        assert s.scalars(select(SettlementRow)).first() is None
+
+
+def test_concurrent_wallets_cannot_replace_the_winning_preparation(chain) -> None:
+    audit_id = audit()
+    wallets = [PAYER, "0x" + "44" * 20]
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        results = list(pool.map(lambda payer: prepare(audit_id, execution_account=payer), wallets))
+    assert sorted(r.status_code for r in results) == [200, 409]
+    winner = next(r.json()["payer"] for r in results if r.status_code == 200)
+    chain.mine(TX, logs=[transfer_log(frm=winner)])
+    assert verify(audit_id).json()["status"] == "settled"
+
+
+def test_existing_settlement_tables_gain_a_nullable_preparation_boundary(tmp_path) -> None:
+    from storage.db import _migrate
+
+    engine = create_engine(f"sqlite:///{(tmp_path / 'legacy.db').as_posix()}")
+    try:
+        with engine.begin() as connection:
+            connection.execute(text("CREATE TABLE settlements (id INTEGER PRIMARY KEY)"))
+            connection.execute(text("INSERT INTO settlements (id) VALUES (1)"))
+        _migrate(engine)
+        _migrate(engine)
+        columns = {column["name"]: column for column in inspect(engine).get_columns("settlements")}
+        assert columns["prepared_after_block"]["nullable"]
+        with engine.connect() as connection:
+            assert connection.execute(text("SELECT prepared_after_block FROM settlements")).scalar() is None
+    finally:
+        engine.dispose()
