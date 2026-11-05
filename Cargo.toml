@@ -13,4 +13,4 @@ members  = []
 exclude  = ["integrations/aomi", "integrations/aomi-audit"]
 
 [workspace.dependencies]
-aomi-sdk = "=5.1.1"
+aomi-sdk = "=6.0.0"
